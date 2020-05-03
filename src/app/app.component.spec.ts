@@ -16,16 +16,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'FormIoEditor'`, () => {
+  it(`should have as title 'AngularFormioEditor'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('FormIoEditor');
+    expect(app.title).toEqual('AngularFormioEditor');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('FormIoEditor app is running!');
+    expect(compiled.querySelector('.content span').textContent).toContain('AngularFormioEditor app is running!');
   });
 });
