@@ -1,5 +1,6 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, OnInit, ViewChild} from '@angular/core';
 import {PrismService} from '../prism.service';
+import { JsonEditorOptions, JsonEditorComponent } from 'ang-jsoneditor';
 
 @Component({
   selector: 'app-formio-editor',
@@ -7,11 +8,12 @@ import {PrismService} from '../prism.service';
   styleUrls: ['./formio-editor.component.css']
 })
 export class FormioEditorComponent implements AfterViewInit, OnInit {
-  @ViewChild('json', {static: true}) jsonElement?: ElementRef;
-  @ViewChild('code', {static: true}) codeElement?: ElementRef;
   public form: any;
-  public formJson: string;
-  triggerRefresh: any;
+  public jsonEditorOptions: JsonEditorOptions;
+  rendererTriggerRefresh: any;
+
+  @ViewChild('jsoneditor', {static: true}) editor: JsonEditorComponent;
+
   constructor(public prism: PrismService) {
     this.form = {
       display: 'wizard',
@@ -72,36 +74,52 @@ export class FormioEditorComponent implements AfterViewInit, OnInit {
         }
       ]
     };
+
+    this.jsonEditorOptions = new JsonEditorOptions()
+    this.jsonEditorOptions.modes = ['code', 'text', 'view']; // set allowed modes
+    this.jsonEditorOptions.mode = 'view'; // set default mode
+    this.jsonEditorOptions.onError = (error)=> console.log(error);
   }
 
-  onChangeType(event){
+  onChangeType(event) {
+    console.log("onchange type",event);
     this.form = Object.assign({}, this.form);
-    this.refreshJson();
-    this.refreshRender();
+    this.refreshJsonEditor();
+    this.refreshRenderer();
   }
-  onChange(event) {
-    this.form  = event.form;
-    this.refreshJson();
-    this.refreshRender();
+
+  onChangeBuilder(event) {
+    console.log("onchange builder", event);
+    if (event.type === "saveComponent" || event.type === "deleteComponent") {
+      this.form = event.form;
+      this.refreshJsonEditor();
+      this.refreshRenderer();
+    }
+  }
+  
+  onChangeJsonEditor(event) {
+    console.log("onchange editor", event, this.editor.get(), this.form);
+    if(event instanceof  Event) {
+      this.form = this.editor.get();
+      this.refreshRenderer();
+    }
   }
 
   ngAfterViewInit() {
     this.prism.init();
+    this.refreshJsonEditor();
   }
 
   ngOnInit(): void {
-    this.triggerRefresh = new EventEmitter();
-    this.refreshJson();
+    this.rendererTriggerRefresh = new EventEmitter();
   }
 
-  refreshJson() {
-    this.formJson = JSON.stringify(this.form, null, 4);
-    this.jsonElement.nativeElement.innerHTML = '';
-    this.jsonElement.nativeElement.appendChild(document.createTextNode(this.formJson));
+  refreshJsonEditor() {
+    this.editor.set(this.form);
   }
 
-  refreshRender() {
-    this.triggerRefresh.emit({
+  refreshRenderer() {
+    this.rendererTriggerRefresh.emit({
       property: 'form',
       value: this.form
     });

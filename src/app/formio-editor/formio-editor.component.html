@@ -1,25 +1,26 @@
 <ul class="nav nav-tabs" id="myTab" role="tablist">
   <li class="nav-item">
     <a class="nav-link active"
-       id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
+       id="builder-tab" data-toggle="tab" href="#builder" role="tab" aria-controls="builder" aria-selected="true">
       Builder
     </a>
   </li>
   <li class="nav-item">
     <a class="nav-link"
-       id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">
+      id="json-editor-tab" data-toggle="tab" href="#json-editor" role="tab" aria-controls="json-editor" 
+      aria-selected="false">
       Json
     </a>
   </li>
   <li class="nav-item">
     <a class="nav-link"
-       id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">
+        id="renderer-tab" data-toggle="tab" href="#renderer" role="tab" aria-controls="renderer" aria-selected="false">
       Renderer
     </a>
   </li>
 </ul>
 <div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+  <div class="tab-pane fade show active" id="builder" role="tabpanel" aria-labelledby="builder-tab">
     <div class="m-2">
       <label class="mx-2" for="form-select">Tipo modulo: </label>
       <select class="form-control my-2" id="form-select"
@@ -27,17 +28,16 @@
         <option value="form">Form</option>
         <option value="wizard">Wizard</option>
       </select>
-      <form-builder [form]="form" (change)="onChange($event)"></form-builder>
+      <form-builder [form]="form" (change)="onChangeBuilder($event)"></form-builder>
     </div>
   </div>
-  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+  <div class="tab-pane fade" id="json-editor" role="tabpanel" aria-labelledby="json-editor-tab">
     <div class="m-2 well jsonviewer">
-      <pre id="json"><code class="language-json" #json></code></pre>
+      <json-editor #jsoneditor [options]="jsonEditorOptions" [data]="form" (change)="onChangeJsonEditor($event)"></json-editor>
     </div>
   </div>
-  <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-<!--    <formio [form]="formJson"></formio>-->
-    <formio [form]="form" [refresh]="triggerRefresh"></formio>
+  <div class="tab-pane fade" id="renderer" role="tabpanel" aria-labelledby="renderer-tab">
+    <formio [form]="form" [refresh]="rendererTriggerRefresh"></formio>
   </div>
 </div>
 
