@@ -75,31 +75,31 @@ export class FormioEditorComponent implements AfterViewInit, OnInit {
       ]
     };
 
-    this.jsonEditorOptions = new JsonEditorOptions()
+    this.jsonEditorOptions = new JsonEditorOptions();
     this.jsonEditorOptions.modes = ['code', 'text', 'view']; // set allowed modes
     this.jsonEditorOptions.mode = 'view'; // set default mode
-    this.jsonEditorOptions.onError = (error)=> console.log(error);
+    this.jsonEditorOptions.onError = (error) => console.log(error);
   }
 
   onChangeType(event) {
-    console.log("onchange type",event);
+    console.log('onchange type', event);
     this.form = Object.assign({}, this.form);
     this.refreshJsonEditor();
     this.refreshRenderer();
   }
 
   onChangeBuilder(event) {
-    console.log("onchange builder", event);
-    if (event.type === "saveComponent" || event.type === "deleteComponent") {
+    console.log('onchange builder', event);
+    if (event.type === 'saveComponent' || event.type === 'deleteComponent') {
       this.form = event.form;
       this.refreshJsonEditor();
       this.refreshRenderer();
     }
   }
-  
+
   onChangeJsonEditor(event) {
-    console.log("onchange editor", event, this.editor.get(), this.form);
-    if(event instanceof  Event) {
+    console.log('onchange editor', event, this.editor.get(), this.form);
+    if (event instanceof  Event) {
       this.form = this.editor.get();
       this.refreshRenderer();
     }
