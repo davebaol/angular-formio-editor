@@ -2,3 +2,7 @@
 $fa-font-path: '../node_modules/font-awesome/fonts';
 @import '~font-awesome/scss/font-awesome';
 @import "~jsoneditor/dist/jsoneditor.min.css";
+
+.jsoneditor-outer.has-main-menu-bar.has-status-bar{
+    height: 70vh;
+}
