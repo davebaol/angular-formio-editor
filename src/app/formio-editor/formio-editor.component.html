@@ -35,12 +35,12 @@
   <div class="tab-pane fade" id="json-editor" role="tabpanel" aria-labelledby="json-editor-tab">
     <div class="m-2 well">
       <div *ngIf="jsonEditorChanged" class="m-2">
-        <button type="button" class="btn btn-primary mr-4" (click)="jsonEditorApplyChanges()">Apply</button>
+        <button type="button" class="btn btn-success mr-4" (click)="jsonEditorApplyChanges()">Apply</button>
         <button type="button" class="btn btn-secondary" (click)="jsonEditorDiscardChanges()">Discard</button>
       </div>
       <json-editor #jsoneditor [options]="jsonEditorOptions" (change)="onJsonEditorChange($event)"></json-editor>
       <div *ngIf="jsonEditorChanged" class="m-2">
-        <button type="button" class="btn btn-primary mr-4" (click)="jsonEditorApplyChanges()">Apply</button>
+        <button type="button" class="btn btn-success mr-4" (click)="jsonEditorApplyChanges()">Apply</button>
         <button type="button" class="btn btn-secondary" (click)="jsonEditorDiscardChanges()">Discard</button>
       </div>
     </div>
