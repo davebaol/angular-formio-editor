@@ -77,7 +77,7 @@ export class FormioEditorComponent implements AfterViewInit, OnInit {
     };
 
     this.jsonEditorOptions = new JsonEditorOptions();
-    this.jsonEditorOptions.modes = ['code', 'text', 'tree', 'view']; // set allowed modes
+    this.jsonEditorOptions.modes = ['code', 'tree', 'view']; // set allowed modes
     this.jsonEditorOptions.mode = 'view'; // set default mode
     this.jsonEditorOptions.onError = (error) => console.log("jsonEditorOptions.onError: ", error);
   }
