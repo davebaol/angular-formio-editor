@@ -1,5 +1,4 @@
 import {AfterViewInit, Component, EventEmitter, OnInit, ViewChild} from '@angular/core';
-import {PrismService} from '../prism.service';
 import { JsonEditorOptions, JsonEditorComponent } from 'ang-jsoneditor';
 
 @Component({
@@ -15,7 +14,7 @@ export class FormioEditorComponent implements AfterViewInit, OnInit {
 
   @ViewChild('jsoneditor', {static: true}) editor: JsonEditorComponent;
 
-  constructor(public prism: PrismService) {
+  constructor() {
     this.form = {
       display: 'wizard',
       components: [
@@ -87,7 +86,6 @@ export class FormioEditorComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit() {
-    this.prism.init();
     this.refreshJsonEditor();
   }
 

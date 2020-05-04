@@ -28,14 +28,11 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss",
-              "./node_modules/prism-themes/themes/prism-vs.css"
+              "src/styles.scss"
             ],
             "scripts": [
               "./node_modules/jquery/dist/jquery.slim.min.js",
-              "./node_modules/bootstrap/dist/js/bootstrap.js",
-              "./node_modules/prismjs/prism.js",
-              "./node_modules/prismjs/components/prism-markup.min.js"
+              "./node_modules/bootstrap/dist/js/bootstrap.js"
             ]
           },
           "configurations": {
