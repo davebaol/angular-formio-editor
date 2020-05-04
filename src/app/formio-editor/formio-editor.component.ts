@@ -10,6 +10,7 @@ import { JsonEditorOptions, JsonEditorComponent } from 'ang-jsoneditor';
 export class FormioEditorComponent implements AfterViewInit, OnInit {
   public form: any;
   public jsonEditorOptions: JsonEditorOptions;
+  jsonEditorChanged = false;
   rendererTriggerRefresh: any;
 
   @ViewChild('jsoneditor', {static: true}) editor: JsonEditorComponent;
@@ -76,33 +77,13 @@ export class FormioEditorComponent implements AfterViewInit, OnInit {
     };
 
     this.jsonEditorOptions = new JsonEditorOptions();
-    this.jsonEditorOptions.modes = ['code', 'text', 'view']; // set allowed modes
+    this.jsonEditorOptions.modes = ['code', 'text', 'tree', 'view']; // set allowed modes
     this.jsonEditorOptions.mode = 'view'; // set default mode
-    this.jsonEditorOptions.onError = (error) => console.log(error);
+    this.jsonEditorOptions.onError = (error) => console.log("jsonEditorOptions.onError: ", error);
   }
 
-  onChangeType(event) {
-    console.log('onchange type', event);
-    this.form = Object.assign({}, this.form);
-    this.refreshJsonEditor();
-    this.refreshRenderer();
-  }
-
-  onChangeBuilder(event) {
-    console.log('onchange builder', event);
-    if (event.type === 'saveComponent' || event.type === 'deleteComponent') {
-      this.form = event.form;
-      this.refreshJsonEditor();
-      this.refreshRenderer();
-    }
-  }
-
-  onChangeJsonEditor(event) {
-    console.log('onchange editor', event, this.editor.get(), this.form);
-    if (event instanceof  Event) {
-      this.form = this.editor.get();
-      this.refreshRenderer();
-    }
+  ngOnInit(): void {
+    this.rendererTriggerRefresh = new EventEmitter();
   }
 
   ngAfterViewInit() {
@@ -110,13 +91,49 @@ export class FormioEditorComponent implements AfterViewInit, OnInit {
     this.refreshJsonEditor();
   }
 
-  ngOnInit(): void {
-    this.rendererTriggerRefresh = new EventEmitter();
+  //
+  // Form.io Builder
+  //
+
+  onBuilderDiplayChange(event) {
+    this.form = Object.assign({}, this.form);
+    this.refreshJsonEditor();
+    this.refreshRenderer();
+  }
+
+  onBuilderChange(event) {
+    this.refreshJsonEditor();
+    this.refreshRenderer();
+  }
+
+  //
+  // JSON Editor
+  //
+
+  onJsonEditorChange(event) {
+    this.jsonEditorChanged = true;
+  }
+
+  jsonEditorApplyChanges() {
+    this.jsonEditorChanged = false;
+    this.form = this.editor.get();
+    this.refreshRenderer();
+  }
+
+  jsonEditorDiscardChanges() {
+    this.refreshJsonEditor();
+    this.refreshRenderer();
   }
 
   refreshJsonEditor() {
-    this.editor.set(this.form);
+    // Here we use update instead of set to preserve the editor status
+    this.editor.update(this.form);
+    this.jsonEditorChanged = false;
   }
+
+  //
+  // Form.io Renderer
+  //
 
   refreshRenderer() {
     this.rendererTriggerRefresh.emit({

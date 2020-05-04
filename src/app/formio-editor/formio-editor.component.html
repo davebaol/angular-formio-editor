@@ -25,16 +25,24 @@
     <div class="m-2">
       <label class="mx-2" for="form-select">Tipo modulo: </label>
       <select class="form-control my-2" id="form-select"
-              [(ngModel)]="form.display" style="display: inline-block; width: 150px;" (change)="onChangeType($event)">
+              [(ngModel)]="form.display" style="display: inline-block; width: 150px;" (change)="onBuilderDiplayChange($event)">
         <option value="form">Form</option>
         <option value="wizard">Wizard</option>
       </select>
-      <form-builder [form]="form" (change)="onChangeBuilder($event)"></form-builder>
+      <form-builder [form]="form" (change)="onBuilderChange($event)"></form-builder>
     </div>
   </div>
   <div class="tab-pane fade" id="json-editor" role="tabpanel" aria-labelledby="json-editor-tab">
-    <div class="m-2 well jsonviewer">
-      <json-editor #jsoneditor [options]="jsonEditorOptions" [data]="form" (change)="onChangeJsonEditor($event)"></json-editor>
+    <div class="m-2 well">
+      <div *ngIf="jsonEditorChanged" class="m-2">
+        <button type="button" class="btn btn-primary mr-4" (click)="jsonEditorApplyChanges()">Apply</button>
+        <button type="button" class="btn btn-secondary" (click)="jsonEditorDiscardChanges()">Discard</button>
+      </div>
+      <json-editor #jsoneditor [options]="jsonEditorOptions" (change)="onJsonEditorChange($event)"></json-editor>
+      <div *ngIf="jsonEditorChanged" class="m-2">
+        <button type="button" class="btn btn-primary mr-4" (click)="jsonEditorApplyChanges()">Apply</button>
+        <button type="button" class="btn btn-secondary" (click)="jsonEditorDiscardChanges()">Discard</button>
+      </div>
     </div>
   </div>
   <div class="tab-pane fade" id="renderer" role="tabpanel" aria-labelledby="renderer-tab">
