@@ -2,7 +2,7 @@ import {AfterViewInit, Component, EventEmitter, OnInit, ViewChild} from '@angula
 import { JsonEditorOptions, JsonEditorComponent } from 'ang-jsoneditor';
 
 @Component({
-  selector: 'app-formio-editor',
+  selector: 'formio-editor',
   templateUrl: './formio-editor.component.html',
   styleUrls: ['./formio-editor.component.css']
 })
