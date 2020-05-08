@@ -1,80 +1,34 @@
-import {AfterViewInit, Component, EventEmitter, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, OnInit, ViewChild, Input, Output} from '@angular/core';
 import { JsonEditorOptions, JsonEditorComponent } from 'ang-jsoneditor';
+
+export * from 'ang-jsoneditor';
 
 @Component({
   selector: 'formio-editor',
   templateUrl: './formio-editor.component.html',
   styleUrls: ['./formio-editor.component.css']
 })
-export class FormioEditorComponent implements AfterViewInit, OnInit {
-  public form: any;
-  public jsonEditorOptions: JsonEditorOptions;
+export class FormioEditorComponent implements OnInit, AfterViewInit  {
+  formValue: any;
+  @Output() formChange: EventEmitter<any> = new EventEmitter<any>();
+
+  get form() {
+    return this.formValue;
+  }
+  @Input()
+  set form(val) {
+    console.log("set form(val)");
+    this.formValue = val;
+    this.formChange.emit(this.formValue);
+  }
+
+  @Input() jsonEditorOptions: JsonEditorOptions;
   jsonEditorChanged = false;
-  rendererTriggerRefresh: any;
+  rendererTriggerRefresh = new EventEmitter();
 
   @ViewChild('jsoneditor', {static: true}) editor: JsonEditorComponent;
 
   constructor() {
-    this.form = {
-      display: 'wizard',
-      components: [
-        {
-          label: 'Panel',
-          title: 'Page 1',
-          breadcrumbClickable: true,
-          buttonSettings: {
-            previous: true,
-            cancel: true,
-            next: true
-          },
-          collapsible: false,
-          mask: false,
-          tableView: false,
-          alwaysEnabled: false,
-          type: 'panel',
-          input: false,
-          key: 'panel2',
-          conditional: {
-            show: '',
-            when: '',
-            json: ''
-          },
-          components: [
-            {
-              type: 'textfield',
-              label: 'FirstName',
-              key: 'firstName',
-              input: true,
-              tableView: true
-            },
-            {
-              type: 'textfield',
-              label: 'LastName',
-              key: 'lastName',
-              input: true,
-              tableView: true
-            }
-          ],
-          collapsed: false,
-          reorder: false,
-          properties: {},
-          customConditional: '',
-          nextPage: '',
-          logic: [],
-          attributes: {}
-        },
-        {
-          type: 'button',
-          action: 'Submit',
-          label: 'Submit',
-          theme: 'primary',
-          input: true,
-          key: 'submit',
-          tableView: true
-        }
-      ]
-    };
-
     this.jsonEditorOptions = new JsonEditorOptions();
     this.jsonEditorOptions.modes = ['code', 'tree', 'view']; // set allowed modes
     this.jsonEditorOptions.mode = 'view'; // set default mode
@@ -82,7 +36,6 @@ export class FormioEditorComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    this.rendererTriggerRefresh = new EventEmitter();
   }
 
   ngAfterViewInit() {
@@ -94,12 +47,14 @@ export class FormioEditorComponent implements AfterViewInit, OnInit {
   //
 
   onBuilderDiplayChange(event) {
+    console.log("onBuilderDiplayChange");
     this.form = Object.assign({}, this.form);
     this.refreshJsonEditor();
     this.refreshRenderer();
   }
 
   onBuilderChange(event) {
+    console.log("onBuilderChange");
     this.refreshJsonEditor();
     this.refreshRenderer();
   }
@@ -109,21 +64,25 @@ export class FormioEditorComponent implements AfterViewInit, OnInit {
   //
 
   onJsonEditorChange(event) {
+    console.log("onJsonEditorChange");
     this.jsonEditorChanged = true;
   }
 
   jsonEditorApplyChanges() {
+    console.log("jsonEditorApplyChanges");
     this.jsonEditorChanged = false;
     this.form = this.editor.get();
     this.refreshRenderer();
   }
 
   jsonEditorDiscardChanges() {
+    console.log("jsonEditorDiscardChanges");
     this.refreshJsonEditor();
     this.refreshRenderer();
   }
 
   refreshJsonEditor() {
+    console.log("refreshJsonEditor");
     // Here we use update instead of set to preserve the editor status
     this.editor.update(this.form);
     this.jsonEditorChanged = false;
