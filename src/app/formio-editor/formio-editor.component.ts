@@ -1,5 +1,6 @@
-import {AfterViewInit, Component, EventEmitter, OnInit, ViewChild, Input, Output} from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, OnInit, ViewChild, Input } from '@angular/core';
 import { JsonEditorOptions, JsonEditorComponent } from 'ang-jsoneditor';
+import { Subject } from 'rxjs';
 
 export * from 'ang-jsoneditor';
 
@@ -9,30 +10,22 @@ export * from 'ang-jsoneditor';
   styleUrls: ['./formio-editor.component.css']
 })
 export class FormioEditorComponent implements OnInit, AfterViewInit  {
-  formValue: any;
-  @Output() formChange: EventEmitter<any> = new EventEmitter<any>();
-
-  get form() {
-    return this.formValue;
-  }
-  @Input()
-  set form(val) {
-    console.log("set form(val)");
-    this.formValue = val;
-    this.formChange.emit(this.formValue);
-  }
+  @Input() form: any;
+  refreshBuilder$ = new Subject();
 
   @Input() jsonEditorOptions: JsonEditorOptions;
   jsonEditorChanged = false;
   rendererTriggerRefresh = new EventEmitter();
+  @ViewChild('jsoneditor', {static: true}) jsonEditor: JsonEditorComponent;
 
-  @ViewChild('jsoneditor', {static: true}) editor: JsonEditorComponent;
+  activeTab: String;
 
   constructor() {
     this.jsonEditorOptions = new JsonEditorOptions();
     this.jsonEditorOptions.modes = ['code', 'tree', 'view']; // set allowed modes
     this.jsonEditorOptions.mode = 'view'; // set default mode
     this.jsonEditorOptions.onError = (error) => console.log("jsonEditorOptions.onError: ", error);
+    this.activeTab = "builder";
   }
 
   ngOnInit(): void {
@@ -43,20 +36,23 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
   }
 
   //
-  // Form.io Builder
+  // Form Builder
   //
+
+  refreshFormBuilder() {
+    console.log("refreshFormBuilder");
+    this.refreshBuilder$.next();
+  }
 
   onBuilderDiplayChange(event) {
     console.log("onBuilderDiplayChange");
-    this.form = Object.assign({}, this.form);
+    this.refreshFormBuilder()
     this.refreshJsonEditor();
-    this.refreshRenderer();
   }
 
   onBuilderChange(event) {
     console.log("onBuilderChange");
     this.refreshJsonEditor();
-    this.refreshRenderer();
   }
 
   //
@@ -71,32 +67,25 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
   jsonEditorApplyChanges() {
     console.log("jsonEditorApplyChanges");
     this.jsonEditorChanged = false;
-    this.form = this.editor.get();
-    this.refreshRenderer();
+    // Remove all properties from this form
+    // then copy the properties of the edited json to this form
+    // and refresh the builder
+    Object.getOwnPropertyNames(this.form).forEach(p => delete this.form[p]);
+    Object.assign(this.form, this.jsonEditor.get())
+    this.refreshFormBuilder();
   }
 
   jsonEditorDiscardChanges() {
     console.log("jsonEditorDiscardChanges");
     this.refreshJsonEditor();
-    this.refreshRenderer();
   }
 
   refreshJsonEditor() {
     console.log("refreshJsonEditor");
     // Here we use update instead of set to preserve the editor status
-    this.editor.update(this.form);
+    this.jsonEditor.update(this.form);
     this.jsonEditorChanged = false;
   }
 
-  //
-  // Form.io Renderer
-  //
-
-  refreshRenderer() {
-    this.rendererTriggerRefresh.emit({
-      property: 'form',
-      value: this.form
-    });
-  }
 }
 
