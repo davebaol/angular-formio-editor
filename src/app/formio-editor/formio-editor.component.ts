@@ -1,8 +1,10 @@
 import { AfterViewInit, Component, EventEmitter, OnInit, ViewChild, Input } from '@angular/core';
 import { JsonEditorOptions, JsonEditorComponent } from 'ang-jsoneditor';
 import { Subject } from 'rxjs';
+import { FormioComponent, FormioRefreshValue } from 'angular-formio';
 
 export * from 'ang-jsoneditor';
+export type FormioEditorTab = 'builder' | 'json' | 'renderer';
 
 @Component({
   selector: 'formio-editor',
@@ -15,17 +17,18 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
 
   @Input() jsonEditorOptions: JsonEditorOptions;
   jsonEditorChanged = false;
-  rendererTriggerRefresh = new EventEmitter();
   @ViewChild('jsoneditor', {static: true}) jsonEditor: JsonEditorComponent;
 
-  activeTab: String;
+  @ViewChild('renderer', {static: true}) renderer: FormioComponent;
+  @Input() refreshRenderer?: EventEmitter<FormioRefreshValue> = new EventEmitter();
+
+  @Input() activeTab?: FormioEditorTab = 'builder';
 
   constructor() {
     this.jsonEditorOptions = new JsonEditorOptions();
     this.jsonEditorOptions.modes = ['code', 'tree', 'view']; // set allowed modes
     this.jsonEditorOptions.mode = 'view'; // set default mode
     this.jsonEditorOptions.onError = (error) => console.log("jsonEditorOptions.onError: ", error);
-    this.activeTab = "builder";
   }
 
   ngOnInit(): void {
