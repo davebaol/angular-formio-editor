@@ -14,6 +14,7 @@ export type FormioEditorTab = 'builder' | 'json' | 'renderer';
 export class FormioEditorComponent implements OnInit, AfterViewInit  {
   @Input() form: any;
   refreshBuilder$ = new Subject();
+  builderDisplayChanged = false;
 
   @Input() jsonEditorOptions: JsonEditorOptions;
   jsonEditorChanged = false;
@@ -49,7 +50,12 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
 
   onBuilderDiplayChange(event) {
     console.log("onBuilderDiplayChange");
-    this.refreshFormBuilder()
+    // Unfortunately calling this.refreshFormBuilder() doesn't work as expected here.
+    // The workaround is to recreate the builder component through *ngIf="!builderDisplayChanged"
+    // See https://github.com/formio/angular-formio/issues/172#issuecomment-401876490
+    this.builderDisplayChanged = true;
+    setTimeout(() => { this.builderDisplayChanged = false; });
+
     this.refreshJsonEditor();
   }
 
@@ -74,7 +80,7 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
     // then copy the properties of the edited json to this form
     // and refresh the builder
     Object.getOwnPropertyNames(this.form).forEach(p => delete this.form[p]);
-    Object.assign(this.form, this.jsonEditor.get())
+    Object.assign(this.form, this.jsonEditor.get());
     this.refreshFormBuilder();
   }
 
