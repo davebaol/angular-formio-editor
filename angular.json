@@ -126,6 +126,46 @@
           }
         }
       }
+    },
+    "formio-editor": {
+      "projectType": "library",
+      "root": "projects/formio-editor",
+      "sourceRoot": "projects/formio-editor/src",
+      "prefix": "davebaol",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/formio-editor/tsconfig.lib.json",
+            "project": "projects/formio-editor/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/formio-editor/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/formio-editor/src/test.ts",
+            "tsConfig": "projects/formio-editor/tsconfig.spec.json",
+            "karmaConfig": "projects/formio-editor/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/formio-editor/tsconfig.lib.json",
+              "projects/formio-editor/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "defaultProject": "AngularFormioEditor",

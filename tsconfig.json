@@ -16,7 +16,13 @@
       "dom"
     ],
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "formio-editor": [
+        "dist/formio-editor/formio-editor",
+        "dist/formio-editor"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

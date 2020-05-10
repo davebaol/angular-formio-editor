@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { JsonEditorOptions } from './formio-editor/formio-editor.component';
+import { JsonEditorOptions } from 'ang-jsoneditor';
 import form from './initial-form.json';
 
 @Component({

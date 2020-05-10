@@ -1,0 +1,11 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/formio-editor",
+  "lib": {
+    "entryFile": "src/public-api.ts",
+    "umdModuleIds": {
+      "ang-jsoneditor": "ang-jsoneditor",
+      "angular-formio": "angular-formio"      
+    }
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "name": "angular-formio-editor",
+  "name": "@davebaol/angular-formio-editor",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,9 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "formio-editor:build": "ng build formio-editor && npm i dist/formio-editor --save-optional",
+    "library:build": "npm run formio-editor:build"
   },
   "private": true,
   "dependencies": {
@@ -24,15 +26,18 @@
     "angular-formio": "^4.7.9",
     "bootstrap": "^4.4.1",
     "font-awesome": "^4.7.0",
-    "formiojs": "^4.9.26",
     "jquery": "^3.5.1",
-    "jsoneditor": "^8.6.6",
+    "jsoneditor": "^8.6.7",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
   },
+  "optionalDependencies": {
+    "@davebaol/formio-editor": "file:dist/formio-editor"
+  },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.901.5",
+    "@angular-devkit/build-ng-packagr": "~0.901.5",
     "@angular/cli": "~9.1.5",
     "@angular/compiler-cli": "~9.1.6",
     "@angular/language-service": "~9.1.6",
@@ -47,6 +52,7 @@
     "karma-coverage-istanbul-reporter": "~2.1.0",
     "karma-jasmine": "~3.0.1",
     "karma-jasmine-html-reporter": "^1.4.2",
+    "ng-packagr": "^9.0.0",
     "protractor": "~5.4.3",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",

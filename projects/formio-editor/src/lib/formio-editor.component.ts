@@ -3,11 +3,11 @@ import { JsonEditorOptions, JsonEditorComponent } from 'ang-jsoneditor';
 import { Subject } from 'rxjs';
 import { FormioComponent, FormioRefreshValue } from 'angular-formio';
 
-export * from 'ang-jsoneditor';
+//export * from 'ang-jsoneditor';
 export type FormioEditorTab = 'builder' | 'json' | 'renderer';
 
 @Component({
-  selector: 'formio-editor',
+  selector: 'davebaol-formio-editor',
   templateUrl: './formio-editor.component.html',
   styleUrls: ['./formio-editor.component.css']
 })
@@ -97,4 +97,3 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
   }
 
 }
-
