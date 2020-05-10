@@ -4,6 +4,7 @@
       {
         "type": "panel",
         "label": "Panel",
+        "title": "Page 1",
         "key": "panel",
         "theme": "default",
         "input": false,
@@ -65,7 +66,6 @@
         "properties": {},
         "allowMultipleMasks": false,
         "tree": false,
-        "title": "Page 1",
         "breadcrumb": "default",
         "components": [
           {
