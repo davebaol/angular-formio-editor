@@ -1,8 +1,9 @@
-# AngularFormioEditor
+# Angular Form.io Editor Component
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.4.
+This Angular component provides [Form.io](https://www.form.io/) builder and renderer integrated with json editor. 
 
-### Component Preview
+It works with latest Angular 9.
+
 The component is supposed to look somewhat like this (click any image to enlarge it):
 <table>
 <tr>
@@ -15,27 +16,80 @@ The component is supposed to look somewhat like this (click any image to enlarge
 </tr>
 </table>
 
+## Installation
 
-## Development server
+To install this library with npm, run below command:
+```
+$ npm install --save jsoneditor ang-jsoneditor @davebaol/formio-editor
+```
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Example:
 
-## Code scaffolding
+```html
+<davebaol-formio-editor [form]="form" [jsonEditorOptions]="jsonEditorOptions"></davebaol-formio-editor>
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Usage
 
-## Build
+### Configuration
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+First, import Angular module `FormioEditorModule` as below:
 
-## Running unit tests
+```ts
+import { FormioEditorModule } from '@davebaol/formio-editor'; 
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    ....,
+    FormioEditorModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+Then setup your component models as below:
 
-## Running end-to-end tests
+```ts
+import { Component } from '@angular/core';
+import { JsonEditorOptions } from 'ang-jsoneditor';
+import form from './my-form.json';
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+@Component({
+  selector: 'app-root',
+  template: `
+    <div class="content" role="main">
+      <div class="col-10 m-4">
+        <davebaol-formio-editor [form]="form" [jsonEditorOptions]="jsonEditorOptions"></davebaol-formio-editor>
+      </div>
+    </div>
+  `,
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  title = 'AngularFormioEditor';
+  form: any;
+  jsonEditorOptions: JsonEditorOptions;
 
-## Further help
+  constructor() {
+    this.jsonEditorOptions = new JsonEditorOptions();
+    this.jsonEditorOptions.modes = ['code', 'tree', 'view']; // set allowed modes
+    this.jsonEditorOptions.mode = 'view'; // set default mode
+    this.jsonEditorOptions.onError = (error) => console.log('jsonEditorOptions.onError:', error);
+    this.form = form;
+  }
+}
+```
+Note: For better styling, add the line below to your main style.css file
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+```js
+@import "~jsoneditor/dist/jsoneditor.min.css";
+```
+
+## License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
