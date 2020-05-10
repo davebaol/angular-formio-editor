@@ -29,7 +29,7 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
     this.jsonEditorOptions = new JsonEditorOptions();
     this.jsonEditorOptions.modes = ['code', 'tree', 'view']; // set allowed modes
     this.jsonEditorOptions.mode = 'view'; // set default mode
-    this.jsonEditorOptions.onError = (error) => console.log("jsonEditorOptions.onError: ", error);
+    this.jsonEditorOptions.onError = (error) => console.log('jsonEditorOptions.onError: ', error);
   }
 
   ngOnInit(): void {
@@ -44,12 +44,12 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
   //
 
   refreshFormBuilder() {
-    console.log("refreshFormBuilder");
+    console.log('refreshFormBuilder');
     this.refreshBuilder$.next();
   }
 
   onBuilderDiplayChange(event) {
-    console.log("onBuilderDiplayChange");
+    console.log('onBuilderDiplayChange');
     // Unfortunately calling this.refreshFormBuilder() doesn't work as expected here.
     // The workaround is to recreate the builder component through *ngIf="!builderDisplayChanged"
     // See https://github.com/formio/angular-formio/issues/172#issuecomment-401876490
@@ -60,7 +60,7 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
   }
 
   onBuilderChange(event) {
-    console.log("onBuilderChange");
+    console.log('onBuilderChange');
     this.refreshJsonEditor();
   }
 
@@ -69,12 +69,12 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
   //
 
   onJsonEditorChange(event) {
-    console.log("onJsonEditorChange");
+    console.log('onJsonEditorChange');
     this.jsonEditorChanged = true;
   }
 
   jsonEditorApplyChanges() {
-    console.log("jsonEditorApplyChanges");
+    console.log('jsonEditorApplyChanges');
     this.jsonEditorChanged = false;
     // Remove all properties from this form
     // then copy the properties of the edited json to this form
@@ -85,12 +85,12 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
   }
 
   jsonEditorDiscardChanges() {
-    console.log("jsonEditorDiscardChanges");
+    console.log('jsonEditorDiscardChanges');
     this.refreshJsonEditor();
   }
 
   refreshJsonEditor() {
-    console.log("refreshJsonEditor");
+    console.log('refreshJsonEditor');
     // Here we use update instead of set to preserve the editor status
     this.jsonEditor.update(this.form);
     this.jsonEditorChanged = false;
