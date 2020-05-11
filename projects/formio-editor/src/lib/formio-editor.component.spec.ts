@@ -1,20 +1,31 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FormioEditorComponent } from './formio-editor.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormioModule } from 'angular-formio';
+import { FormsModule } from '@angular/forms';
+import { NgJsonEditorModule } from 'ang-jsoneditor';
+import { Component, ViewChild } from '@angular/core';
 
 describe('FormioEditorComponent', () => {
-  let component: FormioEditorComponent;
-  let fixture: ComponentFixture<FormioEditorComponent>;
+  let component: TestHostComponent;
+  let fixture: ComponentFixture<TestHostComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FormioEditorComponent ]
+      declarations: [ FormioEditorComponent ],
+      imports: [
+        BrowserModule,
+        FormioModule,
+        FormsModule,
+        NgJsonEditorModule
+      ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FormioEditorComponent);
+    fixture = TestBed.createComponent(TestHostComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -22,4 +33,13 @@ describe('FormioEditorComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  @Component({
+    selector: `host-component`,
+    template: `<davebaol-formio-editor form='{display:"form",components:[]}'></davebaol-formio-editor>`
+  })
+  class TestHostComponent {
+    @ViewChild(FormioEditorComponent)
+    public testComponent: FormioEditorComponent;
+  }
 });

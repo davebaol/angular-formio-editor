@@ -70,7 +70,6 @@ import form from './my-form.json';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'AngularFormioEditor';
   form: any;
   jsonEditorOptions: JsonEditorOptions;
 

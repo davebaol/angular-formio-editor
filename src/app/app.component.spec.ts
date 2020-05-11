@@ -1,5 +1,10 @@
 import { TestBed, async } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormioModule } from 'angular-formio';
+import { FormioEditorModule } from '@davebaol/formio-editor';
+import { FormsModule } from '@angular/forms';
+import { NgJsonEditorModule } from 'ang-jsoneditor';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -7,6 +12,13 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent
       ],
+      imports: [
+        BrowserModule,
+        FormioModule,
+        FormioEditorModule,
+        FormsModule,
+        NgJsonEditorModule
+      ]
     }).compileComponents();
   }));
 
@@ -16,16 +28,10 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'AngularFormioEditor'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('AngularFormioEditor');
-  });
-
-  it('should render title', () => {
+  it('should use component davebaol-formio-editor', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('AngularFormioEditor app is running!');
+    expect(compiled.querySelector('davebaol-formio-editor')).toBeTruthy();
   });
 });

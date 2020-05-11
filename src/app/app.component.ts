@@ -8,7 +8,6 @@ import form from './initial-form.json';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'AngularFormioEditor';
   form: any;
   jsonEditorOptions: JsonEditorOptions;
 
