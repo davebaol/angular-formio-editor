@@ -1,5 +1,7 @@
 # Angular Form.io Editor Component
 
+[![Build Status](https://travis-ci.org/davebaol/angular-formio-editor.svg?branch=master)](https://travis-ci.org/github/davebaol/angular-formio-editor)
+
 This Angular component provides [Form.io](https://www.form.io/) builder and renderer integrated with json editor. 
 
 It works with latest Angular 9.
@@ -31,9 +33,9 @@ Example:
 
 ## Usage
 
-### Configuration
+To use this component in your Angular application follow the steps below:
 
-First, import Angular module `FormioEditorModule` as below:
+:one: Import Angular module `FormioEditorModule` as below:
 
 ```ts
 import { FormioEditorModule } from '@davebaol/formio-editor'; 
@@ -51,7 +53,7 @@ import { FormioEditorModule } from '@davebaol/formio-editor';
 })
 export class AppModule { }
 ```
-Then setup your component models as below:
+:two: Setup your component models as below:
 
 ```ts
 import { Component } from '@angular/core';
@@ -82,7 +84,7 @@ export class AppComponent {
   }
 }
 ```
-Note: For better styling, add the line below to your main style.css file
+:three: For better styling, add the line below to your main style.css file
 
 ```js
 @import "~jsoneditor/dist/jsoneditor.min.css";
