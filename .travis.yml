@@ -9,11 +9,11 @@ before_script:
   - "export DISPLAY=:99.0"
   # - "sh -e /etc/init.d/xvfb start"
   - sleep 3 # give xvfb some time to start
-  - npm run library:build build
+  - npm run formio-editor:build-prod build-prod
   - sleep 3 # give Web server some time to bind to sockets, etc
 
 before_install:
-  - npm install -g typescript webdriver-manager ng-packagr @angular/cli@9.0.2
+  - npm install -g typescript webdriver-manager ng-packagr @angular/cli@9.1.5
   - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
   - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
 
@@ -22,3 +22,11 @@ install:
   - webdriver-manager update
   - node node_modules/protractor/bin/webdriver-manager update
   - node_modules/protractor/bin/webdriver-manager update
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  local_dir: dist/AngularFormioEditor
+  on:
+    branch: master
