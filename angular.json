@@ -51,6 +51,7 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
+              "baseHref": "https://davebaol.github.io/angular-formio-editor/",
               "budgets": [
                 {
                   "type": "initial",
@@ -144,8 +145,7 @@
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/formio-editor/tsconfig.lib.prod.json",
-              "baseHref": "https://davebaol.github.io/angular-formio-editor/"
+              "tsConfig": "projects/formio-editor/tsconfig.lib.prod.json"
             }
           }
         },
