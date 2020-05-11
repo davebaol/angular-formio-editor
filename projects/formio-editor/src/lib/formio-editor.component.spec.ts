@@ -35,7 +35,7 @@ describe('FormioEditorComponent', () => {
   });
 
   @Component({
-    selector: `host-component`,
+    selector: `davebaol-host-component`,
     template: `<davebaol-formio-editor form='{display:"form",components:[]}'></davebaol-formio-editor>`
   })
   class TestHostComponent {
