@@ -8,6 +8,7 @@
     "build": "ng build",
     "build-prod": "ng build --prod",
     "test": "ng test --watch=false",
+    "test-headless": "ng test --watch=false --browsers=ChromeHeadless",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "formio-editor:build": "ng build formio-editor && npm i dist/formio-editor --save-optional",
