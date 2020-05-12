@@ -1,0 +1,21 @@
+{
+  "title": "Form",
+  "description": "Object containing a form.io form",
+  "type": "object",
+  "required": ["components"],
+  "properties": {
+    "display": {
+      "title": "Display mode",
+      "description": "The given name.",
+      "enum": ["form", "wizard"]
+    },
+    "components": {
+      "title": "Component List",
+      "description": "The list of all components",
+      "type": "array",
+      "items": {
+        "$ref": "component"
+      }
+    }
+  }
+}

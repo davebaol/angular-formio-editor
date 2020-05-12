@@ -1,0 +1,23 @@
+{
+  "title": "Component",
+  "description": "Object containing a form.io component",
+  "type": "object",
+  "required": ["type", "key", "input"],
+  "properties": {
+    "type": {
+      "title": "Component Type",
+      "description": "The type of this component",
+      "type": "string"
+    },
+    "key": {
+      "title": "Component Key",
+      "description": "The API key for this component",
+      "type": "string"
+    },
+    "input": {
+      "title": "User Input?",
+      "description": "Determines if this is an input from the user",
+      "type": "boolean"
+    }
+  }
+}
