@@ -11,12 +11,12 @@ It works with latest Angular 9.
 In case the live demo goes down for whatever reason, the component is supposed to look somewhat like this (click any image to enlarge it):
 <table>
 <tr>
-    <td><a target="_blank" href="https://user-images.githubusercontent.com/2366334/81509000-d8d34500-9307-11ea-8d0d-a7cf2da5c7c0.png"><img src="https://user-images.githubusercontent.com/2366334/81509000-d8d34500-9307-11ea-8d0d-a7cf2da5c7c0.png" alt="formio-editor-builder"></img></a></td>
-    <td><a target="_blank" href="https://user-images.githubusercontent.com/2366334/81509005-e5f03400-9307-11ea-9c26-61b027f4062d.png"><img src="https://user-images.githubusercontent.com/2366334/81509005-e5f03400-9307-11ea-9c26-61b027f4062d.png" alt="formio-editor-json-code"></img></a></td>
+    <td><a target="_blank" href="https://user-images.githubusercontent.com/2366334/81509000-d8d34500-9307-11ea-8d0d-a7cf2da5c7c0.png"><img src="https://user-images.githubusercontent.com/2366334/81509000-d8d34500-9307-11ea-8d0d-a7cf2da5c7c0.png" alt="formio-editor-builder"/></a></td>
+    <td><a target="_blank" href="https://user-images.githubusercontent.com/2366334/81509005-e5f03400-9307-11ea-9c26-61b027f4062d.png"><img src="https://user-images.githubusercontent.com/2366334/81509005-e5f03400-9307-11ea-9c26-61b027f4062d.png" alt="formio-editor-json-code"/></a></td>
 </tr>
 <tr>
-    <td><a target="_blank" href="https://user-images.githubusercontent.com/2366334/81509007-e983bb00-9307-11ea-864f-3a0cdbe8192c.png"><img src="https://user-images.githubusercontent.com/2366334/81509007-e983bb00-9307-11ea-864f-3a0cdbe8192c.png" alt="formio-editor-json-tree"></img></a></td>
-    <td><a target="_blank" href="https://user-images.githubusercontent.com/2366334/81509008-edafd880-9307-11ea-8485-ee82ac05e248.png"><img src="https://user-images.githubusercontent.com/2366334/81509008-edafd880-9307-11ea-8485-ee82ac05e248.png" alt="formio-editor-renderer"></img></a></td>
+    <td><a target="_blank" href="https://user-images.githubusercontent.com/2366334/81509007-e983bb00-9307-11ea-864f-3a0cdbe8192c.png"><img src="https://user-images.githubusercontent.com/2366334/81509007-e983bb00-9307-11ea-864f-3a0cdbe8192c.png" alt="formio-editor-json-tree"/></a></td>
+    <td><a target="_blank" href="https://user-images.githubusercontent.com/2366334/81509008-edafd880-9307-11ea-8485-ee82ac05e248.png"><img src="https://user-images.githubusercontent.com/2366334/81509008-edafd880-9307-11ea-8485-ee82ac05e248.png" alt="formio-editor-renderer"/></a></td>
 </tr>
 </table>
 
@@ -24,7 +24,7 @@ In case the live demo goes down for whatever reason, the component is supposed t
 
 To install this library with npm, run below command:
 ```
-$ npm install --save jsoneditor ang-jsoneditor @davebaol/formio-editor
+$ npm install --save ang-jsoneditor angular-formio bootstrap font-awesome jquery jsoneditor @angular/elements @davebaol/formio-editor
 ```
 
 Example:
@@ -60,7 +60,6 @@ export class AppModule { }
 ```ts
 import { Component } from '@angular/core';
 import { JsonEditorOptions } from 'ang-jsoneditor';
-import form from './my-form.json';
 
 @Component({
   selector: 'app-root',
@@ -82,13 +81,16 @@ export class AppComponent {
     this.jsonEditorOptions.modes = ['code', 'tree', 'view']; // set allowed modes
     this.jsonEditorOptions.mode = 'view'; // set default mode
     this.jsonEditorOptions.onError = (error) => console.log('jsonEditorOptions.onError:', error);
-    this.form = form;
+    this.form = {
+      display: 'form',
+      components: []
+    };
   }
 }
 ```
 :three: For better styling, add the line below to your main style.css file
 
-```js
+```css
 @import "~jsoneditor/dist/jsoneditor.min.css";
 ```
 
