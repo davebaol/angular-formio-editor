@@ -88,10 +88,12 @@ export class AppComponent {
   }
 }
 ```
-:three: For better styling, add the line below to your main style.css file
+:three: For better styling, add the lines below to your main style.css file
 
 ```css
 @import "~jsoneditor/dist/jsoneditor.min.css";
+@import "~bootstrap/dist/css/bootstrap.css";
+@import "~font-awesome/css/font-awesome.css";
 ```
 
 ## License
