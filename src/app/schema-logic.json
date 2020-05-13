@@ -1,0 +1,172 @@
+{
+  "title": "Logic",
+  "description": "...",
+  "type": "object",
+  "required": ["trigger", "actions"],
+  "properties": {
+    "trigger": {
+      "title": "Trigger",
+      "description": "Determines when the logic should be triggered",
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "title": "Type",
+          "description": "The type of the trigger.",
+          "enum": ["simple", "javascript", "json"]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "type": { "const": "simple" } }
+          },
+          "then": {
+            "properties": {
+              "simple": {
+                "title": "Simple",
+                "description": "Defines a simple trigger.",
+                "required": ["when", "eq", "show"],
+                "type": "object",
+                "properties": {
+                  "when": {
+                    "title": "When",
+                    "description": "The trigger field key.",
+                    "type": "string"
+                  },
+                  "eq": {
+                    "title": "Eq",
+                    "description": "The value to equal.",
+                    "type": "string"
+                  },
+                  "show": {
+                    "title": "Show",
+                    "description": "Whether to trigger or not when the value is equal.",
+                    "type": "boolean"
+                  }
+                }
+              }      
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "javascript" } }
+          },
+          "then": {
+            "properties": {
+              "javascript": {
+                "title": "Javascript",
+                "description": "Javascript logic.",
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "json" } }
+          },
+          "then": {
+            "properties": {
+              "json": {
+                "title": "Json",
+                "description": "JSON Logic object that returns true or false.",
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]    
+    },
+    "actions": {
+      "title": "Actions",
+      "description": "The actions to perform when the logic is triggered",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": {
+            "title": "Type",
+            "description": "The type of the action.",
+            "enum": ["property", "value"]
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": { "type": { "const": "property" } }
+            },
+            "then": {
+              "properties": {
+                "property": {
+                  "title": "Property",
+                  "description": "The property action.",
+                  "required": ["type", "value"],
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "title": "Property",
+                      "description": "The type of the property action (either 'boolean' or 'string').",
+                      "enum": ["boolean", "string"]
+                    },
+                    "value": {
+                      "title": "Value",
+                      "description": "The path to the property on the component definition.",
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "allOf": [
+                {
+                  "if": {
+                    "properties": { "type": { "const": "boolean" } }
+                  },
+                  "then": {
+                    "properties": {
+                      "state": {
+                        "title": "Boolean State",
+                        "description": "Used if the type of the property action is boolean.",
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": { "type": { "const": "string" } }
+                  },
+                  "then": {
+                    "properties": {
+                      "text": {
+                        "title": "String Text",
+                        "description": "Used if the type of the property action is string.",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": { "type": { "const": "value" } }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "title": "Value",
+                  "description": "The javascript that returns the new value. It Will be evaluated with available variables of row, data, component and result (returned from trigger).",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ]    
+      }
+    }
+  }
+}
