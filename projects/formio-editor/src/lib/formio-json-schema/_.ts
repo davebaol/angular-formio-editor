@@ -1,4 +1,5 @@
-{
+// tslint:disable:object-literal-key-quotes quotemark semicolon
+export default {
   "title": "Form",
   "description": "Object containing a form.io form",
   "type": "object",

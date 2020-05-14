@@ -1,4 +1,5 @@
-{
+// tslint:disable:object-literal-key-quotes quotemark semicolon
+export default {
   "title": "Action",
   "description": "An action to perform when the logic is triggered",
   "required": ["type"],
@@ -82,5 +83,5 @@
         }
       }
     }
-  ]    
+  ]
 }

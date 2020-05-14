@@ -1,10 +1,31 @@
 import { AfterViewInit, Component, EventEmitter, OnInit, ViewChild, Input } from '@angular/core';
-import { JsonEditorOptions, JsonEditorComponent } from 'ang-jsoneditor';
+import { JsonEditorOptions as OriginalJsonEditorOptions, JsonEditorComponent } from 'ang-jsoneditor';
 import { Subject } from 'rxjs';
 import { FormioComponent, FormioRefreshValue } from 'angular-formio';
+import formioJsonSchema from './formio-json-schema';
 
 // export * from 'ang-jsoneditor';
 export type FormioEditorTab = 'builder' | 'json' | 'renderer';
+
+// Unfortunately JsonEditorOptions from package ang-jsoneditor 1.9.4
+// dos not support options 'schemaRefs' and 'onValidationError'
+// used by jsoneditor 8.6.7
+export class JsonEditorOptions extends OriginalJsonEditorOptions {
+  schemaRefs = null;
+  onValidationError = null;
+  constructor() {
+    super();
+    this.modes = ['code', 'tree', 'view']; // set allowed modes
+    this.mode = 'view'; // set default mode
+    this.onError = (error) => console.log('jsonEditorOptions.onError: ', error);
+    this.schema = formioJsonSchema.schema;
+    this.schemaRefs = formioJsonSchema.schemaRefs;
+    this.onValidationError = (errors: any[]) => {
+      console.log('Found', errors.length, 'validation errors:');
+      errors.forEach((error) => console.log(error));
+    };
+  }
+}
 
 @Component({
   selector: 'davebaol-formio-editor',
@@ -27,9 +48,6 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
 
   constructor() {
     this.jsonEditorOptions = new JsonEditorOptions();
-    this.jsonEditorOptions.modes = ['code', 'tree', 'view']; // set allowed modes
-    this.jsonEditorOptions.mode = 'view'; // set default mode
-    this.jsonEditorOptions.onError = (error) => console.log('jsonEditorOptions.onError: ', error);
   }
 
   ngOnInit(): void {

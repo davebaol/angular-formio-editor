@@ -1,4 +1,5 @@
-{
+// tslint:disable:object-literal-key-quotes quotemark semicolon
+export default {
   "title": "Logic",
   "description": "...",
   "type": "object",

@@ -1,4 +1,5 @@
-{
+// tslint:disable:object-literal-key-quotes quotemark semicolon
+export default {
   "title": "Trigger",
   "description": "Determines when the logic should be triggered",
   "type": "object",
@@ -40,7 +41,7 @@
                 "type": "boolean"
               }
             }
-          }      
+          }
         }
       }
     },
@@ -89,5 +90,5 @@
         }
       }
     }
-  ]    
+  ]
 }
