@@ -91,12 +91,12 @@
         "minLength": {
           "title": "Min Lenngth",
           "description": "For text input, this checks the minimum length of text for valid input.",
-          "type": "number"
+          "type": ["number", "string"]
         },
         "maxLength": {
           "title": "Max Lenngth",
           "description": "For text input, this checks the maximum length of text for valid input.",
-          "type": "number"
+          "type": ["number", "string"]
         },
         "pattern": {
           "title": "Pattern",
@@ -196,6 +196,9 @@
       "items": {
         "$ref": "logic"
       }
+    },
+    "components": {
+      "$ref": "components"
     }
   }
 }
