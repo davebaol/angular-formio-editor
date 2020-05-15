@@ -112,31 +112,7 @@ export default {
       }
     },
     "conditional": {
-      "title": "Conditional",
-      "description": "Determines when this component should be added to the form for both processing and input.",
-      "type": "object",
-      "properties": {
-        "show": {
-          "title": "Show",
-          "description": "If the field should show if the condition is true.",
-          "type": ["boolean", "null"]
-        },
-        "when": {
-          "title": "When",
-          "description": "The field API key that it should compare its value against to determine if the condition is triggered.",
-          "type": ["string", "null"]
-        },
-        "eq": {
-          "title": "Eq",
-          "description": "The value that should be checked against the comparison component.",
-          "type": "string"
-        },
-        "json": {
-          "title": "Json",
-          "description": "The JSON Logic to determine if this component is conditionally available.",
-          "type": "string"
-        }
-      }
+      "$ref": "conditional"
     },
     "errors": {
       "title": "Errors",

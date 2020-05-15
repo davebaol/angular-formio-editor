@@ -2,14 +2,14 @@ import { AfterViewInit, Component, EventEmitter, OnInit, ViewChild, Input } from
 import { JsonEditorOptions as OriginalJsonEditorOptions, JsonEditorComponent } from 'ang-jsoneditor';
 import { Subject } from 'rxjs';
 import { FormioComponent, FormioRefreshValue } from 'angular-formio';
-import formioJsonSchema from './formio-json-schema';
+import { loose as formioJsonSchema } from './formio-json-schema';
 
 // export * from 'ang-jsoneditor';
 export type FormioEditorTab = 'builder' | 'json' | 'renderer';
 
-// Unfortunately JsonEditorOptions from package ang-jsoneditor 1.9.4
-// dos not support options 'schemaRefs' and 'onValidationError'
-// used by jsoneditor 8.6.7
+// Unfortunately JsonEditorOptions from package ang-jsoneditor 1.9.4 doesn't
+// support options 'schemaRefs' and 'onValidationError' used by jsoneditor 8.6.7.
+// See https://github.com/mariohmol/ang-jsoneditor/issues/66
 export class JsonEditorOptions extends OriginalJsonEditorOptions {
   schemaRefs = null;
   onValidationError = null;
