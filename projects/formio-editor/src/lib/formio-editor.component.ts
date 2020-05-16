@@ -11,8 +11,9 @@ export type FormioEditorTab = 'builder' | 'json' | 'renderer';
 // support options 'schemaRefs' and 'onValidationError' used by jsoneditor 8.6.7.
 // See https://github.com/mariohmol/ang-jsoneditor/issues/66
 export class JsonEditorOptions extends OriginalJsonEditorOptions {
-  schemaRefs = null;
-  onValidationError = null;
+  schemaRefs: object;
+  onValidationError: (errors: any[]) => void;
+
   constructor() {
     super();
     this.modes = ['code', 'tree', 'view']; // set allowed modes
@@ -20,10 +21,6 @@ export class JsonEditorOptions extends OriginalJsonEditorOptions {
     this.onError = (error) => console.log('jsonEditorOptions.onError: ', error);
     this.schema = formioJsonSchema.schema;
     this.schemaRefs = formioJsonSchema.schemaRefs;
-    this.onValidationError = (errors: any[]) => {
-      console.log('Found', errors.length, 'validation errors:');
-      errors.forEach((error) => console.log(error));
-    };
   }
 }
 
@@ -47,11 +44,21 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
 
   @Input() activeTab?: FormioEditorTab = 'builder';
 
+  private jsonEditorErrors = [];
   constructor() {
     this.jsonEditorOptions = new JsonEditorOptions();
   }
 
   ngOnInit(): void {
+    const origOnValidationError = this.jsonEditorOptions.onValidationError;
+    this.jsonEditorOptions.onValidationError = (errors: any[]) => {
+      console.log('Found', errors.length, 'validation errors:');
+      this.jsonEditorErrors = errors;
+      this.jsonEditorErrors.forEach((error) => console.log(error));
+      if (origOnValidationError){
+        origOnValidationError(errors);
+      }
+    };
   }
 
   ngAfterViewInit() {

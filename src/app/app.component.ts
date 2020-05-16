@@ -13,7 +13,6 @@ export class AppComponent {
 
   constructor() {
     this.form = form;
-    this.jsonEditorOptions = new JsonEditorOptions();
   }
 
 }
