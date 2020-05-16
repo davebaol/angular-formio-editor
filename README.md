@@ -30,7 +30,7 @@ $ npm install --save ang-jsoneditor angular-formio bootstrap font-awesome jquery
 Example:
 
 ```html
-<davebaol-formio-editor [form]="form" [jsonEditorOptions]="jsonEditorOptions"></davebaol-formio-editor>
+<formio-editor [form]="form" [jsonEditorOptions]="jsonEditorOptions"></formio-editor>
 ```
 
 ## Usage
@@ -66,7 +66,7 @@ import { JsonEditorOptions } from 'ang-jsoneditor';
   template: `
     <div class="content" role="main">
       <div class="col-10 m-4">
-        <davebaol-formio-editor [form]="form" [jsonEditorOptions]="jsonEditorOptions"></davebaol-formio-editor>
+        <formio-editor [form]="form" [jsonEditorOptions]="jsonEditorOptions"></formio-editor>
       </div>
     </div>
   `,

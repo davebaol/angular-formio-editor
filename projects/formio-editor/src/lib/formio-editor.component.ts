@@ -28,7 +28,8 @@ export class JsonEditorOptions extends OriginalJsonEditorOptions {
 }
 
 @Component({
-  selector: 'davebaol-formio-editor',
+  // tslint:disable-next-line:component-selector
+  selector: 'formio-editor',
   templateUrl: './formio-editor.component.html',
   styleUrls: ['./formio-editor.component.css']
 })

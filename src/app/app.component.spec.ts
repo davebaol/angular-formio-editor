@@ -28,10 +28,10 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should use component davebaol-formio-editor', () => {
+  it('should use component formio-editor', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('davebaol-formio-editor')).toBeTruthy();
+    expect(compiled.querySelector('formio-editor')).toBeTruthy();
   });
 });
