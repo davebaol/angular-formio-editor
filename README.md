@@ -90,10 +90,21 @@ export class AppComponent {
 ```
 :three: For better styling, add the lines below to your main style.css file
 ```css
+@import "./styles/bootstrap/css/bootstrap.min.css";
+@import '~font-awesome/css/font-awesome.min.css';
 @import "~jsoneditor/dist/jsoneditor.min.css";
-@import "~bootstrap/dist/css/bootstrap.css";
-@import "~font-awesome/css/font-awesome.css";
+
+.jsoneditor-outer.has-main-menu-bar.has-status-bar{
+    height: 70vh;
+}
+
+.alert {
+  padding: .375rem .75rem;
+  margin-bottom: 0;
+}
 ```
+Note that this library only needs the `.css` from bootstrap, not the `.js`, since `ngx-bootstrap` is used internally.
+So you don't have necessarily to add bootstrap and its peer dependency jQuery. 
 
 ## License
 
