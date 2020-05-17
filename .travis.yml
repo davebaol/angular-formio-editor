@@ -16,10 +16,7 @@ install:
   - npm install
 
 script:
-  - npm run lint
-  - npm run formio-editor:build-prod   # this must run before test-headless to make it work
-  - npm run test-headless
-  - npm run build-prod
+  - npm run build-all-prod
 
 deploy:
   provider: pages

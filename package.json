@@ -7,13 +7,13 @@
     "clean": "rimraf dist",
     "build": "ng build",
     "build-prod": "ng build --prod",
+    "build-all-prod": "npm run lint && npm run formio-editor:build-prod && npm run test-headless && npm run build-prod",
     "test": "ng test --watch=false",
     "test-headless": "ng test --watch=false --browsers=ChromeHeadless",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "formio-editor:build": "ng build formio-editor && npm i dist/formio-editor --save-optional",
-    "formio-editor:build-prod": "ng build formio-editor --prod && npm i dist/formio-editor --save-optional",
-    "___prepare": "npm run clean && npm run lint && npm run library:build && npm run build -- AngularFormioEditor && npm run test"
+    "formio-editor:build-prod": "ng build formio-editor --prod && npm i dist/formio-editor --save-optional"
   },
   "private": true,
   "dependencies": {
@@ -28,10 +28,10 @@
     "@angular/router": "~9.1.6",
     "ang-jsoneditor": "^1.9.4",
     "angular-formio": "^4.7.9",
-    "bootstrap": "^4.4.1",
+    "bootstrap": "4.1.1",
     "font-awesome": "^4.7.0",
-    "jquery": "^3.5.1",
     "jsoneditor": "^8.6.7",
+    "ngx-bootstrap": "^4.1.1",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"

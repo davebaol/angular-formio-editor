@@ -1,3 +1,21 @@
+<!-- Modal -->
+<ng-template  #saveModal class="modal fade" tabindex="-1" role="dialog" aria-labelledby="saveModalLabel" aria-hidden="true">
+
+  <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">Validation warning</h5>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    Looks like the json is not a valid form.
+    Do you want to apply changes anyways?
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="modalRef.hide();">NO</button>
+    <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="modalRef.hide(); jsonEditorApplyChanges()">YES</button>
+  </div>
+</ng-template>
 <ul class="nav nav-tabs" id="myTab" role="tablist">
   <li class="nav-item">
     <a class="nav-link" [ngClass]="{'active':activeTab=='builder'}" (click)="activeTab='builder'"
@@ -7,7 +25,7 @@
   </li>
   <li class="nav-item">
     <a class="nav-link" [ngClass]="{'active':activeTab=='json'}" (click)="activeTab='json'"
-      id="json-editor-tab" data-toggle="tab" href="#json-editor" role="tab" aria-controls="json-editor" 
+      id="json-editor-tab" data-toggle="tab" href="#json-editor" role="tab" aria-controls="json-editor"
       aria-selected="false">
       Json
     </a>
@@ -33,14 +51,30 @@
   </div>
   <div class="tab-pane fade" [ngClass]="{'show active':activeTab=='json'}" id="json-editor" role="tabpanel" aria-labelledby="json-editor-tab">
     <div class="m-2 well">
-      <div *ngIf="jsonEditorChanged" class="m-2">
-        <button type="button" class="btn btn-success mr-4" (click)="jsonEditorApplyChanges()">Apply</button>
-        <button type="button" class="btn btn-secondary" (click)="jsonEditorDiscardChanges()">Discard</button>
+      <div class="row mx-0">
+        <div class="m-2 p-0">
+          <button type="button" class="btn btn-success mr-4" (click)="onJsonEditorApply(saveModal)"
+                  [disabled]="!jsonEditorChanged || this.jsonEditorErrors.length !== this.jsonEditorWarningCounter">
+            Apply
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="jsonEditorDiscardChanges()">Discard</button>
+        </div>
+        <alert class="col-6 mx-4 m-2 p-0"  type="danger" [isOpen]="this.jsonEditorErrors.length !== this.jsonEditorWarningCounter" >
+          Cannot apply changes. Json is not well-formed.
+        </alert>
       </div>
       <json-editor #jsoneditor [options]="jsonEditorOptions" (change)="onJsonEditorChange($event)"></json-editor>
-      <div *ngIf="jsonEditorChanged" class="m-2">
-        <button type="button" class="btn btn-success mr-4" (click)="jsonEditorApplyChanges()">Apply</button>
-        <button type="button" class="btn btn-secondary" (click)="jsonEditorDiscardChanges()">Discard</button>
+      <div class="row mx-0">
+        <div class="m-2 p-0">
+          <button type="button" class="btn btn-success mr-4" (click)="onJsonEditorApply(saveModal)"
+                  [disabled]="!jsonEditorChanged || this.jsonEditorErrors.length !== this.jsonEditorWarningCounter">
+            Apply
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="jsonEditorDiscardChanges()">Discard</button>
+        </div>
+        <alert class="col-6 mx-4 my-2 p-1 align-middle" type="danger" [isOpen]="this.jsonEditorErrors.length !== this.jsonEditorWarningCounter" >
+          Cannot apply changes. Json is not well-formed.
+        </alert>
       </div>
     </div>
   </div>
@@ -49,4 +83,5 @@
       <formio *ngIf="activeTab=='renderer'" [form]="form" [refresh]="refreshRenderer"></formio>
     </div>
   </div>
+</div>
 

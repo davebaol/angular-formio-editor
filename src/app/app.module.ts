@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { FormioModule } from 'angular-formio';
 import { FormioEditorModule } from '@davebaol/formio-editor';
 import { NgJsonEditorModule } from 'ang-jsoneditor';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { NgJsonEditorModule } from 'ang-jsoneditor';
     FormioModule,
     FormioEditorModule,
     FormsModule,
-    NgJsonEditorModule
+    NgJsonEditorModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

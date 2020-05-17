@@ -1,8 +1,9 @@
-import { AfterViewInit, Component, EventEmitter, OnInit, ViewChild, Input } from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, OnInit, ViewChild, Input, TemplateRef} from '@angular/core';
 import { JsonEditorOptions as OriginalJsonEditorOptions, JsonEditorComponent } from 'ang-jsoneditor';
 import { Subject } from 'rxjs';
 import { FormioComponent, FormioRefreshValue } from 'angular-formio';
 import { loose as formioJsonSchema } from './formio-json-schema';
+import {BsModalService, BsModalRef} from 'ngx-bootstrap';
 
 // export * from 'ang-jsoneditor';
 export type FormioEditorTab = 'builder' | 'json' | 'renderer';
@@ -11,8 +12,9 @@ export type FormioEditorTab = 'builder' | 'json' | 'renderer';
 // support options 'schemaRefs' and 'onValidationError' used by jsoneditor 8.6.7.
 // See https://github.com/mariohmol/ang-jsoneditor/issues/66
 export class JsonEditorOptions extends OriginalJsonEditorOptions {
-  schemaRefs = null;
-  onValidationError = null;
+  schemaRefs: object;
+  onValidationError: (errors: any[]) => void;
+
   constructor() {
     super();
     this.modes = ['code', 'tree', 'view']; // set allowed modes
@@ -20,21 +22,18 @@ export class JsonEditorOptions extends OriginalJsonEditorOptions {
     this.onError = (error) => console.log('jsonEditorOptions.onError: ', error);
     this.schema = formioJsonSchema.schema;
     this.schemaRefs = formioJsonSchema.schemaRefs;
-    this.onValidationError = (errors: any[]) => {
-      console.log('Found', errors.length, 'validation errors:');
-      errors.forEach((error) => console.log(error));
-    };
   }
 }
 
 @Component({
-  selector: 'davebaol-formio-editor',
+  // tslint:disable-next-line:component-selector
+  selector: 'formio-editor',
   templateUrl: './formio-editor.component.html',
   styleUrls: ['./formio-editor.component.css']
 })
 export class FormioEditorComponent implements OnInit, AfterViewInit  {
   @Input() form: any;
-  refreshBuilder$ = new Subject();
+  refreshBuilder$ = new Subject<void>();
   builderDisplayChanged = false;
 
   @Input() jsonEditorOptions: JsonEditorOptions;
@@ -46,11 +45,36 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
 
   @Input() activeTab?: FormioEditorTab = 'builder';
 
-  constructor() {
+  modalRef: BsModalRef;
+  // tslint:disable-next-line:variable-name
+  private _jsonEditorErrors = [];
+  get jsonEditorErrors(){
+    return this._jsonEditorErrors;
+  }
+  set jsonEditorErrors(errors){
+    this._jsonEditorErrors = errors;
+    this.jsonEditorWarningCounter = 0;
+    errors.forEach((error) => {
+      if (error.type === 'validation'){
+        this.jsonEditorWarningCounter++;
+      }
+    });
+  }
+
+  jsonEditorWarningCounter = 0;
+  constructor(private modalService: BsModalService) {
     this.jsonEditorOptions = new JsonEditorOptions();
   }
 
   ngOnInit(): void {
+    const origOnValidationError = this.jsonEditorOptions.onValidationError;
+    this.jsonEditorOptions.onValidationError = (errors: any[]) => {
+      console.log('Found', errors.length, 'validation errors:');
+      this.jsonEditorErrors = errors;
+      if (origOnValidationError){
+        origOnValidationError(errors);
+      }
+    };
   }
 
   ngAfterViewInit() {
@@ -89,6 +113,15 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
   onJsonEditorChange(event) {
     console.log('onJsonEditorChange');
     this.jsonEditorChanged = true;
+  }
+
+  onJsonEditorApply(template: TemplateRef<any>){
+    console.log('Errors: ', this.jsonEditorErrors.length - this.jsonEditorWarningCounter, 'Warnings: ', this.jsonEditorWarningCounter);
+    if (this.jsonEditorWarningCounter === 0) {
+      this.jsonEditorApplyChanges();
+    } else {
+      this.modalRef = this.modalService.show(template);
+    }
   }
 
   jsonEditorApplyChanges() {
