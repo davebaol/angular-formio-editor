@@ -5,10 +5,7 @@
     "target": "es2015",
     "declaration": true,
     "inlineSources": true,
-    "types": [
-      "jquery",
-      "bootstrap"
-    ],
+    "types": [],
     "lib": [
       "dom",
       "es2018"

@@ -1,8 +1,9 @@
-import { AfterViewInit, Component, EventEmitter, OnInit, ViewChild, Input } from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, OnInit, ViewChild, Input, TemplateRef} from '@angular/core';
 import { JsonEditorOptions as OriginalJsonEditorOptions, JsonEditorComponent } from 'ang-jsoneditor';
 import { Subject } from 'rxjs';
 import { FormioComponent, FormioRefreshValue } from 'angular-formio';
 import { loose as formioJsonSchema } from './formio-json-schema';
+import {BsModalService, BsModalRef} from 'ngx-bootstrap';
 
 // export * from 'ang-jsoneditor';
 export type FormioEditorTab = 'builder' | 'json' | 'renderer';
@@ -32,7 +33,7 @@ export class JsonEditorOptions extends OriginalJsonEditorOptions {
 })
 export class FormioEditorComponent implements OnInit, AfterViewInit  {
   @Input() form: any;
-  refreshBuilder$ = new Subject();
+  refreshBuilder$ = new Subject<void>();
   builderDisplayChanged = false;
 
   @Input() jsonEditorOptions: JsonEditorOptions;
@@ -44,6 +45,7 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
 
   @Input() activeTab?: FormioEditorTab = 'builder';
 
+  modalRef: BsModalRef;
   // tslint:disable-next-line:variable-name
   private _jsonEditorErrors = [];
   get jsonEditorErrors(){
@@ -57,15 +59,10 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
         this.jsonEditorWarningCounter++;
       }
     });
-    if (errors.length !== this.jsonEditorWarningCounter){
-      $('.errorAlert').show();
-    } else {
-      $('.errorAlert').hide();
-    }
   }
 
   jsonEditorWarningCounter = 0;
-  constructor() {
+  constructor(private modalService: BsModalService) {
     this.jsonEditorOptions = new JsonEditorOptions();
   }
 
@@ -118,12 +115,12 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
     this.jsonEditorChanged = true;
   }
 
-  onJsonEditorApply(){
+  onJsonEditorApply(template: TemplateRef<any>){
     console.log('Errors: ', this.jsonEditorErrors.length - this.jsonEditorWarningCounter, 'Warnings: ', this.jsonEditorWarningCounter);
     if (this.jsonEditorWarningCounter === 0) {
       this.jsonEditorApplyChanges();
     } else {
-      $('#saveModal').modal();
+      this.modalRef = this.modalService.show(template);
     }
   }
 

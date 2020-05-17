@@ -8,9 +8,9 @@
     "tslib": "^1.10.0",
     "ang-jsoneditor": "^1.9.4",
     "angular-formio": "^4.7.9",
-    "bootstrap": "^4.4.1",
+    "bootstrap": "4.1.1",
     "font-awesome": "^4.7.0",
-    "jquery": "^3.5.1",
+    "ngx-bootstrap": "^4.1.1",
     "jsoneditor": "^8.6.7"
   }
 }
