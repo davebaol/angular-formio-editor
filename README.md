@@ -24,7 +24,7 @@ In case the live demo goes down for whatever reason, the component is supposed t
 
 To install this library with npm, run below command:
 ```
-$ npm install --save ang-jsoneditor angular-formio bootstrap font-awesome jquery jsoneditor @angular/elements @davebaol/formio-editor
+$ npm install --save ang-jsoneditor angular-formio jsoneditor ngx-bootstrap @angular/elements @davebaol/formio-editor
 ```
 
 Example:
@@ -88,14 +88,7 @@ export class AppComponent {
   }
 }
 ```
-:three: Add scripts below to your angular.json
-```json
- "scripts": [
-              "./node_modules/jquery/dist/jquery.min.js",
-              "./node_modules/bootstrap/dist/js/bootstrap.js"
-            ] 
-```
-:four: For better styling, add the lines below to your main style.css file
+:three: For better styling, add the lines below to your main style.css file
 ```css
 @import "~jsoneditor/dist/jsoneditor.min.css";
 @import "~bootstrap/dist/css/bootstrap.css";
