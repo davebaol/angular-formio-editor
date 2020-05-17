@@ -44,7 +44,27 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
 
   @Input() activeTab?: FormioEditorTab = 'builder';
 
-  private jsonEditorErrors = [];
+  // tslint:disable-next-line:variable-name
+  private _jsonEditorErrors = [];
+  get jsonEditorErrors(){
+    return this._jsonEditorErrors;
+  }
+  set jsonEditorErrors(errors){
+    this._jsonEditorErrors = errors;
+    this.jsonEditorWarningCounter = 0;
+    errors.forEach((error) => {
+      if (error.type === 'validation'){
+        this.jsonEditorWarningCounter++;
+      }
+    });
+    if (errors.length !== this.jsonEditorWarningCounter){
+      $('.errorAlert').show();
+    } else {
+      $('.errorAlert').hide();
+    }
+  }
+
+  jsonEditorWarningCounter = 0;
   constructor() {
     this.jsonEditorOptions = new JsonEditorOptions();
   }
@@ -54,7 +74,6 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
     this.jsonEditorOptions.onValidationError = (errors: any[]) => {
       console.log('Found', errors.length, 'validation errors:');
       this.jsonEditorErrors = errors;
-      this.jsonEditorErrors.forEach((error) => console.log(error));
       if (origOnValidationError){
         origOnValidationError(errors);
       }
@@ -97,6 +116,15 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
   onJsonEditorChange(event) {
     console.log('onJsonEditorChange');
     this.jsonEditorChanged = true;
+  }
+
+  onJsonEditorApply(){
+    console.log('Errors: ', this.jsonEditorErrors.length - this.jsonEditorWarningCounter, 'Warnings: ', this.jsonEditorWarningCounter);
+    if (this.jsonEditorWarningCounter === 0) {
+      this.jsonEditorApplyChanges();
+    } else {
+      $('#saveModal').modal();
+    }
   }
 
   jsonEditorApplyChanges() {

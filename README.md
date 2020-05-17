@@ -88,8 +88,14 @@ export class AppComponent {
   }
 }
 ```
-:three: For better styling, add the lines below to your main style.css file
-
+:three: Add scripts below to your angular.json
+```json
+ "scripts": [
+              "./node_modules/jquery/dist/jquery.min.js",
+              "./node_modules/bootstrap/dist/js/bootstrap.js"
+            ] 
+```
+:four: For better styling, add the lines below to your main style.css file
 ```css
 @import "~jsoneditor/dist/jsoneditor.min.css";
 @import "~bootstrap/dist/css/bootstrap.css";
