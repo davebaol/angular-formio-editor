@@ -7,13 +7,13 @@
     "clean": "rimraf dist",
     "build": "ng build",
     "build-prod": "ng build --prod",
+    "build-all-prod": "npm run lint && npm run formio-editor:build-prod && npm run test-headless && npm run build-prod",
     "test": "ng test --watch=false",
     "test-headless": "ng test --watch=false --browsers=ChromeHeadless",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "formio-editor:build": "ng build formio-editor && npm i dist/formio-editor --save-optional",
-    "formio-editor:build-prod": "ng build formio-editor --prod && npm i dist/formio-editor --save-optional",
-    "___prepare": "npm run clean && npm run lint && npm run library:build && npm run build -- AngularFormioEditor && npm run test"
+    "formio-editor:build-prod": "ng build formio-editor --prod && npm i dist/formio-editor --save-optional"
   },
   "private": true,
   "dependencies": {
