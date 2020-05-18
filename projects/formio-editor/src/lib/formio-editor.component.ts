@@ -1,29 +1,9 @@
-import {AfterViewInit, Component, EventEmitter, OnInit, ViewChild, Input, TemplateRef} from '@angular/core';
-import { JsonEditorOptions as OriginalJsonEditorOptions, JsonEditorComponent } from 'ang-jsoneditor';
-import { Subject } from 'rxjs';
-import { FormioComponent, FormioRefreshValue } from 'angular-formio';
-import { loose as formioJsonSchema } from './formio-json-schema';
-import {BsModalService, BsModalRef} from 'ngx-bootstrap';
+import { AfterViewInit, Component, OnInit, ViewChild, Input, TemplateRef, OnDestroy} from '@angular/core';
+import { JsonEditorComponent } from 'ang-jsoneditor';
+import { Subject, Observable, Subscription } from 'rxjs';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap';
+import { FormioEditorOptions, FormioEditorTab, JsonEditorOptions } from './formio-editor-options';
 
-// export * from 'ang-jsoneditor';
-export type FormioEditorTab = 'builder' | 'json' | 'renderer';
-
-// Unfortunately JsonEditorOptions from package ang-jsoneditor 1.9.4 doesn't
-// support options 'schemaRefs' and 'onValidationError' used by jsoneditor 8.6.7.
-// See https://github.com/mariohmol/ang-jsoneditor/issues/66
-export class JsonEditorOptions extends OriginalJsonEditorOptions {
-  schemaRefs: object;
-  onValidationError: (errors: any[]) => void;
-
-  constructor() {
-    super();
-    this.modes = ['code', 'tree', 'view']; // set allowed modes
-    this.mode = 'view'; // set default mode
-    this.onError = (error) => console.log('jsonEditorOptions.onError: ', error);
-    this.schema = formioJsonSchema.schema;
-    this.schemaRefs = formioJsonSchema.schemaRefs;
-  }
-}
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -31,59 +11,91 @@ export class JsonEditorOptions extends OriginalJsonEditorOptions {
   templateUrl: './formio-editor.component.html',
   styleUrls: ['./formio-editor.component.css']
 })
-export class FormioEditorComponent implements OnInit, AfterViewInit  {
+export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  {
   @Input() form: any;
   refreshBuilder$ = new Subject<void>();
   builderDisplayChanged = false;
 
-  @Input() jsonEditorOptions: JsonEditorOptions;
+  @Input() reset?: Observable<void>;
+  private resetSubscription: Subscription;
+
+  @Input() options: FormioEditorOptions = { builder: {} };
+
   jsonEditorChanged = false;
   @ViewChild('jsoneditor', {static: true}) jsonEditor: JsonEditorComponent;
-
-  @ViewChild('renderer', {static: true}) renderer: FormioComponent;
-  @Input() refreshRenderer?: EventEmitter<FormioRefreshValue> = new EventEmitter();
 
   @Input() activeTab?: FormioEditorTab = 'builder';
 
   modalRef: BsModalRef;
   // tslint:disable-next-line:variable-name
   private _jsonEditorErrors = [];
-  get jsonEditorErrors(){
+  get jsonEditorErrors() {
     return this._jsonEditorErrors;
   }
-  set jsonEditorErrors(errors){
+  set jsonEditorErrors(errors) {
     this._jsonEditorErrors = errors;
     this.jsonEditorWarningCounter = 0;
     errors.forEach((error) => {
-      if (error.type === 'validation'){
+      if (error.type === 'validation') {
         this.jsonEditorWarningCounter++;
       }
     });
   }
 
   jsonEditorWarningCounter = 0;
+
   constructor(private modalService: BsModalService) {
-    this.jsonEditorOptions = new JsonEditorOptions();
   }
 
   ngOnInit(): void {
-    const origOnValidationError = this.jsonEditorOptions.onValidationError;
-    this.jsonEditorOptions.onValidationError = (errors: any[]) => {
+    if (!this.options) {
+      this.options = {};
+    }
+    if (!(this.options.json instanceof JsonEditorOptions)) {
+      this.options.json = new JsonEditorOptions();
+    }
+
+    const origOnValidationError = this.options.json.onValidationError;
+    this.options.json.onValidationError = (errors: any[]) => {
       console.log('Found', errors.length, 'validation errors:');
       this.jsonEditorErrors = errors;
-      if (origOnValidationError){
+      if (origOnValidationError) {
         origOnValidationError(errors);
       }
     };
+
+    if (this.reset) {
+      this.resetSubscription = this.reset.subscribe(() => {
+        this.resetFormBuilder();
+        this.resetFormRendererIfActive();
+      });
+    }
   }
 
   ngAfterViewInit() {
     this.refreshJsonEditor();
   }
 
+  ngOnDestroy() {
+    if (this.resetSubscription) {
+      this.resetSubscription.unsubscribe();
+    }
+  }
+
   //
   // Form Builder
   //
+
+  resetFormBuilder() {
+    console.log('resetFormBuilder');
+    // Unfortunately calling this.refreshFormBuilder() doesn't work as expected here.
+    // The workaround is to recreate the builder component through *ngIf="!builderDisplayChanged"
+    // See https://github.com/formio/angular-formio/issues/172#issuecomment-401876490
+    this.builderDisplayChanged = true;
+    setTimeout(() => { this.builderDisplayChanged = false; });
+
+    this.refreshJsonEditor();
+  }
 
   refreshFormBuilder() {
     console.log('refreshFormBuilder');
@@ -92,13 +104,7 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
 
   onBuilderDiplayChange(event) {
     console.log('onBuilderDiplayChange');
-    // Unfortunately calling this.refreshFormBuilder() doesn't work as expected here.
-    // The workaround is to recreate the builder component through *ngIf="!builderDisplayChanged"
-    // See https://github.com/formio/angular-formio/issues/172#issuecomment-401876490
-    this.builderDisplayChanged = true;
-    setTimeout(() => { this.builderDisplayChanged = false; });
-
-    this.refreshJsonEditor();
+    this.resetFormBuilder();
   }
 
   onBuilderChange(event) {
@@ -115,7 +121,7 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
     this.jsonEditorChanged = true;
   }
 
-  onJsonEditorApply(template: TemplateRef<any>){
+  onJsonEditorApply(template: TemplateRef<any>) {
     console.log('Errors: ', this.jsonEditorErrors.length - this.jsonEditorWarningCounter, 'Warnings: ', this.jsonEditorWarningCounter);
     if (this.jsonEditorWarningCounter === 0) {
       this.jsonEditorApplyChanges();
@@ -145,6 +151,21 @@ export class FormioEditorComponent implements OnInit, AfterViewInit  {
     // Here we use update instead of set to preserve the editor status
     this.jsonEditor.update(this.form);
     this.jsonEditorChanged = false;
+  }
+
+  //
+  // Form Renderer
+  //
+
+  resetFormRendererIfActive() {
+    console.log('resetFormRenderer');
+    // Here we recreate the renderer component through *ngIf="activeTab='renderer'"
+    // by changing the active tab and then restoring it.
+    // Although this is a rather dirty hack it is hardly noticeable to the eye :)
+    if (this.activeTab === 'renderer') {
+      this.activeTab = 'builder';
+      setTimeout(() => { this.activeTab = 'renderer'; });
+    }
   }
 
 }

@@ -10,3 +10,16 @@
   padding: .375rem .75rem;
   margin-bottom: 0;
 }
+
+.center {
+  margin: auto;
+  width: 75%;
+}
+
+@media (max-width: 1023px){
+  .center {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+}

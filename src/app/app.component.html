@@ -1,10 +1,25 @@
 <div class="content" role="main">
-  <div class="col-10 m-4">
-    <h1 class="text-center mb-4">Angular <a href="https://www.form.io/" target="_blank">Form.io</a> Editor</h1>
-    <formio-editor [form]="form"></formio-editor>
-<!--    <formio-editor [form]="form" [jsonEditorOptions]="jsonEditorOptions"></formio-editor>-->
+  <div class="m-4">
+    <h1 class="text-center mb-4">Angular <a href="https://www.form.io/" target="_blank">Form.io</a> Editor Demo</h1>
+    <p class="font-weight-bold text-center mb-4">Welcome to the demo of the Angular component &lt;formio-editor&gt; the one in the blue box.</p>
+    <div class="col-12 col-lg-10 center">
+      <div class="row mx-0 align-items-baseline">
+        <label for="display-as-checkbox" class="mx-2">Use 'Display as' inside the builder: </label>
+        <input type="checkbox" id="display-as-checkbox" [checked]="!options.builder.hideDisplaySelect" (change)="options.builder.hideDisplaySelect = !options.builder.hideDisplaySelect"/>
+      </div>
+      <div class="my-1" *ngIf="options?.builder?.hideDisplaySelect === true">
+        <label for="form-display-select-outer" class="mx-2">Display as: </label>
+        <select id="form-display-select-outer" class="form-control my-2" style="display: inline-block; width: 150px;"
+                [(ngModel)]="form.display" (ngModelChange)="resetFormioEditor$.next()">
+          <option value="form">Form</option>
+          <option value="wizard">Wizard</option>
+        </select>
+      </div>
+      <div class="mx-2 p-2 border border-primary">
+        <formio-editor [form]="form" [options]="options" [reset]="resetFormioEditor$"></formio-editor>
+      </div>
   </div>
-  <!-- <pre><code>{{form|json}}</code></pre> -->
+  </div>
 </div>
 
 

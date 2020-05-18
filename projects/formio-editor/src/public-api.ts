@@ -4,3 +4,4 @@
 
 export * from './lib/formio-editor.component';
 export * from './lib/formio-editor.module';
+export * from './lib/formio-editor-options';
