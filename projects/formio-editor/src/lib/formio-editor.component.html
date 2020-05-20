@@ -56,25 +56,25 @@
       <div class="row mx-0">
         <div class="m-2 p-0">
           <button type="button" class="btn btn-success mr-4" (click)="onJsonEditorApply(saveModal)"
-                  [disabled]="!jsonEditorChanged || this.jsonEditorErrors.length !== this.jsonEditorWarningCounter">
+                  [disabled]="!jsonEditorChanged || jsonEditorErrors.length !== jsonEditorWarningCounter">
             Apply
           </button>
           <button type="button" class="btn btn-secondary" (click)="jsonEditorDiscardChanges()">Discard</button>
         </div>
-        <alert class="col-6 mx-4 m-2 p-0"  type="danger" [isOpen]="this.jsonEditorErrors.length !== this.jsonEditorWarningCounter" >
+        <alert class="col-6 mx-4 m-2 p-0"  type="danger" [isOpen]="jsonEditorErrors.length !== jsonEditorWarningCounter" >
           Cannot apply changes. Json is not well-formed.
         </alert>
       </div>
-      <json-editor #jsoneditor [options]="options.json" (change)="onJsonEditorChange($event)"></json-editor>
+      <json-editor #jsoneditor [options]="options.json" (change)="onJsonEditorChange($event)" (error)="onJsonEditorError($event)"></json-editor>
       <div class="row mx-0">
         <div class="m-2 p-0">
           <button type="button" class="btn btn-success mr-4" (click)="onJsonEditorApply(saveModal)"
-                  [disabled]="!jsonEditorChanged || this.jsonEditorErrors.length !== this.jsonEditorWarningCounter">
+                  [disabled]="!jsonEditorChanged || jsonEditorErrors.length !== jsonEditorWarningCounter">
             Apply
           </button>
           <button type="button" class="btn btn-secondary" (click)="jsonEditorDiscardChanges()">Discard</button>
         </div>
-        <alert class="col-6 mx-4 my-2 p-1 align-middle" type="danger" [isOpen]="this.jsonEditorErrors.length !== this.jsonEditorWarningCounter" >
+        <alert class="col-6 mx-4 my-2 p-1 align-middle" type="danger" [isOpen]="jsonEditorErrors.length !== jsonEditorWarningCounter" >
           Cannot apply changes. Json is not well-formed.
         </alert>
       </div>

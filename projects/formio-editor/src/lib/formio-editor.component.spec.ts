@@ -4,7 +4,6 @@ import { FormioEditorComponent } from './formio-editor.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormioModule } from 'angular-formio';
 import { FormsModule } from '@angular/forms';
-import { NgJsonEditorModule } from 'ang-jsoneditor';
 import { Component, ViewChild } from '@angular/core';
 
 describe('FormioEditorComponent', () => {
@@ -17,8 +16,7 @@ describe('FormioEditorComponent', () => {
       imports: [
         BrowserModule,
         FormioModule,
-        FormsModule,
-        NgJsonEditorModule
+        FormsModule
       ]
     })
     .compileComponents();

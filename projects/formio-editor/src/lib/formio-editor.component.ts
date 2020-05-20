@@ -1,8 +1,10 @@
 import { AfterViewInit, Component, OnInit, ViewChild, Input, TemplateRef, OnDestroy} from '@angular/core';
-import { JsonEditorComponent } from 'ang-jsoneditor';
 import { Subject, Observable, Subscription } from 'rxjs';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap';
-import { FormioEditorOptions, FormioEditorTab, JsonEditorOptions } from './formio-editor-options';
+import { FormioEditorOptions, FormioEditorTab } from './formio-editor-options';
+import { JsonEditorComponent } from './json-editor/json-editor.component';
+import { JsonEditorOptions } from './json-editor/json-editor-options';
+import { loose as formioJsonSchema } from './formio-json-schema';
 
 
 @Component({
@@ -27,6 +29,7 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   @Input() activeTab?: FormioEditorTab = 'builder';
 
   modalRef: BsModalRef;
+
   // tslint:disable-next-line:variable-name
   private _jsonEditorErrors = [];
   get jsonEditorErrors() {
@@ -51,18 +54,14 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
     if (!this.options) {
       this.options = {};
     }
-    if (!(this.options.json instanceof JsonEditorOptions)) {
-      this.options.json = new JsonEditorOptions();
+    if (!this.options.json) {
+      this.options.json = {};
     }
 
-    const origOnValidationError = this.options.json.onValidationError;
-    this.options.json.onValidationError = (errors: any[]) => {
-      console.log('Found', errors.length, 'validation errors:');
-      this.jsonEditorErrors = errors;
-      if (origOnValidationError) {
-        origOnValidationError(errors);
-      }
-    };
+    if (!this.options.json.schema) {
+      this.options.json.schema = formioJsonSchema.schema;
+      this.options.json.schemaRefs = formioJsonSchema.schemaRefs;
+    }
 
     if (this.reset) {
       this.resetSubscription = this.reset.subscribe(() => {
@@ -115,6 +114,11 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   //
   // JSON Editor
   //
+
+  onJsonEditorError(errors: any[]) {
+    console.log('onJsonEditorError: found', errors.length, 'validation errors:');
+    this.jsonEditorErrors = errors;
+  }
 
   onJsonEditorChange(event) {
     console.log('onJsonEditorChange');
