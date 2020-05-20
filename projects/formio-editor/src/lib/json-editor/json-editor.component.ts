@@ -163,6 +163,10 @@ export class JsonEditorComponent implements OnInit {
     this.editor.update(json);
   }
 
+  public refresh() {
+    this.editor.refresh();
+  }
+
   public destroy() {
     this.editor.destroy();
   }
