@@ -33,28 +33,31 @@ export class JsonEditorComponent implements OnInit {
 
   @ViewChild('jsonEditorContainer', { static: true }) jsonEditorContainer: ElementRef;
 
-  @Input() options: JsonEditorOptions;
+  @Input() options?: JsonEditorOptions;
 
   @Input() debug = false;
 
-  @Output('change') changeEmitter: EventEmitter<any> = new EventEmitter<any>();
-  @Output('error') errorEmitter: EventEmitter<any> = new EventEmitter<any>();
+  @Output() dataChange: EventEmitter<any> = new EventEmitter<any>();
+  @Output() dataError: EventEmitter<any> = new EventEmitter<any>();
 
   constructor() { }
 
   ngOnInit() {
+    this.options = this.options || {};
+
     console.log('>>>>>>>>>>>>init options in JsonEditorComponent.ngOnInit');
     console.log('this.options.onValidationError:', this.options.onValidationError);
+
     let optionsBefore = this.options;
     if (!this.optionsChanged && this.editor) {
       optionsBefore = this.editor.options;
     }
 
-    if (!this.options.onChange && this.changeEmitter) {
+    if (!this.options.onChange && this.dataChange) {
       this.options.onChange = this.onChangeData.bind(this);
     }
 
-    if (!this.options.onValidationError && this.errorEmitter) {
+    if (!this.options.onValidationError && this.dataError) {
       this.options.onValidationError = this.onValidationError.bind(this);
     }
     const optionsCopy = Object.assign({}, defaultOptions, optionsBefore);
@@ -76,13 +79,13 @@ export class JsonEditorComponent implements OnInit {
 
   public onChangeData(e) {
     if (this.editor) {
-      this.changeEmitter.emit(this.editor.get());
+      this.dataChange.emit(this.editor.get());
     }
   }
 
   public onValidationError(e) {
     if (this.editor) {
-      this.errorEmitter.emit(e);
+      this.dataError.emit(e);
     }
   }
 
