@@ -89,6 +89,12 @@ export class JsonEditorComponent implements OnInit {
     }
   }
 
+  public resetMode() {
+    const mode = this.getMode();
+    this.setMode(mode === 'view' ? 'text' : 'view');
+    this.setMode(mode);
+  }
+
   /**
    * JSON EDITOR FUNCTIONS
    */
