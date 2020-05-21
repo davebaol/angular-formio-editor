@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild, Input, TemplateRef, OnDestroy} from '@angular/core';
-import { Subject, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 import { FormioEditorOptions, FormioEditorTab } from './formio-editor-options';
 import { JsonEditorComponent } from './json-editor/json-editor.component';
@@ -14,7 +14,6 @@ import { loose as formioJsonSchema } from './formio-json-schema';
 })
 export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  {
   @Input() form: any;
-  refreshBuilder$ = new Subject<void>();
   builderDisplayChanged = false;
 
   @Input() reset?: Observable<void>;
@@ -85,8 +84,7 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
 
   resetFormBuilder(fromJsonEditor: boolean = false) {
     console.log('resetFormBuilder');
-    // Unfortunately calling this.refreshFormBuilder() doesn't work as expected here.
-    // The workaround is to recreate the builder component through *ngIf="!builderDisplayChanged"
+    // Here we have to reset builder component through *ngIf="!builderDisplayChanged"
     // See https://github.com/formio/angular-formio/issues/172#issuecomment-401876490
     this.builderDisplayChanged = true;
     setTimeout(() => {
@@ -98,11 +96,6 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
     });
   }
 
-  refreshFormBuilder() {
-    console.log('refreshFormBuilder');
-    this.refreshBuilder$.next();
-  }
-
   onBuilderDiplayChange(event) {
     console.log('onBuilderDiplayChange');
     this.resetFormBuilder();
@@ -110,7 +103,7 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
 
   onBuilderChange(event) {
     console.log('onBuilderChange: event', event);
-     this.refreshJsonEditor(true);
+    this.refreshJsonEditor(true);
   }
 
   //
@@ -141,7 +134,7 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
     this.jsonEditorChanged = false;
     // Remove all properties from this form
     // then copy the properties of the edited json to this form
-    // and refresh the builder
+    // and reset the builder
     Object.getOwnPropertyNames(this.form).forEach(p => delete this.form[p]);
     Object.assign(this.form, this.jsonEditor.get());
     this.resetFormBuilder(true);
@@ -157,8 +150,9 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
     // Here we use update instead of set to preserve the editor status
     this.jsonEditor.update(this.form);
     this.jsonEditorChanged = false;
-    if (resetMode)
+    if (resetMode) {
       this.jsonEditor.resetMode();
+    }
   }
 
   //
