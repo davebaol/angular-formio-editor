@@ -4,8 +4,8 @@
   "lib": {
     "entryFile": "src/public-api.ts",
     "umdModuleIds": {
-      "ang-jsoneditor": "ang-jsoneditor",
       "angular-formio": "angular-formio",
+      "jsoneditor": "jsoneditor",
       "ngx-bootstrap": "ngx-bootstrap",
       "ngx-bootstrap/alert": "ngx-bootstrap/alert",
       "ngx-bootstrap/modal": "ngx-bootstrap/modal"

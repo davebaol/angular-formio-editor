@@ -4,7 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormioModule } from 'angular-formio';
 import { FormioEditorModule } from '@davebaol/formio-editor';
 import { FormsModule } from '@angular/forms';
-import { NgJsonEditorModule } from 'ang-jsoneditor';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -16,8 +15,7 @@ describe('AppComponent', () => {
         BrowserModule,
         FormioModule,
         FormioEditorModule,
-        FormsModule,
-        NgJsonEditorModule
+        FormsModule
       ]
     }).compileComponents();
   }));
