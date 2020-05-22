@@ -24,7 +24,7 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   jsonEditorChanged = false;
   @ViewChild('jsoneditor', {static: true}) jsonEditor: JsonEditorComponent;
 
-  @Input() activeTab?: FormioEditorTab = 'builder';
+  activeTab: FormioEditorTab;
 
   modalRef: BsModalRef;
 
@@ -49,22 +49,23 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   }
 
   ngOnInit(): void {
-    if (!this.options) {
-      this.options = {};
+    this.options = this.options || {};
+    if (!this.options.tabs || this.options.tabs.length === 0) {
+      this.options.tabs = ['builder', 'json', 'renderer'];
     }
-    if (!this.options.json) {
-      this.options.json = {};
+    if (!this.options.tab || !this.options.tabs.includes(this.options.tab)) {
+      this.options.tab = this.options.tabs[0];
     }
-
+    this.options.json = this.options.json || {};
     if (!this.options.json.schema) {
       this.options.json.schema = formioJsonSchema.schema;
       this.options.json.schemaRefs = formioJsonSchema.schemaRefs;
     }
 
+    this.activeTab = this.options.tab;
+
     if (this.reset) {
-      this.resetSubscription = this.reset.subscribe(() => {
-        this.resetFormBuilder();
-      });
+      this.resetSubscription = this.reset.subscribe(() => this.resetFormBuilder());
     }
   }
 
