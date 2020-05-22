@@ -98,15 +98,7 @@ export class AppComponent {
 @import "./styles/bootstrap/css/bootstrap.min.css";
 @import '~font-awesome/css/font-awesome.min.css';
 @import "~jsoneditor/dist/jsoneditor.min.css";
-
-.jsoneditor-outer.has-main-menu-bar.has-status-bar{
-    height: 70vh;
-}
-
-.alert {
-  padding: .375rem .75rem;
-  margin-bottom: 0;
-}
+@import "~@davebaol/formio-editor/styles.css";
 ```
 Note that this library only needs the `.css` from bootstrap, not the `.js`, since `ngx-bootstrap` is used internally.
 So you don't have necessarily to add bootstrap and its peer dependency jQuery. 
