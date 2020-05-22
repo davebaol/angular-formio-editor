@@ -24,13 +24,13 @@ In case the live demo goes down for whatever reason, the component is supposed t
 
 To install this library with npm, run below command:
 ```
-$ npm install --save ang-jsoneditor angular-formio jsoneditor ngx-bootstrap @angular/elements @davebaol/formio-editor
+$ npm install --save angular-formio jsoneditor ngx-bootstrap @angular/elements @davebaol/formio-editor
 ```
 
 Example:
 
 ```html
-<formio-editor [form]="form" [jsonEditorOptions]="jsonEditorOptions"></formio-editor>
+<formio-editor [form]="form" [options]="options"></formio-editor>
 ```
 
 ## Usage
@@ -59,14 +59,14 @@ export class AppModule { }
 
 ```ts
 import { Component } from '@angular/core';
-import { JsonEditorOptions } from 'ang-jsoneditor';
+import { FormioEditorOptions } from '@davebaol/formio-editor';
 
 @Component({
   selector: 'app-root',
   template: `
     <div class="content" role="main">
       <div class="col-10 m-4">
-        <formio-editor [form]="form" [jsonEditorOptions]="jsonEditorOptions"></formio-editor>
+        <formio-editor [form]="form" [options]="options"></formio-editor>
       </div>
     </div>
   `,
@@ -74,16 +74,21 @@ import { JsonEditorOptions } from 'ang-jsoneditor';
 })
 export class AppComponent {
   form: any;
-  jsonEditorOptions: JsonEditorOptions;
+  options: FormioEditorOptions;
 
   constructor() {
-    this.jsonEditorOptions = new JsonEditorOptions();
-    this.jsonEditorOptions.modes = ['code', 'tree', 'view']; // set allowed modes
-    this.jsonEditorOptions.mode = 'view'; // set default mode
-    this.jsonEditorOptions.onError = (error) => console.log('jsonEditorOptions.onError:', error);
     this.form = {
       display: 'form',
       components: []
+    };
+    this.options = {
+      builder: {
+        hideDisplaySelect: true
+      },
+      json: {
+        modes = ['code', 'tree', 'view']; // set allowed modes
+        mode = 'view'; // set default mode
+      }
     };
   }
 }

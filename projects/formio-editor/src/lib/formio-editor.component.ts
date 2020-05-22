@@ -1,8 +1,9 @@
 import { AfterViewInit, Component, OnInit, ViewChild, Input, TemplateRef, OnDestroy} from '@angular/core';
-import { JsonEditorComponent } from 'ang-jsoneditor';
-import { Subject, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap';
-import { FormioEditorOptions, FormioEditorTab, JsonEditorOptions } from './formio-editor-options';
+import { FormioEditorOptions, FormioEditorTab } from './formio-editor-options';
+import { JsonEditorComponent } from './json-editor/json-editor.component';
+import { loose as formioJsonSchema } from './formio-json-schema';
 
 
 @Component({
@@ -13,7 +14,6 @@ import { FormioEditorOptions, FormioEditorTab, JsonEditorOptions } from './formi
 })
 export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  {
   @Input() form: any;
-  refreshBuilder$ = new Subject<void>();
   builderDisplayChanged = false;
 
   @Input() reset?: Observable<void>;
@@ -27,6 +27,7 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   @Input() activeTab?: FormioEditorTab = 'builder';
 
   modalRef: BsModalRef;
+
   // tslint:disable-next-line:variable-name
   private _jsonEditorErrors = [];
   get jsonEditorErrors() {
@@ -51,23 +52,18 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
     if (!this.options) {
       this.options = {};
     }
-    if (!(this.options.json instanceof JsonEditorOptions)) {
-      this.options.json = new JsonEditorOptions();
+    if (!this.options.json) {
+      this.options.json = {};
     }
 
-    const origOnValidationError = this.options.json.onValidationError;
-    this.options.json.onValidationError = (errors: any[]) => {
-      console.log('Found', errors.length, 'validation errors:');
-      this.jsonEditorErrors = errors;
-      if (origOnValidationError) {
-        origOnValidationError(errors);
-      }
-    };
+    if (!this.options.json.schema) {
+      this.options.json.schema = formioJsonSchema.schema;
+      this.options.json.schemaRefs = formioJsonSchema.schemaRefs;
+    }
 
     if (this.reset) {
       this.resetSubscription = this.reset.subscribe(() => {
         this.resetFormBuilder();
-        this.resetFormRendererIfActive();
       });
     }
   }
@@ -86,20 +82,18 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   // Form Builder
   //
 
-  resetFormBuilder() {
+  resetFormBuilder(fromJsonEditor: boolean = false) {
     console.log('resetFormBuilder');
-    // Unfortunately calling this.refreshFormBuilder() doesn't work as expected here.
-    // The workaround is to recreate the builder component through *ngIf="!builderDisplayChanged"
+    // Here we have to reset builder component through *ngIf="!builderDisplayChanged"
     // See https://github.com/formio/angular-formio/issues/172#issuecomment-401876490
     this.builderDisplayChanged = true;
-    setTimeout(() => { this.builderDisplayChanged = false; });
-
-    this.refreshJsonEditor();
-  }
-
-  refreshFormBuilder() {
-    console.log('refreshFormBuilder');
-    this.refreshBuilder$.next();
+    setTimeout(() => {
+      this.builderDisplayChanged = false;
+      if (!fromJsonEditor) {
+        this.refreshJsonEditor(true);
+      }
+      this.resetFormRendererIfActive();
+    });
   }
 
   onBuilderDiplayChange(event) {
@@ -108,13 +102,18 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   }
 
   onBuilderChange(event) {
-    console.log('onBuilderChange');
-    this.refreshJsonEditor();
+    console.log('onBuilderChange: event', event);
+    this.refreshJsonEditor(true);
   }
 
   //
   // JSON Editor
   //
+
+  onJsonEditorError(errors: any[]) {
+    console.log('onJsonEditorError: found', errors.length, 'validation errors:');
+    this.jsonEditorErrors = errors;
+  }
 
   onJsonEditorChange(event) {
     console.log('onJsonEditorChange');
@@ -135,10 +134,10 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
     this.jsonEditorChanged = false;
     // Remove all properties from this form
     // then copy the properties of the edited json to this form
-    // and refresh the builder
+    // and reset the builder
     Object.getOwnPropertyNames(this.form).forEach(p => delete this.form[p]);
     Object.assign(this.form, this.jsonEditor.get());
-    this.refreshFormBuilder();
+    this.resetFormBuilder(true);
   }
 
   jsonEditorDiscardChanges() {
@@ -146,11 +145,14 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
     this.refreshJsonEditor();
   }
 
-  refreshJsonEditor() {
+  refreshJsonEditor(resetMode: boolean = false) {
     console.log('refreshJsonEditor');
     // Here we use update instead of set to preserve the editor status
     this.jsonEditor.update(this.form);
     this.jsonEditorChanged = false;
+    if (resetMode) {
+      this.jsonEditor.resetMode();
+    }
   }
 
   //

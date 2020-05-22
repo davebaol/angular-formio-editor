@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { JsonEditorOptions, FormioEditorOptions } from '@davebaol/formio-editor';
+import { FormioEditorOptions } from '@davebaol/formio-editor';
 import { Subject } from 'rxjs';
 import form from './initial-form.json';
 
@@ -20,7 +20,7 @@ export class AppComponent {
       builder: {
         hideDisplaySelect: false
       },
-      json: new JsonEditorOptions()
+      json: {}
     };
   }
 

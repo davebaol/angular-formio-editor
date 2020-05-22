@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { FormioModule } from 'angular-formio';
 import { FormioEditorModule } from '@davebaol/formio-editor';
-import { NgJsonEditorModule } from 'ang-jsoneditor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
@@ -17,7 +16,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     FormioModule,
     FormioEditorModule,
     FormsModule,
-    NgJsonEditorModule,
     BrowserAnimationsModule
   ],
   providers: [],

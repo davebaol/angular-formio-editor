@@ -26,7 +26,6 @@
     "@angular/platform-browser": "~9.1.6",
     "@angular/platform-browser-dynamic": "~9.1.6",
     "@angular/router": "~9.1.6",
-    "ang-jsoneditor": "^1.9.4",
     "angular-formio": "^4.7.9",
     "font-awesome": "^4.7.0",
     "jsoneditor": "^8.6.7",
