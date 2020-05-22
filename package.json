@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "clean": "rimraf dist",
+    "clean": "shx rm -rf dist",
     "build": "ng build",
     "build-prod": "ng build --prod",
     "build-all-prod": "npm run lint && npm run formio-editor:build-prod && npm run test-headless && npm run build-prod",
@@ -12,8 +12,8 @@
     "test-headless": "ng test --watch=false --browsers=ChromeHeadless",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "formio-editor:build": "ng build formio-editor && npm i dist/formio-editor --save-optional",
-    "formio-editor:build-prod": "ng build formio-editor --prod && npm i dist/formio-editor --save-optional"
+    "formio-editor:build": "ng build formio-editor && shx cp README.md LICENSE dist/formio-editor && npm i dist/formio-editor --save-optional",
+    "formio-editor:build-prod": "ng build formio-editor --prod && shx cp README.md LICENSE dist/formio-editor && npm i dist/formio-editor --save-optional"
   },
   "private": true,
   "dependencies": {
@@ -56,7 +56,7 @@
     "karma-jasmine-html-reporter": "^1.4.2",
     "ng-packagr": "^9.0.0",
     "protractor": "~5.4.3",
-    "rifraf": "^2.0.3",
+    "shx": "^0.3.2",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
     "typescript": "~3.8.3"
