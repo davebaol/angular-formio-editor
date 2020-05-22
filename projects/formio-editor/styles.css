@@ -1,0 +1,8 @@
+.jsoneditor-outer.has-main-menu-bar.has-status-bar{
+    height: 70vh;
+}
+
+.alert {
+  padding: .375rem .75rem;
+  margin-bottom: 0;
+}
