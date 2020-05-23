@@ -3,6 +3,7 @@ import { Observable, Subscription } from 'rxjs';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { FormioEditorOptions, FormioEditorTab } from './formio-editor-options';
 import { JsonEditorComponent } from './json-editor/json-editor.component';
+import { JsonEditorValidationError } from './json-editor/json-editor-options';
 import { loose as formioJsonSchema } from './formio-json-schema';
 
 
@@ -29,11 +30,11 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   modalRef: BsModalRef;
 
   // tslint:disable-next-line:variable-name
-  private _jsonEditorErrors = [];
+  private _jsonEditorErrors: JsonEditorValidationError[] = [];
   get jsonEditorErrors() {
     return this._jsonEditorErrors;
   }
-  set jsonEditorErrors(errors) {
+  set jsonEditorErrors(errors: JsonEditorValidationError[]) {
     this._jsonEditorErrors = errors;
     this.jsonEditorWarningCounter = 0;
     errors.forEach((error) => {
