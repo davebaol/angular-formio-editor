@@ -27,15 +27,13 @@ Object.freeze(defaultOptions);
 })
 export class JsonEditorComponent implements OnInit {
   private editor: any;
-  public id = 'angjsoneditor' + Math.floor(Math.random() * 1000000);
+  public id = 'jsoneditor' + Math.floor(Math.random() * 1000000);
 
   public optionsChanged = false;
 
   @ViewChild('jsonEditorContainer', { static: true }) jsonEditorContainer: ElementRef;
 
   @Input() options?: JsonEditorOptions;
-
-  @Input() debug = false;
 
   @Output() dataChange: EventEmitter<any> = new EventEmitter<any>();
   @Output() dataError: EventEmitter<any> = new EventEmitter<any>();
@@ -44,9 +42,6 @@ export class JsonEditorComponent implements OnInit {
 
   ngOnInit() {
     this.options = this.options || {};
-
-    console.log('>>>>>>>>>>>>init options in JsonEditorComponent.ngOnInit');
-    console.log('this.options.onValidationError:', this.options.onValidationError);
 
     let optionsBefore = this.options;
     if (!this.optionsChanged && this.editor) {
@@ -62,11 +57,9 @@ export class JsonEditorComponent implements OnInit {
     }
     const optionsCopy = Object.assign({}, defaultOptions, optionsBefore);
 
-    // expandAll is an option only supported by ang-jsoneditor and not by the the original jsoneditor.
+    // expandAll is an additional option not supported by the original jsoneditor
     delete optionsCopy.expandAll;
-    if (this.debug) {
-      console.log(optionsCopy);
-    }
+
     if (!this.jsonEditorContainer.nativeElement) {
       console.error(`Can't find the ElementRef reference for jsoneditor)`);
     }
