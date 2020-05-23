@@ -6,7 +6,7 @@
     "@angular/core": "^9.1.6",
     "@angular/forms": "^9.1.6",
     "angular-formio": "^4.7.9",
-    "ngx-bootstrap": "^4.1.1",
-    "jsoneditor": "^7.0.0 || ^8.0.0"
+    "ngx-bootstrap": "^5.6.1",
+    "jsoneditor": ">=7.0.0"
   }
 }
