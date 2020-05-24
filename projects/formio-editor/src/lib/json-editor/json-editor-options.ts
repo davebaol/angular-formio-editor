@@ -1,14 +1,16 @@
 
 export type JsonEditorMode = 'tree' | 'view' | 'form' | 'code' | 'text';
 
+export type JsonEditorNodePath = (string | number)[];
+
 export interface JsonEditorTreeNode {
   field: string;
-  path: string[];
+  path: JsonEditorNodePath;
   value?: string;
 }
 
 export interface JsonEditorError {
-  path: (string | number)[];
+  path: JsonEditorNodePath;
   message: string;
 }
 
@@ -45,12 +47,28 @@ export interface JsonEditorTextPosition {
 
 export interface JsonEditorSerializableNode {
   value: any;
-  path: (string | number)[];
+  path: JsonEditorNodePath;
 }
 
 export interface JsonEditorEvent {
   type: string;
   target: HTMLElement;
+}
+
+export interface JsonEditorMenuItem {
+  text?: string;
+  title?: string;
+  className?: string;
+  click?: () => void;
+  submenu?: JsonEditorMenuItem[];
+  submenuTitle?: string;
+  type?: 'separator';
+}
+
+export interface JsonEditorMenuNode {
+  type: 'single' | 'multiple' | 'append';
+  path: JsonEditorNodePath;
+  paths: JsonEditorNodePath[];
 }
 
 export interface JsonEditorQueryOptions {
@@ -83,10 +101,10 @@ export interface JsonEditorOptions {
   onEditable?: (node: JsonEditorTreeNode) => boolean | { field: boolean, value: boolean };
   onError?: (error: Error) => void;
   onModeChange?: (newMode: JsonEditorMode, oldMode: JsonEditorMode) => void;
-  onNodeName?: (node: { path: string[], type: 'object' | 'array', size: number}) => string | undefined;
+  onNodeName?: (node: { path: JsonEditorNodePath, type: 'object' | 'array', size: number}) => string | undefined;
   onValidate?: (json: object) => JsonEditorError[] | null | Promise<JsonEditorError[]>;
   onValidationError?: (errors: JsonEditorValidationError[]) => void;
-  onCreateMenu?: (items: object[], ) => object[];
+  onCreateMenu?: (items: JsonEditorMenuItem[], node: JsonEditorMenuNode) => JsonEditorMenuItem[];
   onSelectionChange?: (start: JsonEditorSerializableNode, end: JsonEditorSerializableNode) => void;
   onTextSelectionChange?: (start: JsonEditorTextPosition, end: JsonEditorTextPosition, text: string) => void;
   onEvent?: (node: JsonEditorTreeNode, event: Event) => void;
@@ -95,7 +113,7 @@ export interface JsonEditorOptions {
   enableSort?: boolean;
   enableTransform?: boolean;
   escapeUnicode?: boolean;
-  expandAll?: boolean;
+  expandAll?: boolean;  // additional option not supported by the original jsoneditor
   sortObjectKeys?: boolean;
   history?: boolean;
   mode?: JsonEditorMode;
