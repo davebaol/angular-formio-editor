@@ -27,7 +27,7 @@
     "@angular/forms": "^9.1.6",
     "angular-formio": "^4.7.9",
     "ngx-bootstrap": "^5.6.1",
-    "jsoneditor": ">=7.0.0"
+    "jsoneditor": ">=7.4.0"
   },
   "publishConfig": {
     "access": "public"
