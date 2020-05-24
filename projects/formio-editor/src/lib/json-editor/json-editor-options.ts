@@ -1,5 +1,5 @@
 
-export type JsonEditorMode = 'tree' | 'view' | 'form' | 'code' | 'text';
+export type JsonEditorMode = 'code' | 'form' | 'text' | 'tree' | 'view' | 'preview';
 
 export type JsonEditorNodePath = (string | number)[];
 
@@ -45,9 +45,20 @@ export interface JsonEditorTextPosition {
   column: number;
 }
 
+export interface JsonEditorTextSelection {
+  start: JsonEditorTextPosition;
+  end: JsonEditorTextPosition;
+  text: string;
+}
+
 export interface JsonEditorSerializableNode {
   value: any;
   path: JsonEditorNodePath;
+}
+
+export interface JsonEditorSelection {
+  start: JsonEditorSerializableNode;
+  end: JsonEditorSerializableNode;
 }
 
 export interface JsonEditorEvent {

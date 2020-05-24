@@ -1,7 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
-
+import { Component, OnInit, ViewChild, ElementRef, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import * as editor from 'jsoneditor';
-import { JsonEditorOptions, JsonEditorMode } from './json-editor-options';
+import {
+  JsonEditorOptions, JsonEditorMode, JsonEditorSelection, JsonEditorValidationError,
+  JsonEditorTextPosition, JsonEditorTextSelection, JsonEditorSerializableNode
+} from './json-editor-options';
 
 const defaultOptions: JsonEditorOptions = {
   modes: ['code', 'tree', 'view'], // set allowed modes
@@ -21,19 +23,18 @@ Object.freeze(defaultOptions);
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'json-editor',
-  template: `<div [id]="id" #jsonEditorContainer></div>`,
-  preserveWhitespaces: false,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  template: `<div [id]="id" #jsonEditorContainer></div>`
 })
-export class JsonEditorComponent implements OnInit {
+export class JsonEditorComponent implements OnInit, OnDestroy {
   private editor: any;
   public id = 'jsoneditor' + Math.floor(Math.random() * 1000000);
 
-  public optionsChanged = false;
-
   @ViewChild('jsonEditorContainer', { static: true }) jsonEditorContainer: ElementRef;
 
-  @Input() options?: JsonEditorOptions;
+  // tslint:disable-next-line:variable-name
+  private _options: JsonEditorOptions;
+  get options() { return this._options; }
+  @Input() set options(options: JsonEditorOptions) { this.createEditor(options); }
 
   @Output() dataChange: EventEmitter<any> = new EventEmitter<any>();
   @Output() dataError: EventEmitter<any> = new EventEmitter<any>();
@@ -41,44 +42,62 @@ export class JsonEditorComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.options = this.options || {};
-
-    let optionsBefore = this.options;
-    if (!this.optionsChanged && this.editor) {
-      optionsBefore = this.editor.options;
+    if (!this.editor) {
+      this.createEditor({}); // creates the editor with default options
     }
+  }
 
-    if (!this.options.onChange && this.dataChange) {
-      this.options.onChange = this.onChangeData.bind(this);
+  ngOnDestroy(): void {
+    if (this.editor) {
+      this.editor.destroy();
+      this.editor = undefined;
     }
+  }
 
-    if (!this.options.onValidationError && this.dataError) {
-      this.options.onValidationError = this.onValidationError.bind(this);
-    }
-    const optionsCopy = Object.assign({}, defaultOptions, optionsBefore);
+  private createEditor(options: JsonEditorOptions) {
+    // Store original options passed in
+    this._options = options;
+
+    // Create actual options for the editor
+    const patchedOptions: JsonEditorOptions = {
+      onChange: this.onChangeData.bind(this),
+      onValidationError: this.onValidationError.bind(this)
+    };
+    const editorOptions = Object.assign({}, defaultOptions, options, patchedOptions);
 
     // expandAll is an additional option not supported by the original jsoneditor
-    delete optionsCopy.expandAll;
+    const expandAll = editorOptions.expandAll;
+    delete editorOptions.expandAll;
 
+    // (Re)create the editor
     if (!this.jsonEditorContainer.nativeElement) {
       console.error(`Can't find the ElementRef reference for jsoneditor)`);
     }
-    this.editor = new editor(this.jsonEditorContainer.nativeElement, optionsCopy, {});
+    if (this.editor) {
+      this.editor.destroy();
+    }
+    this.editor = new editor(this.jsonEditorContainer.nativeElement, editorOptions, {});
 
-    if (this.options.expandAll) {
+    if (expandAll) {
       this.editor.expandAll();
     }
   }
 
-  public onChangeData(e) {
+  public onChangeData(e: any) {
     if (this.editor) {
       this.dataChange.emit(this.editor.get());
+      if (this.options.onChange) {
+        this.options.onChange();
+      }
     }
   }
 
-  public onValidationError(e) {
+  public onValidationError(errors: JsonEditorValidationError[]) {
     if (this.editor) {
-      this.dataError.emit(e);
+      this.dataError.emit(errors);
+      if (this.options.onValidationError) {
+        this.options.onValidationError(errors);
+      }
     }
   }
 
@@ -88,12 +107,25 @@ export class JsonEditorComponent implements OnInit {
     this.setMode(mode);
   }
 
+  public isWellFormedJson() {
+    try {
+      JSON.parse(this.getText());
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   /**
    * JSON EDITOR FUNCTIONS
    */
 
   public collapseAll() {
     this.editor.collapseAll();
+  }
+
+  public destroy() {
+    this.editor.destroy();
   }
 
   public expandAll() {
@@ -109,7 +141,7 @@ export class JsonEditorComponent implements OnInit {
   }
 
   public getMode(): JsonEditorMode {
-    return this.editor.getMode() as JsonEditorMode;
+    return this.editor.getMode();
   }
 
   public getName(): string {
@@ -118,6 +150,22 @@ export class JsonEditorComponent implements OnInit {
 
   public getText(): string {
     return this.editor.getText();
+  }
+
+  public getSelection(): JsonEditorSelection {
+    return this.editor.getSelection();
+  }
+
+  public getTextSelection(): JsonEditorTextSelection {
+    return this.editor.getSelection();
+  }
+
+  public getValidateSchema(): any {
+    return this.editor.validateSchema;
+  }
+
+  public refresh() {
+    this.editor.refresh();
   }
 
   public set(json: JSON) {
@@ -132,53 +180,24 @@ export class JsonEditorComponent implements OnInit {
     this.editor.setName(name);
   }
 
-  public setSelection(start, end) {
-    this.editor.setSelection(start, end);
-  }
-
-  public getSelection(): any {
-    return this.editor.getSelection();
-  }
-
-  public getValidateSchema(): any {
-    return this.editor.validateSchema;
-  }
-
-  public setSchema(schema: any, schemaRefs: any) {
+  public setSchema(schema: any, schemaRefs?: any) {
     this.editor.setSchema(schema, schemaRefs);
   }
 
-  public search(query: string) {
-    this.editor.search(query);
+  public setSelection(start: JsonEditorSerializableNode, end: JsonEditorSerializableNode) {
+    this.editor.setSelection(start, end);
   }
 
-  public setOptions(newOptions: JsonEditorOptions) {
-    if (this.editor) {
-      this.editor.destroy();
-    }
-    this.optionsChanged = true;
-    this.options = newOptions;
-    this.ngOnInit();
+  public setTextSelection(start: JsonEditorTextPosition, end: JsonEditorTextPosition) {
+    this.editor.setSelection(start, end);
+  }
+
+  public search(query: string): any[] {
+    return this.editor.search(query);
   }
 
   public update(json: JSON) {
     this.editor.update(json);
   }
 
-  public refresh() {
-    this.editor.refresh();
-  }
-
-  public destroy() {
-    this.editor.destroy();
-  }
-
-  public isValidJson() {
-    try {
-      JSON.parse(this.getText());
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
 }
