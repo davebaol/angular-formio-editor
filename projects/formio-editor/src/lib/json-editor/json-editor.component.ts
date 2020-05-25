@@ -3,7 +3,7 @@ import * as editor from 'jsoneditor';
 import {
   JsonEditorOptions, JsonEditorMode, JsonEditorSelection, JsonEditorValidationError,
   JsonEditorTextPosition, JsonEditorTextSelection, JsonEditorSerializableNode
-} from './json-editor-options';
+} from './json-editor-shapes';
 
 const defaultOptions: JsonEditorOptions = {
   modes: ['code', 'tree', 'view'], // set allowed modes

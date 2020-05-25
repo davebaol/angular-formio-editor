@@ -1,4 +1,4 @@
-import { JsonEditorOptions } from './json-editor/json-editor-options';
+import { JsonEditorOptions } from './json-editor/json-editor-shapes';
 
 export type FormioEditorTab = 'builder' | 'json' | 'renderer';
 
