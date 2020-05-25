@@ -1,11 +1,30 @@
 import { AfterViewInit, Component, OnInit, ViewChild, Input, TemplateRef, OnDestroy} from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
-import { FormioEditorOptions, FormioEditorTab } from './formio-editor-options';
+import { FormioEditorOptions, FormioEditorTab, BuilderOptions } from './formio-editor-options';
 import { JsonEditorComponent } from './json-editor/json-editor.component';
-import { JsonEditorValidationError } from './json-editor/json-editor-shapes';
+import { JsonEditorValidationError, JsonEditorOptions } from './json-editor/json-editor-shapes';
 import { loose as formioJsonSchema } from './formio-json-schema';
 
+const defaultBuilderOptions: BuilderOptions = {
+  hideDisplaySelect: false
+};
+
+const defaultJsonOptions: JsonEditorOptions = {
+  enableSort: true,
+  enableTransform: true,
+  escapeUnicode: false,
+  expandAll: false,
+  history: true,
+  indentation: 2,
+  mode: 'view', // set default mode
+  modes: ['code', 'tree', 'view'], // set allowed modes
+  schema: formioJsonSchema.schema,
+  schemaRefs: formioJsonSchema.schemaRefs,
+  search: true,
+  sortObjectKeys: false
+};
+// Object.freeze(defaultJsonOptions);
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -20,7 +39,10 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   @Input() reset?: Observable<void>;
   private resetSubscription: Subscription;
 
-  @Input() options: FormioEditorOptions = { builder: {} };
+  // tslint:disable-next-line:variable-name
+  private _options: FormioEditorOptions;
+  get options() { return this._options; }
+  @Input() set options(options: FormioEditorOptions) { this.setOptions(options); }
 
   jsonEditorChanged = false;
   @ViewChild('jsoneditor', {static: true}) jsonEditor: JsonEditorComponent;
@@ -50,17 +72,8 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   }
 
   ngOnInit(): void {
-    this.options = this.options || {};
-    if (!this.options.tabs || this.options.tabs.length === 0) {
-      this.options.tabs = ['builder', 'json', 'renderer'];
-    }
-    if (!this.options.tab || !this.options.tabs.includes(this.options.tab)) {
-      this.options.tab = this.options.tabs[0];
-    }
-    this.options.json = this.options.json || {};
-    if (!this.options.json.schema) {
-      this.options.json.schema = formioJsonSchema.schema;
-      this.options.json.schemaRefs = formioJsonSchema.schemaRefs;
+    if (!this.options) {
+      this.setOptions(); // Set default options
     }
 
     this.activeTab = this.options.tab;
@@ -78,6 +91,16 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
     if (this.resetSubscription) {
       this.resetSubscription.unsubscribe();
     }
+  }
+
+  private setOptions(options: FormioEditorOptions = {}) {
+    const opts: FormioEditorOptions = {};
+    opts.tabs = !options.tabs || options.tabs.length === 0 ? ['builder', 'json', 'renderer'] : options.tabs;
+    opts.tab = !options.tab || !options.tabs.includes(options.tab) ? opts.tabs[0] : options.tab;
+    opts.builder = Object.assign({}, defaultBuilderOptions, options.builder);
+    opts.json = Object.assign({}, defaultJsonOptions, options.json);
+
+    this._options = opts;
   }
 
   //

@@ -5,20 +5,6 @@ import {
   JsonEditorTextPosition, JsonEditorTextSelection, JsonEditorSerializableNode
 } from './json-editor-shapes';
 
-const defaultOptions: JsonEditorOptions = {
-  modes: ['code', 'tree', 'view'], // set allowed modes
-  mode: 'view', // set default mode
-  enableSort: true,
-  enableTransform: true,
-  escapeUnicode: false,
-  expandAll: false,
-  sortObjectKeys: false,
-  history: true,
-  search: true,
-  indentation: 2
-};
-Object.freeze(defaultOptions);
-
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -63,7 +49,7 @@ export class JsonEditorComponent implements OnInit, OnDestroy {
       onChange: this.onChangeData.bind(this),
       onValidationError: this.onValidationError.bind(this)
     };
-    const editorOptions = Object.assign({}, defaultOptions, options, patchedOptions);
+    const editorOptions = Object.assign({}, options, patchedOptions);
 
     // expandAll is an additional option not supported by the original jsoneditor
     const expandAll = editorOptions.expandAll;
