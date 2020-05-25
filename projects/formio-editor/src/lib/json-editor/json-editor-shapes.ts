@@ -125,15 +125,16 @@ export interface JsonEditorOptions {
   enableTransform?: boolean;
   escapeUnicode?: boolean;
   expandAll?: boolean;  // additional option not supported by the original jsoneditor
-  sortObjectKeys?: boolean;
   history?: boolean;
+  indentation?: number;
+  limitDragging?: boolean;
   mode?: JsonEditorMode;
   modes?: JsonEditorMode[];
   name?: string;
   schema?: object;
   schemaRefs?: object;
   search?: boolean;
-  indentation?: number;
+  sortObjectKeys?: boolean;
   templates?: object[];
   theme?: string;
   language?: string;

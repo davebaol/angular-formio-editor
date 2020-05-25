@@ -17,6 +17,7 @@ const defaultJsonOptions: JsonEditorOptions = {
   expandAll: false,
   history: true,
   indentation: 2,
+  limitDragging: false,
   mode: 'view', // set default mode
   modes: ['code', 'tree', 'view'], // set allowed modes
   schema: formioJsonSchema.schema,
