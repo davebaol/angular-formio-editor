@@ -112,7 +112,7 @@ export interface JsonEditorOptions {
   onEditable?: (node: JsonEditorTreeNode) => boolean | { field: boolean, value: boolean };
   onError?: (error: Error) => void;
   onModeChange?: (newMode: JsonEditorMode, oldMode: JsonEditorMode) => void;
-  onNodeName?: (node: { path: JsonEditorNodePath, type: 'object' | 'array', size: number}) => string | undefined;
+  onNodeName?: (node: { path: JsonEditorNodePath, type: 'object' | 'array', size: number }) => string | undefined;
   onValidate?: (json: object) => JsonEditorError[] | null | Promise<JsonEditorError[]>;
   onValidationError?: (errors: JsonEditorValidationError[]) => void;
   onCreateMenu?: (items: JsonEditorMenuItem[], node: JsonEditorMenuNode) => JsonEditorMenuItem[];
@@ -154,3 +154,61 @@ export interface JsonEditorOptions {
   executeQuery?: (json: JSON, query: string) => JSON;
   queryDescription?: string;
 }
+
+export const jsonEditorValidOptions: string[] = (() => {
+  // See https://stackoverflow.com/a/54308812
+  type KeysEnum<T> = { [P in keyof Required<T>]: true };
+  const kObj: KeysEnum<JsonEditorOptions> = {
+    ace: true,
+    ajv: true,
+    onChange: true,
+    onChangeJSON: true,
+    onChangeText: true,
+    onClassName: true,
+    onEditable: true,
+    onError: true,
+    onModeChange: true,
+    onNodeName: true,
+    onValidate: true,
+    onValidationError: true,
+    onCreateMenu: true,
+    onSelectionChange: true,
+    onTextSelectionChange: true,
+    onEvent: true,
+    onFocus: true,
+    onBlur: true,
+    enableSort: true,
+    enableTransform: true,
+    escapeUnicode: true,
+    expandAll: true,
+    history: true,
+    indentation: true,
+    limitDragging: true,
+    mode: true,
+    modes: true,
+    name: true,
+    schema: true,
+    schemaRefs: true,
+    search: true,
+    sortObjectKeys: true,
+    templates: true,
+    theme: true,
+    language: true,
+    languages: true,
+    autocomplete: true,
+    mainMenuBar: true,
+    navigationBar: true,
+    statusBar: true,
+    colorPicker: true,
+    onColorPicker: true,
+    timestampTag: true,
+    timestampFormat: true,
+    modalAnchor: true,
+    popupAnchor: true,
+    maxVisibleChilds: true,
+    createQuery: true,
+    executeQuery: true,
+    queryDescription: true
+  };
+  return Object.keys(kObj);
+})();

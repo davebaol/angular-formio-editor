@@ -1,16 +1,21 @@
 import { AfterViewInit, Component, OnInit, ViewChild, Input, TemplateRef, OnDestroy} from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
-import { FormioEditorOptions, FormioEditorTab, BuilderOptions } from './formio-editor-options';
+import { FormioEditorOptions, FormioEditorTab, FormioEditorBuilderOptions, FormioEditorJsonOptions } from './formio-editor-options';
 import { JsonEditorComponent } from './json-editor/json-editor.component';
-import { JsonEditorValidationError, JsonEditorOptions } from './json-editor/json-editor-shapes';
+import { JsonEditorValidationError, JsonEditorOptions, jsonEditorValidOptions } from './json-editor/json-editor-shapes';
 import { loose as formioJsonSchema } from './formio-json-schema';
 
-const defaultBuilderOptions: BuilderOptions = {
+const defaultBuilderOptions: FormioEditorBuilderOptions = {
   hideDisplaySelect: false
 };
 
-const defaultJsonOptions: JsonEditorOptions = {
+const defaultJsonOptions: FormioEditorJsonOptions = {
+  changePanelLocations: ['top', 'bottom'],
+
+  //
+  // JsonEditorOptions
+  //
   enableSort: true,
   enableTransform: true,
   escapeUnicode: false,
@@ -44,6 +49,8 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   private _options: FormioEditorOptions;
   get options() { return this._options; }
   @Input() set options(options: FormioEditorOptions) { this.setOptions(options); }
+
+  jsonEditorOptions: JsonEditorOptions;
 
   jsonEditorChanged = false;
   @ViewChild('jsoneditor', {static: true}) jsonEditor: JsonEditorComponent;
@@ -102,10 +109,19 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
     opts.json = Object.assign({}, defaultJsonOptions, options.json);
 
     this._options = opts;
+
+    // Extract all and only the options for the json editor to avoid misleading
+    // logging message "Unknown 'xxx' option. This option will be ignored"
+    this.jsonEditorOptions = jsonEditorValidOptions.reduce((result, k) => {
+      if (k in opts.json) {
+        result[k] = opts.json[k];
+      }
+      return result;
+    }, {});
   }
 
   //
-  // Form Builder
+  // Form Builder Tab
   //
 
   resetFormBuilder(fromJsonEditor: boolean = false) {
@@ -133,7 +149,7 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   }
 
   //
-  // JSON Editor
+  // JSON Tab
   //
 
   onJsonEditorError(errors: any[]) {
@@ -182,7 +198,7 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   }
 
   //
-  // Form Renderer
+  // Form Renderer Tab
   //
 
   resetFormRendererIfActive() {
