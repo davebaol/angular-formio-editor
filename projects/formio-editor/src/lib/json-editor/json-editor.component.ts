@@ -1,16 +1,17 @@
 import { Component, OnInit, ViewChild, ElementRef, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
-import * as editor from 'jsoneditor';
+import JsonEditor from 'jsoneditor';
 import {
   JsonEditorOptions, JsonEditorMode, JsonEditorSelection, JsonEditorValidationError,
-  JsonEditorTextPosition, JsonEditorTextSelection, JsonEditorSerializableNode, jsonEditorNativeOptions
+  JsonEditorTextPosition, JsonEditorTextSelection, JsonEditorSerializableNode, jsonEditorNativeOptions, jsonEditorAdditionalOptions
 } from './json-editor-shapes';
 
-let unsupportedOptions = editor.VALID_OPTIONS.filter(p => !jsonEditorNativeOptions.includes(p));
+// Check unsupported options
+let unsupportedOptions = JsonEditor.VALID_OPTIONS.filter(p => !jsonEditorNativeOptions.includes(p));
 if (unsupportedOptions.length > 0) {
   console.log('You\'re probably using a recent version of jsoneditor and the following options are not yet defined in JsonEditorNativeOptions', unsupportedOptions);
   console.log('However, you can still pass these options using TypeScript type assertion \'as JsonEditorOptions\'');
 }
-unsupportedOptions = jsonEditorNativeOptions.filter(p => !editor.VALID_OPTIONS.includes(p));
+unsupportedOptions = jsonEditorNativeOptions.filter(p => !JsonEditor.VALID_OPTIONS.includes(p));
 if (unsupportedOptions.length > 0) {
   console.log('You\'re probably using an old version of jsoneditor that doesn\'t support the following options', unsupportedOptions);
 }
@@ -60,9 +61,12 @@ export class JsonEditorComponent implements OnInit, OnDestroy {
     };
     const editorOptions = Object.assign({}, options, patchedOptions);
 
-    // expandAll is an additional option not supported by the original jsoneditor
-    const expandAll = editorOptions.expandAll;
-    delete editorOptions.expandAll;
+    // Extract additional options not supported by the original jsoneditor
+    const additionalOptions: JsonEditorOptions = jsonEditorAdditionalOptions.reduce((opts, k) => {
+      opts[k] = editorOptions[k];
+      delete editorOptions[k];
+      return opts;
+    }, {});
 
     // (Re)create the editor
     if (!this.jsonEditorContainer.nativeElement) {
@@ -71,9 +75,9 @@ export class JsonEditorComponent implements OnInit, OnDestroy {
     if (this.editor) {
       this.editor.destroy();
     }
-    this.editor = new editor(this.jsonEditorContainer.nativeElement, editorOptions, {});
+    this.editor = new JsonEditor(this.jsonEditorContainer.nativeElement, editorOptions, {});
 
-    if (expandAll) {
+    if (additionalOptions.expandAll) {
       this.editor.expandAll();
     }
   }
