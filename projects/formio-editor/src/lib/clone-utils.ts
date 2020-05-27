@@ -1,32 +1,32 @@
 /*
   This is heavily inspired by https://github.com/schnittstabil/merge-options
 */
-const { hasOwnProperty } = Object.prototype;
+const { hasOwnProperty, toString } = Object.prototype;
 const { propertyIsEnumerable } = Object;
 const globalThis = this;
 const defaultMergeOpts = { ignoreUndefined: false };
 
 type propertyKey = string | number | symbol;
 
-function isOptionObject(value: any) {
-  if (Object.prototype.toString.call(value) !== '[object Object]') {
+const isPlainObject = (value: any) => {
+  if (toString.call(value) !== '[object Object]') {
     return false;
   }
 
   const prototype = Object.getPrototypeOf(value);
   return prototype === null || prototype === Object.prototype;
-}
+};
 
-function defineProperty(obj: object, name: propertyKey, value: any) {
+const defineProperty = (obj: object, name: propertyKey, value: any) => {
   Object.defineProperty(obj, name, {
     value,
     writable: true,
     enumerable: true,
     configurable: true
   });
-}
+};
 
-function getEnumerableOwnPropertyKeys(value: object) {
+const getEnumerableOwnPropertyKeys = (value: object) => {
   const keys: propertyKey[] = [];
 
   for (const key in value) {
@@ -46,21 +46,21 @@ function getEnumerableOwnPropertyKeys(value: object) {
   }
 
   return keys;
-}
+};
 
 export const clone = (value: any) => {
   if (Array.isArray(value)) {
     return cloneArray(value);
   }
 
-  if (isOptionObject(value)) {
-    return cloneOptionObject(value);
+  if (isPlainObject(value)) {
+    return clonePlainObject(value);
   }
 
   return value;
 };
 
-function cloneArray(array: any[]) {
+const cloneArray = (array: any[]) => {
   const result = array.slice(0, 0);
 
   getEnumerableOwnPropertyKeys(array).forEach(key => {
@@ -68,19 +68,19 @@ function cloneArray(array: any[]) {
   });
 
   return result;
-}
+};
 
-function cloneOptionObject(obj: object) {
-  const result = Object.getPrototypeOf(obj) === null ? Object.create(null) : {};
+const clonePlainObject = (obj: object) => {
+  const result: object = Object.getPrototypeOf(obj) === null ? Object.create(null) : {};
 
   getEnumerableOwnPropertyKeys(obj).forEach(key => {
     defineProperty(result, key, clone(obj[key]));
   });
 
-  return result as object;
-}
+  return result;
+};
 
-function mergeKeys(merged, source, keys: propertyKey[], config) {
+const mergeKeys = (merged, source, keys: propertyKey[], config) => {
   keys.forEach(key => {
     if (typeof source[key] === 'undefined' && config.ignoreUndefined) {
       return;
@@ -95,15 +95,16 @@ function mergeKeys(merged, source, keys: propertyKey[], config) {
   });
 
   return merged;
-}
+};
 
-function _merge(merged, source, config) {
-  if (!isOptionObject(source) || !isOptionObject(merged)) {
+// tslint:disable-next-line:variable-name
+const _merge = (merged, source, config) => {
+  if (!isPlainObject(source) || !isPlainObject(merged)) {
     return clone(source);
   }
 
   return mergeKeys(merged, source, getEnumerableOwnPropertyKeys(source), config);
-}
+};
 
 export const merge = (...options: any[]) => {
   const config = _merge(clone(defaultMergeOpts), (this !== globalThis && this) || {}, defaultMergeOpts);
@@ -114,8 +115,8 @@ export const merge = (...options: any[]) => {
       continue;
     }
 
-    if (!isOptionObject(option)) {
-      throw new TypeError('`' + option + '` is not an Option Object');
+    if (!isPlainObject(option)) {
+      throw new TypeError('`' + option + '` is not a plain Object');
     }
 
     merged = _merge(merged, { _: option }, config);
