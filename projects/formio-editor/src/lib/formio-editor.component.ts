@@ -104,7 +104,19 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
     const opts: FormioEditorOptions = merge(defaultOptions, options);
 
     // Check options consistency
-    if (!Array.isArray(opts.tabs) || opts.tabs.length === 0) {
+    if (Array.isArray(opts.tabs)) {
+      opts.tabs = opts.tabs.filter(t => {
+        if (!defaultOptions.tabs.includes(t)) {
+          console.log(`FormioEditorComponent: unknown tab '${t}' in 'options.tabs'`);
+          return false;
+        }
+        return true;
+      });
+    } else {
+      opts.tabs = [];
+    }
+    if (opts.tabs.length === 0) {
+      console.log(`FormioEditorComponent: 'options.tabs' must be a non empty array`);
       opts.tabs = clone(defaultOptions.tabs);
     }
     opts.tab = !opts.tab || !opts.tabs.includes(opts.tab) ? opts.tabs[0] : opts.tab;
