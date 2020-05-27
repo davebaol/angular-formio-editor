@@ -2,9 +2,18 @@ import { Component, OnInit, ViewChild, ElementRef, Input, Output, EventEmitter, 
 import * as editor from 'jsoneditor';
 import {
   JsonEditorOptions, JsonEditorMode, JsonEditorSelection, JsonEditorValidationError,
-  JsonEditorTextPosition, JsonEditorTextSelection, JsonEditorSerializableNode
+  JsonEditorTextPosition, JsonEditorTextSelection, JsonEditorSerializableNode, jsonEditorNativeOptions
 } from './json-editor-shapes';
 
+let unsupportedOptions = editor.VALID_OPTIONS.filter(p => !jsonEditorNativeOptions.includes(p));
+if (unsupportedOptions.length > 0) {
+  console.log('You\'re probably using a recent version of jsoneditor and the following options are not yet defined in JsonEditorNativeOptions', unsupportedOptions);
+  console.log('However, you can still pass these options using TypeScript type assertion \'as JsonEditorOptions\'');
+}
+unsupportedOptions = jsonEditorNativeOptions.filter(p => !editor.VALID_OPTIONS.includes(p));
+if (unsupportedOptions.length > 0) {
+  console.log('You\'re probably using an old version of jsoneditor that doesn\'t support the following options', unsupportedOptions);
+}
 
 @Component({
   // tslint:disable-next-line:component-selector

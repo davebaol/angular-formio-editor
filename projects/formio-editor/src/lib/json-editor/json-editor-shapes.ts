@@ -97,12 +97,15 @@ export interface JsonEditorQueryOptions {
   };
 }
 
+interface JsonEditorAdditionalOptions {
+  expandAll?: boolean;
+}
+
 /**
- * Interface for the options of jsoneditor. For the documentation see
+ * Interface for the native options of jsoneditor. For the documentation see
  * https://github.com/josdejong/jsoneditor/blob/master/docs/api.md#configuration-options
  */
-export interface JsonEditorOptions {
-
+interface JsonEditorNativeOptions {
   ace?: object;
   ajv?: object;
   onChange?: () => void;
@@ -124,7 +127,6 @@ export interface JsonEditorOptions {
   enableSort?: boolean;
   enableTransform?: boolean;
   escapeUnicode?: boolean;
-  expandAll?: boolean;  // additional option not supported by the original jsoneditor
   history?: boolean;
   indentation?: number;
   limitDragging?: boolean;
@@ -155,10 +157,20 @@ export interface JsonEditorOptions {
   queryDescription?: string;
 }
 
-export const jsonEditorValidOptions: string[] = (() => {
-  // See https://stackoverflow.com/a/54308812
-  type KeysEnum<T> = { [P in keyof Required<T>]: true };
-  const kObj: KeysEnum<JsonEditorOptions> = {
+export type JsonEditorOptions = JsonEditorNativeOptions & JsonEditorAdditionalOptions;
+
+// See https://stackoverflow.com/a/54308812
+type KeysEnum<T> = { [P in keyof Required<T>]: true };
+
+export const jsonEditorAdditionalOptions: string[] = (() => {
+  const kObj: KeysEnum<JsonEditorAdditionalOptions> = {
+    expandAll: true,
+  };
+  return Object.keys(kObj);
+})();
+
+export const jsonEditorNativeOptions: string[] = (() => {
+  const kObj: KeysEnum<JsonEditorNativeOptions> = {
     ace: true,
     ajv: true,
     onChange: true,
@@ -180,7 +192,6 @@ export const jsonEditorValidOptions: string[] = (() => {
     enableSort: true,
     enableTransform: true,
     escapeUnicode: true,
-    expandAll: true,
     history: true,
     indentation: true,
     limitDragging: true,
