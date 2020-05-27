@@ -6,8 +6,9 @@ export interface FormioEditorBuilderOptions {
   hideDisplaySelect?: boolean;
 }
 
-export interface FormioEditorJsonOptions extends JsonEditorOptions {
+export interface FormioEditorJsonOptions {
   changePanelLocations?: ('top' | 'bottom')[];
+  editor?: JsonEditorOptions;
 }
 
 export interface FormioEditorOptions {

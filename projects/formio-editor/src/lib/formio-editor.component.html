@@ -65,7 +65,7 @@
           Cannot apply changes. Json is not well-formed.
         </alert>
       </div>
-      <json-editor #jsoneditor [options]="jsonEditorOptions" (dataChange)="onJsonEditorChange($event)" (dataError)="onJsonEditorError($event)"></json-editor>
+      <json-editor #jsoneditor [options]="options.json.editor" (dataChange)="onJsonEditorChange($event)" (dataError)="onJsonEditorError($event)"></json-editor>
       <div class="row mx-0" *ngIf="options.json.changePanelLocations.includes('bottom')">
         <div class="m-2 p-0">
           <button type="button" class="btn btn-success mr-4" (click)="onJsonEditorApply(saveModal)"

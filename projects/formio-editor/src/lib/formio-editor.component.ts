@@ -1,36 +1,37 @@
 import { AfterViewInit, Component, OnInit, ViewChild, Input, TemplateRef, OnDestroy} from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
-import { FormioEditorOptions, FormioEditorTab, FormioEditorBuilderOptions, FormioEditorJsonOptions } from './formio-editor-options';
+import { FormioEditorOptions, FormioEditorTab } from './formio-editor-options';
 import { JsonEditorComponent } from './json-editor/json-editor.component';
-import { JsonEditorValidationError, JsonEditorOptions, jsonEditorValidOptions } from './json-editor/json-editor-shapes';
+import { JsonEditorValidationError, JsonEditorOptions } from './json-editor/json-editor-shapes';
+import { merge, clone } from './clone-utils';
 import { loose as formioJsonSchema } from './formio-json-schema';
 
-const defaultBuilderOptions: FormioEditorBuilderOptions = {
-  hideDisplaySelect: false
+const defaultOptions: FormioEditorOptions = {
+  tabs: ['builder', 'json', 'renderer'],
+  tab: 'builder',
+  builder: {
+    hideDisplaySelect: false
+  },
+  json: {
+    changePanelLocations: ['top', 'bottom'],
+    editor: {
+      enableSort: true,
+      enableTransform: true,
+      escapeUnicode: false,
+      expandAll: false,
+      history: true,
+      indentation: 2,
+      limitDragging: false,
+      mode: 'view', // set default mode
+      modes: ['code', 'tree', 'view'], // set allowed modes
+      schema: formioJsonSchema.schema,
+      schemaRefs: formioJsonSchema.schemaRefs,
+      search: true,
+      sortObjectKeys: false
+    }
+  }
 };
-
-const defaultJsonOptions: FormioEditorJsonOptions = {
-  changePanelLocations: ['top', 'bottom'],
-
-  //
-  // JsonEditorOptions
-  //
-  enableSort: true,
-  enableTransform: true,
-  escapeUnicode: false,
-  expandAll: false,
-  history: true,
-  indentation: 2,
-  limitDragging: false,
-  mode: 'view', // set default mode
-  modes: ['code', 'tree', 'view'], // set allowed modes
-  schema: formioJsonSchema.schema,
-  schemaRefs: formioJsonSchema.schemaRefs,
-  search: true,
-  sortObjectKeys: false
-};
-// Object.freeze(defaultJsonOptions);
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -49,8 +50,6 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   private _options: FormioEditorOptions;
   get options() { return this._options; }
   @Input() set options(options: FormioEditorOptions) { this.setOptions(options); }
-
-  jsonEditorOptions: JsonEditorOptions;
 
   jsonEditorChanged = false;
   @ViewChild('jsoneditor', {static: true}) jsonEditor: JsonEditorComponent;
@@ -102,22 +101,19 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   }
 
   private setOptions(options: FormioEditorOptions = {}) {
-    const opts: FormioEditorOptions = {};
-    opts.tabs = !options.tabs || options.tabs.length === 0 ? ['builder', 'json', 'renderer'] : options.tabs;
-    opts.tab = !options.tab || !options.tabs.includes(options.tab) ? opts.tabs[0] : options.tab;
-    opts.builder = Object.assign({}, defaultBuilderOptions, options.builder);
-    opts.json = Object.assign({}, defaultJsonOptions, options.json);
+    const opts: FormioEditorOptions = merge(defaultOptions, options);
+
+    // Check options consistency
+    if (!Array.isArray(opts.tabs) || opts.tabs.length === 0) {
+      opts.tabs = clone(defaultOptions.tabs);
+    }
+    opts.tab = !opts.tab || !opts.tabs.includes(opts.tab) ? opts.tabs[0] : opts.tab;
+    const cpl = opts.json.changePanelLocations;
+    if (!Array.isArray(cpl) || !cpl.some(p => defaultOptions.json.changePanelLocations.includes(p))) {
+      opts.json.changePanelLocations = clone(defaultOptions.json.changePanelLocations);
+    }
 
     this._options = opts;
-
-    // Extract all and only the options for the json editor to avoid misleading
-    // logging message "Unknown 'xxx' option. This option will be ignored"
-    this.jsonEditorOptions = jsonEditorValidOptions.reduce((result, k) => {
-      if (k in opts.json) {
-        result[k] = opts.json[k];
-      }
-      return result;
-    }, {});
   }
 
   //
