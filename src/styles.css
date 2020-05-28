@@ -1,7 +1,11 @@
 @import "./styles/bootstrap/css/bootstrap.min.css";
 @import '~font-awesome/css/font-awesome.min.css';
 @import "~jsoneditor/dist/jsoneditor.min.css";
+/* 
+  In your app the next import should become
 @import "~@davebaol/formio-editor/styles.css";
+ */
+@import "../dist/formio-editor/styles.css";
 
 .center {
   margin: auto;
