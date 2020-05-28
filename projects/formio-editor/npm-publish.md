@@ -12,9 +12,13 @@ To publish a new npm package follow the steps below:
   ```bash
   npm run build-all-prod
   ```
-- Test the package, possibly in a new angular app
+- Test the package possibly by installing it in a new angular app
   ```bash
   npm install dist/formio-editor
+  ```
+- Unfortunately, before publishing the package we have to rebuild the library. This is needed because for some reason the tests and the build of the app make `dist/formio-editor` dirt with ivy files that npm doesn't like for publishing.
+  ```bash
+  npm run formio-editor:build-prod
   ```
 - Publish the package
   ```bash
