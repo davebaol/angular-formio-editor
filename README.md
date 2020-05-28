@@ -24,7 +24,7 @@ In case the live demo goes down for whatever reason, the component is supposed t
 
 To install this library with npm, run below command:
 ```
-$ npm install --save angular-formio jsoneditor ngx-bootstrap @angular/elements @davebaol/formio-editor
+$ npm install --save angular-formio jsoneditor ngx-bootstrap @angular/elements @davebaol/angular-formio-editor
 ```
 
 Example:
@@ -82,12 +82,17 @@ export class AppComponent {
       components: []
     };
     this.options = {
+      tabs: ['builder', 'json', 'renderer'], // set allowed tabs
+      tab: 'builder', // set default tab
       builder: {
         hideDisplaySelect: true
       },
       json: {
-        modes = ['code', 'tree', 'view']; // set allowed modes
-        mode = 'view'; // set default mode
+        changePanelLocations: ['top', 'bottom'],
+        editor: {
+          modes: ['code', 'tree', 'view'], // set allowed modes
+          mode: 'view' // set default mode
+        }
       }
     };
   }
