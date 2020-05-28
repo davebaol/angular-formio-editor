@@ -1,4 +1,4 @@
-To publish a new npm package follow the steps  below:
+To publish a new npm package follow the steps below:
 - Update version inside `projects/formio-editor/package.json`, for instance from `0.0.0` to `0.1.0`
   ```json
   {
