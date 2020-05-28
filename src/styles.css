@@ -3,7 +3,7 @@
 @import "~jsoneditor/dist/jsoneditor.min.css";
 /* 
   In your app the next import should become
-@import "~@davebaol/formio-editor/styles.css";
+@import "~@davebaol/angular-formio-editor/styles.css";
  */
 @import "../dist/formio-editor/styles.css";
 

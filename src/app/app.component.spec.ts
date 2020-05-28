@@ -2,7 +2,7 @@ import { TestBed, async } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormioModule } from 'angular-formio';
-import { FormioEditorModule } from '@davebaol/formio-editor';
+import { FormioEditorModule } from '@davebaol/angular-formio-editor';
 import { FormsModule } from '@angular/forms';
 
 describe('AppComponent', () => {

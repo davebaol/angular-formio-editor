@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormioModule, FormioAppConfig } from 'angular-formio';
-import { FormioEditorModule } from '@davebaol/formio-editor';
+import { FormioEditorModule } from '@davebaol/angular-formio-editor';
 import { AppComponent } from './app.component';
 import { AppConfig } from '../formio-config';
 

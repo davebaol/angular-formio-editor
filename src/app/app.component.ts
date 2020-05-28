@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormioEditorOptions } from '@davebaol/formio-editor';
+import { FormioEditorOptions } from '@davebaol/angular-formio-editor';
 import { Subject } from 'rxjs';
 import form from './initial-form.json';
 
