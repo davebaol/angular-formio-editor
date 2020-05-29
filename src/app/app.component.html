@@ -7,7 +7,7 @@
         <label for="display-as-checkbox" class="mx-2">Use 'Display as' inside the builder: </label>
         <input type="checkbox" id="display-as-checkbox" [checked]="!options.builder.hideDisplaySelect" (change)="options.builder.hideDisplaySelect = !options.builder.hideDisplaySelect"/>
       </div>
-      <div class="my-1" *ngIf="options?.builder?.hideDisplaySelect === true">
+      <div class="my-1" *ngIf="options.builder.hideDisplaySelect">
         <label for="form-display-select-outer" class="mx-2">Display as: </label>
         <select id="form-display-select-outer" class="form-control my-2" style="display: inline-block; width: 150px;"
                 [(ngModel)]="form.display" (ngModelChange)="resetFormioEditor$.next()">
