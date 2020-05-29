@@ -106,7 +106,16 @@ export class AppComponent {
 @import "~@davebaol/angular-formio-editor/styles.css";
 ```
 Note that this library only needs the `.css` from bootstrap, not the `.js`, since `ngx-bootstrap` is used internally.
-So you don't have necessarily to add bootstrap and its peer dependency jQuery. 
+So you don't have necessarily to add bootstrap and its peer dependency jQuery.
+
+## Troubleshooting
+
+- If during `ng build` execution you encounter this error
+  ```
+  Generating ES5 bundles for differential loading...
+  An unhandled exception occurred: Call retries were exceeded
+  ```
+  make sure you're using node 12+. If this does not work for you then try the other possible solutions mentioned [here](https://github.com/angular/angular-cli/issues/15493).
 
 ## License
 
