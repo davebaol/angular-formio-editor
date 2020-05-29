@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormioModule } from 'angular-formio';
 import { FormioEditorModule } from '@davebaol/angular-formio-editor';
 import { FormsModule } from '@angular/forms';
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -15,7 +16,8 @@ describe('AppComponent', () => {
         BrowserModule,
         FormioModule,
         FormioEditorModule,
-        FormsModule
+        FormsModule,
+        ButtonsModule.forRoot()
       ]
     }).compileComponents();
   }));

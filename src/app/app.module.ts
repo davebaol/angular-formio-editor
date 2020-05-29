@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormioModule, FormioAppConfig } from 'angular-formio';
 import { FormioEditorModule } from '@davebaol/angular-formio-editor';
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { AppComponent } from './app.component';
 import { AppConfig } from '../formio-config';
 
@@ -16,7 +17,8 @@ import { AppConfig } from '../formio-config';
     FormioModule,
     FormioEditorModule,
     FormsModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    ButtonsModule.forRoot()
   ],
   providers: [
     { provide: FormioAppConfig, useValue: AppConfig }

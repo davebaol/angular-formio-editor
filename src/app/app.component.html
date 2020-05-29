@@ -4,8 +4,11 @@
     <p class="font-weight-bold text-center mb-4">Welcome to the demo of the Angular component &lt;formio-editor&gt; the one in the blue box.</p>
     <div class="col-12 col-lg-10 center">
       <div class="row mx-0 align-items-baseline">
-        <label for="display-as-checkbox" class="mx-2">Use 'Display as' inside the builder: </label>
-        <input type="checkbox" id="display-as-checkbox" [checked]="!options.builder.hideDisplaySelect" (change)="options.builder.hideDisplaySelect = !options.builder.hideDisplaySelect"/>
+        <label class="mx-2">Re-create component with 'Display as' embedded in the builder:</label>
+        <div class="btn-group align-items-baseline" btnRadioGroup [(ngModel)]="options.builder.hideDisplaySelect" (ngModelChange)="recreateFormioEditor()">
+          <label class="btn btn-primary" [btnRadio]="false" tabindex="0" role="button">Yes</label>
+          <label class="btn btn-primary" [btnRadio]="true" tabindex="0" role="button">No</label>
+        </div>
       </div>
       <div class="my-1" *ngIf="options.builder.hideDisplaySelect">
         <label for="form-display-select-outer" class="mx-2">Display as: </label>
@@ -16,7 +19,7 @@
         </select>
       </div>
       <div class="mx-2 p-2 border border-primary">
-        <formio-editor [form]="form" [options]="options" [reset]="resetFormioEditor$"></formio-editor>
+        <formio-editor *ngIf="alive" [form]="form" [options]="options" [reset]="resetFormioEditor$"></formio-editor>
       </div>
   </div>
   </div>
