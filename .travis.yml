@@ -22,6 +22,6 @@ deploy:
   provider: pages
   skip_cleanup: true
   github_token: $GITHUB_TOKEN
-  local_dir: dist/AngularFormioEditor
+  local_dir: dist/formio-editor-demo
   on:
     branch: master
