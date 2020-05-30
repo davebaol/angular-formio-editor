@@ -50,7 +50,7 @@ export class JsonEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  private createEditor(options: JsonEditorOptions) {
+  private createEditor(options: JsonEditorOptions, mode?: JsonEditorMode) {
     // Store original options passed in
     this._options = options;
 
@@ -77,7 +77,11 @@ export class JsonEditorComponent implements OnInit, OnDestroy {
     }
     this.editor = new JsonEditor(this.jsonEditorContainer.nativeElement, editorOptions, {});
 
-    if (additionalOptions.expandAll) {
+    if (mode) {
+      this.setMode(mode);
+    }
+
+    if (additionalOptions.expandAll && ['form', 'tree', 'view'].includes(this.getMode())) {
       this.editor.expandAll();
     }
   }
@@ -100,10 +104,9 @@ export class JsonEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  public resetMode() {
-    const mode = this.getMode();
-    this.setMode(mode === 'view' ? 'text' : 'view');
-    this.setMode(mode);
+  public reset(preserveMode = false) {
+    const mode = preserveMode ? this.getMode() : undefined;
+    this.createEditor(this.options, mode);
   }
 
   public isWellFormedJson() {

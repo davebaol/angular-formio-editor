@@ -195,14 +195,14 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
     this.refreshJsonEditor();
   }
 
-  refreshJsonEditor(resetMode: boolean = false) {
+  refreshJsonEditor(forceReset: boolean = false) {
     console.log('refreshJsonEditor');
+    if (forceReset) {
+      this.jsonEditor.reset(true);
+    }
     // Here we use update instead of set to preserve the editor status
     this.jsonEditor.update(this.form);
     this.jsonEditorChanged = false;
-    if (resetMode) {
-      this.jsonEditor.resetMode();
-    }
   }
 
   //
