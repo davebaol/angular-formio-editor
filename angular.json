@@ -5,11 +5,7 @@
   "projects": {
     "formio-editor-demo": {
       "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "styleext": "css"
-        }
-      },
+      "schematics": {},
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
