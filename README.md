@@ -108,7 +108,7 @@ export class AppComponent {
 Note that this library only needs the `.css` from bootstrap, not the `.js`, since `ngx-bootstrap` is used internally.
 So you don't have necessarily to add bootstrap and its peer dependency jQuery.
 
-## Troubleshooting
+:four: Troubleshooting
 
 - If during `ng build` execution you encounter this error
   ```
@@ -116,6 +116,51 @@ So you don't have necessarily to add bootstrap and its peer dependency jQuery.
   An unhandled exception occurred: Call retries were exceeded
   ```
   make sure you're using node 12+. If this does not work for you then try the other possible solutions mentioned [here](https://github.com/angular/angular-cli/issues/15493).
+
+## Documentation
+
+The component supports the input arguments `form`, `option` and `reset` described below.
+
+### form
+This is a regular form defined by the form.io framework. The component modifies this argument in place. 
+
+### options
+The options to configure the component are described below. Be aware that options are only intended as a component setup at creation-time.
+```javascript
+{
+  // The allowed tabs to show inside the component.
+  // Defaults to ['builder', 'json', 'renderer'] 
+  tabs: ['builder', 'json', 'renderer'],
+
+  // The tab active at component startup. Defaults to 'builder' 
+  tab: 'builder',
+  
+  // Builder tab options 
+  builder: {
+    // Whether to hide or not the embedded select to change the form display 
+    hideDisplaySelect: false
+  },
+
+  // Json tab options 
+  json: {
+    // The locations relative to the json editor where to show the panel
+    // for applying json changes to the form. Defaults to ['top', 'bottom']
+    changePanelLocations: ['top', 'bottom'],
+
+    // Json editor options 
+    editor: {
+      // Whether to expand or not all nodes in tree mode. This is
+      // an additional option not supported by the original jsoneditor.
+      expandAll: false,
+
+      // Other options supported by the original jsoneditor.
+      // See jsoneditor API documentation at the link below
+      // https://github.com/josdejong/jsoneditor/blob/master/docs/api.md#configuration-options
+      ...
+    }
+  }
+}
+```
 
 ## License
 

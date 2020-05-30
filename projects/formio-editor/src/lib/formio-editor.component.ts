@@ -3,7 +3,7 @@ import { Observable, Subscription } from 'rxjs';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { FormioEditorOptions, FormioEditorTab } from './formio-editor-options';
 import { JsonEditorComponent } from './json-editor/json-editor.component';
-import { JsonEditorValidationError, JsonEditorOptions } from './json-editor/json-editor-shapes';
+import { JsonEditorValidationError } from './json-editor/json-editor-shapes';
 import { merge, clone } from './clone-utils';
 import { loose as formioJsonSchema } from './formio-json-schema';
 
