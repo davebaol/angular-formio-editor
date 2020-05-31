@@ -34,7 +34,9 @@ $ npm install --save angular-formio jsoneditor ngx-bootstrap @angular/elements @
 ```
 Yes, you have to install 5 packages!!! :scream:
 
-See the peer dependencies graph below to know why. :wink:
+<details>
+  <summary>Open this spoiler to see the peer dependencies graph. :wink:</summary>
+  
 <p align="center">
   <img alt="Peer dependencies graph" src="https://user-images.githubusercontent.com/2366334/83361282-eb312380-a387-11ea-9c40-252cac64f846.png">
 </p>
@@ -49,6 +51,9 @@ graph TD
   angular-formio-.->|has peer dependency|angular-elements("@angular/elements")
 ```
 -->
+
+</details>
+
 
 ## Usage
 
