@@ -1,5 +1,8 @@
 
-export type JsonEditorMode = 'code' | 'form' | 'text' | 'tree' | 'view' | 'preview';
+export type JsonEditorMode = 'code' | 'form' | 'preview' | 'text' | 'tree' | 'view';
+
+export const JSON_EDITOR_TREE_MODES: readonly JsonEditorMode[] = Object.freeze(['code', 'preview', 'text']);
+export const JSON_EDITOR_TEXT_MODES: readonly JsonEditorMode[] = Object.freeze(['form', 'tree', 'view']);
 
 export type JsonEditorNodePath = (string | number)[];
 
@@ -162,64 +165,62 @@ export type JsonEditorOptions = JsonEditorNativeOptions & JsonEditorAdditionalOp
 // See https://stackoverflow.com/a/54308812
 type KeysEnum<T> = { [P in keyof Required<T>]: true };
 
-export const jsonEditorAdditionalOptions: string[] = (() => {
-  const kObj: KeysEnum<JsonEditorAdditionalOptions> = {
-    expandAll: true,
-  };
-  return Object.keys(kObj);
-})();
+function getKeys<T>(kObj: KeysEnum<T>) {
+  return Object.freeze(Object.keys(kObj));
+}
 
-export const jsonEditorNativeOptions: string[] = (() => {
-  const kObj: KeysEnum<JsonEditorNativeOptions> = {
-    ace: true,
-    ajv: true,
-    onChange: true,
-    onChangeJSON: true,
-    onChangeText: true,
-    onClassName: true,
-    onEditable: true,
-    onError: true,
-    onModeChange: true,
-    onNodeName: true,
-    onValidate: true,
-    onValidationError: true,
-    onCreateMenu: true,
-    onSelectionChange: true,
-    onTextSelectionChange: true,
-    onEvent: true,
-    onFocus: true,
-    onBlur: true,
-    enableSort: true,
-    enableTransform: true,
-    escapeUnicode: true,
-    history: true,
-    indentation: true,
-    limitDragging: true,
-    mode: true,
-    modes: true,
-    name: true,
-    schema: true,
-    schemaRefs: true,
-    search: true,
-    sortObjectKeys: true,
-    templates: true,
-    theme: true,
-    language: true,
-    languages: true,
-    autocomplete: true,
-    mainMenuBar: true,
-    navigationBar: true,
-    statusBar: true,
-    colorPicker: true,
-    onColorPicker: true,
-    timestampTag: true,
-    timestampFormat: true,
-    modalAnchor: true,
-    popupAnchor: true,
-    maxVisibleChilds: true,
-    createQuery: true,
-    executeQuery: true,
-    queryDescription: true
-  };
-  return Object.keys(kObj);
-})();
+export const JSON_EDITOR_ADDITIONAL_OPTIONS: readonly string[] = getKeys<JsonEditorAdditionalOptions>({
+  expandAll: true
+});
+
+export const JSON_EDITOR_NATIVE_OPTIONS: readonly string[] = getKeys<JsonEditorNativeOptions>({
+  ace: true,
+  ajv: true,
+  onChange: true,
+  onChangeJSON: true,
+  onChangeText: true,
+  onClassName: true,
+  onEditable: true,
+  onError: true,
+  onModeChange: true,
+  onNodeName: true,
+  onValidate: true,
+  onValidationError: true,
+  onCreateMenu: true,
+  onSelectionChange: true,
+  onTextSelectionChange: true,
+  onEvent: true,
+  onFocus: true,
+  onBlur: true,
+  enableSort: true,
+  enableTransform: true,
+  escapeUnicode: true,
+  history: true,
+  indentation: true,
+  limitDragging: true,
+  mode: true,
+  modes: true,
+  name: true,
+  schema: true,
+  schemaRefs: true,
+  search: true,
+  sortObjectKeys: true,
+  templates: true,
+  theme: true,
+  language: true,
+  languages: true,
+  autocomplete: true,
+  mainMenuBar: true,
+  navigationBar: true,
+  statusBar: true,
+  colorPicker: true,
+  onColorPicker: true,
+  timestampTag: true,
+  timestampFormat: true,
+  modalAnchor: true,
+  popupAnchor: true,
+  maxVisibleChilds: true,
+  createQuery: true,
+  executeQuery: true,
+  queryDescription: true
+});

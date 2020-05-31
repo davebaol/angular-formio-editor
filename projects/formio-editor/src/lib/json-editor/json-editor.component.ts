@@ -2,16 +2,17 @@ import { Component, OnInit, ViewChild, ElementRef, Input, Output, EventEmitter, 
 import JsonEditor from 'jsoneditor';
 import {
   JsonEditorOptions, JsonEditorMode, JsonEditorSelection, JsonEditorValidationError,
-  JsonEditorTextPosition, JsonEditorTextSelection, JsonEditorSerializableNode, jsonEditorNativeOptions, jsonEditorAdditionalOptions
+  JsonEditorTextPosition, JsonEditorTextSelection, JsonEditorSerializableNode,
+  JSON_EDITOR_NATIVE_OPTIONS, JSON_EDITOR_ADDITIONAL_OPTIONS, JSON_EDITOR_TREE_MODES
 } from './json-editor-shapes';
 
 // Check unsupported options
-let unsupportedOptions = JsonEditor.VALID_OPTIONS.filter(p => !jsonEditorNativeOptions.includes(p));
+let unsupportedOptions = JsonEditor.VALID_OPTIONS.filter(p => !JSON_EDITOR_NATIVE_OPTIONS.includes(p));
 if (unsupportedOptions.length > 0) {
   console.log('You\'re probably using a recent version of jsoneditor and the following options are not yet defined in JsonEditorNativeOptions', unsupportedOptions);
   console.log('However, you can still pass these options using TypeScript type assertion \'as JsonEditorOptions\'');
 }
-unsupportedOptions = jsonEditorNativeOptions.filter(p => !JsonEditor.VALID_OPTIONS.includes(p));
+unsupportedOptions = JSON_EDITOR_NATIVE_OPTIONS.filter(p => !JsonEditor.VALID_OPTIONS.includes(p));
 if (unsupportedOptions.length > 0) {
   console.log('You\'re probably using an old version of jsoneditor that doesn\'t support the following options', unsupportedOptions);
 }
@@ -62,7 +63,7 @@ export class JsonEditorComponent implements OnInit, OnDestroy {
     const editorOptions = Object.assign({}, options, patchedOptions);
 
     // Extract additional options not supported by the original jsoneditor
-    const additionalOptions: JsonEditorOptions = jsonEditorAdditionalOptions.reduce((opts, k) => {
+    const additionalOptions: JsonEditorOptions = JSON_EDITOR_ADDITIONAL_OPTIONS.reduce((opts, k) => {
       opts[k] = editorOptions[k];
       delete editorOptions[k];
       return opts;
@@ -81,7 +82,7 @@ export class JsonEditorComponent implements OnInit, OnDestroy {
       this.setMode(mode);
     }
 
-    if (additionalOptions.expandAll && ['form', 'tree', 'view'].includes(this.getMode())) {
+    if (additionalOptions.expandAll && JSON_EDITOR_TREE_MODES.includes(this.getMode())) {
       this.editor.expandAll();
     }
   }
