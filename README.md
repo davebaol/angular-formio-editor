@@ -6,7 +6,7 @@ This Angular component provides [Form.io](https://www.form.io/) builder and rend
 
 It works with latest Angular 9.
 
-## Try the [Live Demo](https://davebaol.github.io/angular-formio-editor/)
+## Try the Live Demos: [Demo Dev](https://davebaol.github.io/angular-formio-editor/) and [Demo Stable](https://davebaol.github.io/angular-formio-editor-demo/)
 
 In case the live demo goes down for whatever reason, the component is supposed to look somewhat like this (click any image to enlarge it):
 <table>
