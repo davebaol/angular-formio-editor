@@ -6,6 +6,12 @@ This Angular component provides [Form.io](https://www.form.io/) builder and rend
 
 It works with latest Angular 9.
 
+Example:
+
+```html
+<formio-editor [form]="form" [options]="options"></formio-editor>
+```
+
 ## Try the Live Demos: [Demo Dev](https://davebaol.github.io/angular-formio-editor/) and [Demo Stable](https://davebaol.github.io/angular-formio-editor-demo/)
 
 In case the live demo goes down for whatever reason, the component is supposed to look somewhat like this (click any image to enlarge it):
@@ -26,12 +32,23 @@ To install this library with npm, run below command:
 ```
 $ npm install --save angular-formio jsoneditor ngx-bootstrap @angular/elements @davebaol/angular-formio-editor
 ```
+Yes, you have to install 5 packages!!! :scream:
 
-Example:
-
-```html
-<formio-editor [form]="form" [options]="options"></formio-editor>
+See the peer dependencies graph below to know why. :wink:
+<p align="center">
+  <img alt="Peer dependencies graph" src="https://user-images.githubusercontent.com/2366334/83361282-eb312380-a387-11ea-9c40-252cac64f846.png">
+</p>
+<!--
+```mermaid
+graph TD
+  davebaol-angular-formio-editor("@davebaol/angular-formio-editor")
+  davebaol-angular-formio-editor-.->|has peer dependency|jsoneditor
+  davebaol-angular-formio-editor-.->|has peer dependency|angular-formio
+  davebaol-angular-formio-editor-.->|has peer dependency|ngx-bootstrap
+  angular-formio-.->|has peer dependency|ngx-bootstrap
+  angular-formio-.->|has peer dependency|angular-elements("@angular/elements")
 ```
+-->
 
 ## Usage
 
