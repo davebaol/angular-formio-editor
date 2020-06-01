@@ -12,8 +12,8 @@
     "test-headless": "ng test --watch=false --browsers=ChromeHeadless",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "formio-editor:build": "ng build formio-editor && shx cp README.md LICENSE dist/formio-editor",
-    "formio-editor:build-prod": "ng build formio-editor --prod && shx cp README.md LICENSE dist/formio-editor"
+    "formio-editor:build": "ng build formio-editor && shx cp README.md HISTORY.md LICENSE dist/formio-editor",
+    "formio-editor:build-prod": "ng build formio-editor --prod && shx cp README.md HISTORY.md LICENSE dist/formio-editor"
   },
   "private": true,
   "dependencies": {
