@@ -3,7 +3,7 @@
 https://github.com/davebaol/angular-formio-editor
 
 
-## 2020-MM-DD, version 0.9.3-snapshot
+## 2020-06-01, version 0.9.3
 
 - Fix json editor refresh in view mode
 

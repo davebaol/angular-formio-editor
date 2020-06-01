@@ -16,7 +16,7 @@ To publish a new npm package follow the steps below:
   ```bash
   npm install dist/formio-editor
   ```
-- Unfortunately, before publishing the package we have to rebuild the library. This is needed because for some reason the tests and the build of the app make `dist/formio-editor` dirt with ivy files that npm doesn't like for publishing.
+- Unfortunately, before publishing the package we have to rebuild the library. This is needed because for some reason the tests and the build of the app dirt `dist/formio-editor` with ivy files that npm doesn't like for publishing.
   ```bash
   npm run formio-editor:build-prod
   ```

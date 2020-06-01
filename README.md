@@ -147,59 +147,50 @@ So you don't have necessarily to add bootstrap and its peer dependency jQuery.
 
 ## Documentation
 
-The component supports the input arguments `form`, `option` and `reset` described inside the spoilers below.
+The component supports the input arguments `form`, `options` and `reset` described below:
 
-<details>
-  <summary><b>form</b></summary>
-    
+- **form**<br/>
 This is a regular form defined by the form.io framework. The component modifies this argument in place. 
+- **options**<br/>
+The options to configure the component are described into the spoiler below. Be aware that options are only intended as a component setup at creation-time. <details><summary><b>spoiler</b></summary>
+  ```javascript
+  {
+    // The allowed tabs to show inside the component.
+    // Defaults to ['builder', 'json', 'renderer'] 
+    tabs: ['builder', 'json', 'renderer'],
 
-</details>
+    // The tab active at component startup. Defaults to 'builder' 
+    tab: 'builder',
+    
+    // Builder tab options 
+    builder: {
+      // Whether to hide or not the embedded select to change the form display 
+      hideDisplaySelect: false
+    },
 
-<details>
-  <summary><b>options</b></summary>
+    // Json tab options 
+    json: {
+      // The locations relative to the json editor where to show the panel
+      // for applying json changes to the form. Defaults to ['top', 'bottom']
+      changePanelLocations: ['top', 'bottom'],
 
-The options to configure the component are described below. Be aware that options are only intended as a component setup at creation-time.
-```javascript
-{
-  // The allowed tabs to show inside the component.
-  // Defaults to ['builder', 'json', 'renderer'] 
-  tabs: ['builder', 'json', 'renderer'],
+      // Json editor options 
+      editor: {
+        // Whether to expand or not all nodes in tree mode. This is
+        // an additional option not supported by the original jsoneditor.
+        expandAll: false,
 
-  // The tab active at component startup. Defaults to 'builder' 
-  tab: 'builder',
-  
-  // Builder tab options 
-  builder: {
-    // Whether to hide or not the embedded select to change the form display 
-    hideDisplaySelect: false
-  },
-
-  // Json tab options 
-  json: {
-    // The locations relative to the json editor where to show the panel
-    // for applying json changes to the form. Defaults to ['top', 'bottom']
-    changePanelLocations: ['top', 'bottom'],
-
-    // Json editor options 
-    editor: {
-      // Whether to expand or not all nodes in tree mode. This is
-      // an additional option not supported by the original jsoneditor.
-      expandAll: false,
-
-      // Other options supported by the original jsoneditor.
-      // See jsoneditor API documentation at the link below
-      // https://github.com/josdejong/jsoneditor/blob/master/docs/api.md#configuration-options
-      ...
+        // Other options supported by the original jsoneditor.
+        // See jsoneditor API documentation at the link below
+        // https://github.com/josdejong/jsoneditor/blob/master/docs/api.md#configuration-options
+        ...
+      }
     }
   }
-}
-```
-</details>
-<details>
-  <summary><b>refresh</b></summary>
-    
-TBD
+  ```
+  </details>
+- **reset**<br/>
+  An `Observable<void>` to reset the component. 
 
 </details>
 
