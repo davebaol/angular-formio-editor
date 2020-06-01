@@ -34,21 +34,27 @@ $ npm install --save angular-formio jsoneditor ngx-bootstrap @angular/elements @
 ```
 Yes, you have to install 5 packages!!! :scream:
 
+Having in mind the dependency graph can be useful for choosing the version of the various packages for your application. :wink:
 <details>
-  <summary>Open this spoiler to see the peer dependencies graph. :wink:</summary>
-  
+  <summary><b>Open this spoiler to see the peer dependency graph.</b></summary>
+    
 <p align="center">
-  <img alt="Peer dependencies graph" src="https://user-images.githubusercontent.com/2366334/83361282-eb312380-a387-11ea-9c40-252cac64f846.png">
+  <img alt="Peer dependencies graph" src="https://user-images.githubusercontent.com/2366334/83365783-0b260e80-a3ab-11ea-8197-e463625dfd15.png">
 </p>
 <!--
 ```mermaid
 graph TD
+  subgraph Legend
+   START[ ]-.->|has peer dependency|STOP[ ]
+   style START fill:#FFFFFF00, stroke:#FFFFFF00;
+   style STOP  fill:#FFFFFF00, stroke:#FFFFFF00;
+  end
   davebaol-angular-formio-editor("@davebaol/angular-formio-editor")
-  davebaol-angular-formio-editor-.->|has peer dependency|jsoneditor
-  davebaol-angular-formio-editor-.->|has peer dependency|angular-formio
-  davebaol-angular-formio-editor-.->|has peer dependency|ngx-bootstrap
-  angular-formio-.->|has peer dependency|ngx-bootstrap
-  angular-formio-.->|has peer dependency|angular-elements("@angular/elements")
+  davebaol-angular-formio-editor-.->jsoneditor
+  davebaol-angular-formio-editor-.->angular-formio
+  davebaol-angular-formio-editor-.->ngx-bootstrap
+  angular-formio-.->ngx-bootstrap
+  angular-formio-.->angular-elements("@angular/elements")
 ```
 -->
 
@@ -141,12 +147,18 @@ So you don't have necessarily to add bootstrap and its peer dependency jQuery.
 
 ## Documentation
 
-The component supports the input arguments `form`, `option` and `reset` described below.
+The component supports the input arguments `form`, `option` and `reset` described inside the spoilers below.
 
-### form
+<details>
+  <summary><b>form</b></summary>
+    
 This is a regular form defined by the form.io framework. The component modifies this argument in place. 
 
-### options
+</details>
+
+<details>
+  <summary><b>options</b></summary>
+
 The options to configure the component are described below. Be aware that options are only intended as a component setup at creation-time.
 ```javascript
 {
@@ -183,6 +195,13 @@ The options to configure the component are described below. Be aware that option
   }
 }
 ```
+</details>
+<details>
+  <summary><b>refresh</b></summary>
+    
+TBD
+
+</details>
 
 ## License
 
