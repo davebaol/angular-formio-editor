@@ -14,7 +14,6 @@ export class AppComponent {
   form: any;
   options: FormioEditorOptions;
   resetFormioEditor$ = new Subject<void>();
-  alive = true;
 
   constructor() {
     this.form = form;
@@ -23,12 +22,12 @@ export class AppComponent {
       builder: {
         hideDisplaySelect: false
       },
-      json: {}
+      json: {},
+      renderer: {
+        input: {
+          src: 'http://localhost:8383/api/v1/documents'
+        }
+      }
     };
-  }
-
-  recreateFormioEditor() {
-    this.alive = false;
-    setTimeout(() => this.alive = true);
   }
 }

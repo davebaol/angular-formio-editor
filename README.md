@@ -117,9 +117,11 @@ export class AppComponent {
       },
       json: {
         changePanelLocations: ['top', 'bottom'],
-        editor: {
-          modes: ['code', 'tree', 'view'], // set allowed modes
-          mode: 'view' // set default mode
+        input: {
+          options: {
+            modes: ['code', 'tree', 'view'], // set allowed modes
+            mode: 'view' // set default mode
+          }
         }
       }
     };
@@ -165,7 +167,12 @@ The options to configure the component are described into the spoiler below. Be 
     // Builder tab options 
     builder: {
       // Whether to hide or not the embedded select to change the form display 
-      hideDisplaySelect: false
+      hideDisplaySelect: false,
+
+      // Input and output arguments of the component <formio-builder>.
+      // Refer to the official documentation.
+      input: {},
+      output: {}
     },
 
     // Json tab options 
@@ -174,17 +181,30 @@ The options to configure the component are described into the spoiler below. Be 
       // for applying json changes to the form. Defaults to ['top', 'bottom']
       changePanelLocations: ['top', 'bottom'],
 
-      // Json editor options 
-      editor: {
-        // Whether to expand or not all nodes in tree mode. This is
-        // an additional option not supported by the original jsoneditor.
-        expandAll: false,
+      // Input arguments of the component <json-editor>.
+      input: {
+        options: {
+          // Whether to expand or not all nodes in tree mode. This is
+          // an additional option not supported by the original jsoneditor.
+          expandAll: false,
 
-        // Other options supported by the original jsoneditor.
-        // See jsoneditor API documentation at the link below
-        // https://github.com/josdejong/jsoneditor/blob/master/docs/api.md#configuration-options
-        ...
+          // Other options supported by the original jsoneditor.
+          // See jsoneditor API documentation at the link below
+          // https://github.com/josdejong/jsoneditor/blob/master/docs/api.md#configuration-options
+          ...
+        }
+      },
+      // Output arguments of the component <json-editor>.
+      output: {
+        dataChange: (event: any) => {}
+        dataError: (event: any) => {}
       }
+    },
+    renderer: {
+      // Input and output arguments of the component <formio>.
+      // Refer to the official documentation.
+      input: {},
+      output: {}
     }
   }
   ```

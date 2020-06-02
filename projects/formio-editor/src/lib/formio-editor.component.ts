@@ -3,34 +3,24 @@ import { Observable, Subscription } from 'rxjs';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { FormioEditorOptions, FormioEditorTab } from './formio-editor-options';
 import { JsonEditorComponent } from './json-editor/json-editor.component';
-import { JsonEditorValidationError } from './json-editor/json-editor-shapes';
-import { merge, clone } from './clone-utils';
+import { JsonEditorValidationError, JsonEditorOptions } from './json-editor/json-editor-shapes';
+import { merge } from './clone-utils';
 import { loose as formioJsonSchema } from './formio-json-schema';
 
-const defaultOptions: FormioEditorOptions = {
-  tabs: ['builder', 'json', 'renderer'],
-  tab: 'builder',
-  builder: {
-    hideDisplaySelect: false
-  },
-  json: {
-    changePanelLocations: ['top', 'bottom'],
-    editor: {
-      enableSort: true,
-      enableTransform: true,
-      escapeUnicode: false,
-      expandAll: false,
-      history: true,
-      indentation: 2,
-      limitDragging: false,
-      mode: 'view', // set default mode
-      modes: ['code', 'tree', 'view'], // set allowed modes
-      schema: formioJsonSchema.schema,
-      schemaRefs: formioJsonSchema.schemaRefs,
-      search: true,
-      sortObjectKeys: false
-    }
-  }
+const defaultJsonEditorOptions: JsonEditorOptions = {
+  enableSort: true,
+  enableTransform: true,
+  escapeUnicode: false,
+  expandAll: false,
+  history: true,
+  indentation: 2,
+  limitDragging: false,
+  mode: 'view', // set default mode
+  modes: ['code', 'tree', 'view'], // set allowed modes
+  schema: formioJsonSchema.schema,
+  schemaRefs: formioJsonSchema.schemaRefs,
+  search: true,
+  sortObjectKeys: false
 };
 
 @Component({
@@ -50,6 +40,7 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   private _options: FormioEditorOptions;
   get options() { return this._options; }
   @Input() set options(options: FormioEditorOptions) { this.setOptions(options); }
+  jsonEditorOptions: JsonEditorOptions;
 
   jsonEditorChanged = false;
   @ViewChild('jsoneditor', {static: true}) jsonEditor: JsonEditorComponent;
@@ -83,7 +74,8 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
       this.setOptions(); // Set default options
     }
 
-    this.activeTab = this.options.tab;
+    this.activeTab = this.options?.tab
+        || (Array.isArray(this.options?.tabs) && this.options.tabs.length > 0 ? this.options.tabs[0] : 'builder');
 
     if (this.reset) {
       this.resetSubscription = this.reset.subscribe(() => this.resetFormBuilder());
@@ -101,31 +93,8 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   }
 
   private setOptions(options: FormioEditorOptions = {}) {
-    const opts: FormioEditorOptions = merge(defaultOptions, options);
-
-    // Check options consistency
-    if (Array.isArray(opts.tabs)) {
-      opts.tabs = opts.tabs.filter(t => {
-        if (!defaultOptions.tabs.includes(t)) {
-          console.log(`FormioEditorComponent: unknown tab '${t}' in 'options.tabs'`);
-          return false;
-        }
-        return true;
-      });
-    } else {
-      opts.tabs = [];
-    }
-    if (opts.tabs.length === 0) {
-      console.log(`FormioEditorComponent: 'options.tabs' must be a non empty array`);
-      opts.tabs = clone(defaultOptions.tabs);
-    }
-    opts.tab = !opts.tab || !opts.tabs.includes(opts.tab) ? opts.tabs[0] : opts.tab;
-    const cpl = opts.json.changePanelLocations;
-    if (!Array.isArray(cpl) || !cpl.some(p => defaultOptions.json.changePanelLocations.includes(p))) {
-      opts.json.changePanelLocations = clone(defaultOptions.json.changePanelLocations);
-    }
-
-    this._options = opts;
+    this._options = options;
+    this.jsonEditorOptions = merge(defaultJsonEditorOptions, options?.json?.input?.options);
   }
 
   //

@@ -5,12 +5,12 @@
     <div class="col-12 col-lg-10 center">
       <div class="row mx-0 align-items-baseline">
         <label class="mx-2">Re-create component with 'Display as' embedded in the builder:</label>
-        <div class="btn-group align-items-baseline" btnRadioGroup [(ngModel)]="options.builder.hideDisplaySelect" (ngModelChange)="recreateFormioEditor()">
+        <div class="btn-group align-items-baseline" btnRadioGroup [(ngModel)]="options.builder.hideDisplaySelect">
           <label class="btn btn-primary" [btnRadio]="false" tabindex="0" role="button">Yes</label>
           <label class="btn btn-primary" [btnRadio]="true" tabindex="0" role="button">No</label>
         </div>
       </div>
-      <div class="my-1" *ngIf="options.builder.hideDisplaySelect">
+      <div class="my-1" *ngIf="options?.builder?.hideDisplaySelect">
         <label for="form-display-select-outer" class="mx-2">Display as: </label>
         <select id="form-display-select-outer" class="form-control my-2" style="display: inline-block; width: 150px;"
                 [(ngModel)]="form.display" (ngModelChange)="resetFormioEditor$.next()">
@@ -19,7 +19,7 @@
         </select>
       </div>
       <div class="mx-2 p-2 border border-primary">
-        <formio-editor *ngIf="alive" [form]="form" [options]="options" [reset]="resetFormioEditor$"></formio-editor>
+        <formio-editor [form]="form" [options]="options" [reset]="resetFormioEditor$"></formio-editor>
       </div>
   </div>
   </div>

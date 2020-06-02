@@ -17,20 +17,20 @@
   </div>
 </ng-template>
 <ul class="nav nav-tabs" id="myTab" role="tablist">
-  <li class="nav-item" *ngIf="options.tabs.includes('builder')">
+  <li class="nav-item" *ngIf="!options?.tabs || options.tabs?.includes('builder')">
     <a class="nav-link" [ngClass]="{'active':activeTab=='builder'}" (click)="activeTab='builder'"
        id="builder-tab" data-toggle="tab" href="#builder" role="tab" aria-controls="builder" aria-selected="true">
       Builder
     </a>
   </li>
-  <li class="nav-item" *ngIf="options.tabs.includes('json')">
+  <li class="nav-item" *ngIf="!options?.tabs || options.tabs?.includes('json')">
     <a class="nav-link" [ngClass]="{'active':activeTab=='json'}" (click)="activeTab='json'"
       id="json-editor-tab" data-toggle="tab" href="#json-editor" role="tab" aria-controls="json-editor"
       aria-selected="false">
       Json
     </a>
   </li>
-  <li class="nav-item" *ngIf="options.tabs.includes('renderer')">
+  <li class="nav-item" *ngIf="!options?.tabs || options.tabs?.includes('renderer')">
     <a class="nav-link" [ngClass]="{'active':activeTab=='renderer'}" (click)="activeTab='renderer'"
         id="renderer-tab" data-toggle="tab" href="#renderer" role="tab" aria-controls="renderer" aria-selected="false">
       Renderer
@@ -40,7 +40,7 @@
 <div class="tab-content" id="myTabContent">
   <div class="tab-pane fade" [ngClass]="{'show active':activeTab=='builder'}" id="builder" role="tabpanel" aria-labelledby="builder-tab">
     <div class="m-2">
-      <div *ngIf="!options.builder.hideDisplaySelect">
+      <div *ngIf="options?.builder?.hideDisplaySelect !== true">
         <label for="form-display-select" class="mx-2">Display as: </label>
         <select id="form-display-select" class="form-control my-2" style="display: inline-block; width: 150px;"
                 [(ngModel)]="form.display" (ngModelChange)="onBuilderDiplayChange($event)">
@@ -48,12 +48,18 @@
           <option value="wizard">Wizard</option>
         </select>
       </div>
-      <form-builder *ngIf="!builderDisplayChanged" [form]="form" (change)="onBuilderChange($event)"></form-builder>
+      <form-builder *ngIf="!builderDisplayChanged" [form]="form"
+        [options]="options?.builder?.input?.options"
+        [formbuilder]="options?.builder?.input?.formbuilder"
+        [noeval]="options?.builder?.input?.noeval"
+        [refresh]="options?.builder?.input?.refresh"
+        (change)="onBuilderChange($event); options?.builder?.output?.change ? options.builder.output.change($event) : undefined"
+      ></form-builder>
     </div>
   </div>
   <div class="tab-pane fade" [ngClass]="{'show active':activeTab=='json'}" id="json-editor" role="tabpanel" aria-labelledby="json-editor-tab">
     <div class="m-2 well">
-      <div class="row mx-0" *ngIf="options.json.changePanelLocations.includes('top')">
+      <div class="row mx-0" *ngIf="!options?.json?.changePanelLocations || options.json.changePanelLocations?.includes('top')">
         <div class="m-2 p-0">
           <button type="button" class="btn btn-success mr-4" (click)="onJsonEditorApply(saveModal)"
                   [disabled]="!jsonEditorChanged || jsonEditorErrors.length !== jsonEditorWarningCounter">
@@ -65,8 +71,12 @@
           Cannot apply changes. Json is not well-formed.
         </alert>
       </div>
-      <json-editor #jsoneditor [options]="options.json.editor" (dataChange)="onJsonEditorChange($event)" (dataError)="onJsonEditorError($event)"></json-editor>
-      <div class="row mx-0" *ngIf="options.json.changePanelLocations.includes('bottom')">
+      <json-editor #jsoneditor 
+        [options]="jsonEditorOptions"
+        (dataChange)="onJsonEditorChange($event); options?.json?.output?.dataChange ? options.json.output.dataChange($event) : undefined"
+        (dataError)="onJsonEditorError($event); options?.json?.output?.dataError ? options.json.output.dataError($event) : undefined"
+      ></json-editor>
+      <div class="row mx-0" *ngIf="!options?.json?.changePanelLocations || options.json.changePanelLocations?.includes('bottom')">
         <div class="m-2 p-0">
           <button type="button" class="btn btn-success mr-4" (click)="onJsonEditorApply(saveModal)"
                   [disabled]="!jsonEditorChanged || jsonEditorErrors.length !== jsonEditorWarningCounter">
@@ -82,7 +92,36 @@
   </div>
   <div class="tab-pane fade" [ngClass]="{'show active':activeTab=='renderer'}" id="renderer" role="tabpanel" aria-labelledby="renderer-tab">
     <div class="m-2">
-      <formio *ngIf="activeTab=='renderer'" [form]="form"></formio>
+      <formio *ngIf="activeTab=='renderer'" [form]="form"
+        [submission]="options?.renderer?.input?.submission"
+        [src]="options?.renderer?.input?.src"
+        [url]="options?.renderer?.input?.url"
+        [service]="options?.renderer?.input?.service"
+        [options]="options?.renderer?.input?.options"
+        [noeval]="options?.renderer?.input?.noeval"
+        [formioOptions]="options?.renderer?.input?.formioOptions"
+        [renderOptions]="options?.renderer?.input?.renderOptions"
+        [readOnly]="options?.renderer?.input?.readOnly"
+        [viewOnly]="options?.renderer?.input?.viewOnly"
+        [hideComponents]="options?.renderer?.input?.hideComponents"
+        [refresh]="options?.renderer?.input?.refresh"
+        [success]="options?.renderer?.input?.success"
+        [language]="options?.renderer?.input?.language"
+        [hooks]="options?.renderer?.input?.hooks"
+        [renderer]="options?.renderer?.input?.renderer"
+        (render)="options?.renderer?.output?.render ? options.renderer.output.render($event) : undefined"
+        (customEvent)="options?.renderer?.output?.customEvent ? options.renderer.output.customEvent($event) : undefined"
+        (submit)="options?.renderer?.output?.submit ? options.renderer.output.submit($event) : undefined"
+        (prevPage)="options?.renderer?.output?.prevPage ? options.renderer.output.prevPage($event) : undefined"
+        (nextPage)="options?.renderer?.output?.nextPage ? options.renderer.output.nextPage($event) : undefined"
+        (beforeSubmit)="options?.renderer?.output?.beforeSubmit ? options.renderer.output.beforeSubmit($event) : undefined"
+        (change)="options?.renderer?.output?.change ? options.renderer.output.change($event) : undefined"
+        (invalid)="options?.renderer?.output?.invalid ? options.renderer.output.invalid($event) : undefined"
+        (errorChange)="options?.renderer?.output?.errorChange ? options.renderer.output.errorChange($event) : undefined"
+        (formLoad)="options?.renderer?.output?.formLoad ? options.renderer.output.formLoad($event) : undefined"
+        (submissionLoad)="options?.renderer?.output?.submissionLoad ? options.renderer.output.submissionLoad($event) : undefined"
+        (ready)="options?.renderer?.output?.ready ? options.renderer.output.ready($event) : undefined"
+      ></formio>
     </div>
   </div>
 </div>
