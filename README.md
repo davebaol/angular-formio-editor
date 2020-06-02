@@ -110,8 +110,6 @@ export class AppComponent {
       components: []
     };
     this.options = {
-      tabs: ['builder', 'json', 'renderer'], // set allowed tabs
-      tab: 'builder', // set default tab
       builder: {
         hideDisplaySelect: true
       },
@@ -121,6 +119,13 @@ export class AppComponent {
           options: {
             modes: ['code', 'tree', 'view'], // set allowed modes
             mode: 'view' // set default mode
+          }
+        }
+      },
+      renderer: {
+        input: {
+          options: {
+            src: 'http://localhost:8765/api/v1/documents'
           }
         }
       }
@@ -154,18 +159,16 @@ The component supports the input arguments `form`, `options` and `reset` describ
 - **form**<br/>
 This is a regular form defined by the form.io framework. The component modifies this argument in place. 
 - **options**<br/>
-The options to configure the component are described into the spoiler below. Be aware that options are only intended as a component setup at creation-time. <details><summary><b>spoiler</b></summary>
-  ```javascript
-  {
-    // The allowed tabs to show inside the component.
-    // Defaults to ['builder', 'json', 'renderer'] 
-    tabs: ['builder', 'json', 'renderer'],
+The options have 3 properties, one for each tab of the component: `builder`, `json`, `renderer`.
+Open the spoilers to see the details.
+  - <details><summary><b>options.builder</b></summary>
 
-    // The tab active at component startup. Defaults to 'builder' 
-    tab: 'builder',
-    
-    // Builder tab options 
-    builder: {
+    ```javascript
+    {
+      // Whether to hide the builder tab or not. Defaults to false 
+      hideTab: false,
+      // Specify if the builder is the active tab at component startup. Defaults to true. 
+      defaultTab: true,
       // Whether to hide or not the embedded select to change the form display 
       hideDisplaySelect: false,
 
@@ -173,16 +176,24 @@ The options to configure the component are described into the spoiler below. Be 
       // Refer to the official documentation.
       input: {},
       output: {}
-    },
+    }
+    ```
+    </details>
+  - <details><summary><b>options.json</b></summary>
 
-    // Json tab options 
-    json: {
+    ```javascript
+    {
+      // Whether to hide the json tab or not. Defaults to false 
+      hideTab: false,
+      // Specify if json is the active tab at component startup. Defaults to false 
+      defaultTab: false,
       // The locations relative to the json editor where to show the panel
       // for applying json changes to the form. Defaults to ['top', 'bottom']
       changePanelLocations: ['top', 'bottom'],
 
       // Input arguments of the component <json-editor>.
       input: {
+        // Note that these options are only intended as a component setup at creation-time.
         options: {
           // Whether to expand or not all nodes in tree mode. This is
           // an additional option not supported by the original jsoneditor.
@@ -199,16 +210,24 @@ The options to configure the component are described into the spoiler below. Be 
         dataChange: (event: any) => {}
         dataError: (event: any) => {}
       }
-    },
-    renderer: {
+    }
+    ```
+    </details>
+  - <details><summary><b>options.renderer</b></summary>
+
+    ```javascript
+    {
+      // Whether to hide the renderer tab or not. Defaults to false 
+      hideTab: false,
+      // Specify if renderer is the active tab at component startup. Defaults to false 
+      defaultTab: false,
       // Input and output arguments of the component <formio>.
       // Refer to the official documentation.
       input: {},
       output: {}
     }
-  }
-  ```
-  </details>
+    ```
+    </details>
 - **reset**<br/>
   An `Observable<void>` to reset the component. 
 

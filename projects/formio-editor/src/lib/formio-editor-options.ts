@@ -5,7 +5,12 @@ import { JsonEditorOptions } from './json-editor/json-editor-shapes';
 
 export type FormioEditorTab = 'builder' | 'json' | 'renderer';
 
-export interface FormioEditorBuilderOptions {
+interface FormioEditorTabOptions {
+  hideTab?: boolean;
+  defaultTab?: boolean;
+}
+
+export interface FormioEditorBuilderOptions extends FormioEditorTabOptions {
   hideDisplaySelect?: boolean;
   input?: {
     options?: FormioOptions;
@@ -18,7 +23,7 @@ export interface FormioEditorBuilderOptions {
   };
 }
 
-export interface FormioEditorJsonOptions {
+export interface FormioEditorJsonOptions extends FormioEditorTabOptions {
   changePanelLocations?: ('top' | 'bottom')[];
   input?: {
     options?: JsonEditorOptions;
@@ -29,7 +34,7 @@ export interface FormioEditorJsonOptions {
   };
 }
 
-export interface FormioEditorRendererOptions {
+export interface FormioEditorRendererOptions extends FormioEditorTabOptions {
   input?: {
     submission?: any;
     src?: string;
@@ -66,8 +71,6 @@ export interface FormioEditorRendererOptions {
 }
 
 export interface FormioEditorOptions {
-  tab?: FormioEditorTab;
-  tabs?: FormioEditorTab[];
   builder?: FormioEditorBuilderOptions;
   json?: FormioEditorJsonOptions;
   renderer?: FormioEditorRendererOptions;

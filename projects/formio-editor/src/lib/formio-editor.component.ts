@@ -74,8 +74,8 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
       this.setOptions(); // Set default options
     }
 
-    this.activeTab = this.options?.tab
-        || (Array.isArray(this.options?.tabs) && this.options.tabs.length > 0 ? this.options.tabs[0] : 'builder');
+    this.activeTab = (['builder', 'json', 'renderer'] as FormioEditorTab[])
+          .find(t => this.options && this.options[t]?.defaultTab ? t : undefined) || 'builder';
 
     if (this.reset) {
       this.resetSubscription = this.reset.subscribe(() => this.resetFormBuilder());

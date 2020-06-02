@@ -17,20 +17,20 @@
   </div>
 </ng-template>
 <ul class="nav nav-tabs" id="myTab" role="tablist">
-  <li class="nav-item" *ngIf="!options?.tabs || options.tabs?.includes('builder')">
+  <li class="nav-item" *ngIf="options?.builder?.hideTab !== true">
     <a class="nav-link" [ngClass]="{'active':activeTab=='builder'}" (click)="activeTab='builder'"
        id="builder-tab" data-toggle="tab" href="#builder" role="tab" aria-controls="builder" aria-selected="true">
       Builder
     </a>
   </li>
-  <li class="nav-item" *ngIf="!options?.tabs || options.tabs?.includes('json')">
+  <li class="nav-item" *ngIf="options?.json?.hideTab !== true">
     <a class="nav-link" [ngClass]="{'active':activeTab=='json'}" (click)="activeTab='json'"
       id="json-editor-tab" data-toggle="tab" href="#json-editor" role="tab" aria-controls="json-editor"
       aria-selected="false">
       Json
     </a>
   </li>
-  <li class="nav-item" *ngIf="!options?.tabs || options.tabs?.includes('renderer')">
+  <li class="nav-item" *ngIf="options?.renderer?.hideTab !== true">
     <a class="nav-link" [ngClass]="{'active':activeTab=='renderer'}" (click)="activeTab='renderer'"
         id="renderer-tab" data-toggle="tab" href="#renderer" role="tab" aria-controls="renderer" aria-selected="false">
       Renderer
