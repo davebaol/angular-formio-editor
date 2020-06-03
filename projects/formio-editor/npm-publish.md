@@ -29,7 +29,7 @@ To publish a new npm package follow the steps below:
   ```
 - Visit the [public package page](https://www.npmjs.com/package/@davebaol/angular-formio-editor). Public packages will say `public` below the package name on the npm website.
 - Create a **github release**, for intance `0.1.0`
-- Iterate lib version to the new snapshot, for intance 0.1.1-snapshot, by committing the changes below:
+- Iterate lib version to the new snapshot, for intance 0.1.1-snapshot:
   - Update version inside `projects/formio-editor/package.json`, for instance from `0.1.0` to `0.1.1-snapshot`
     ```json
     {
@@ -45,3 +45,4 @@ To publish a new npm package follow the steps below:
     - ...
 
     ```
+  - Commit changes to github with message `Iterate lib version to 0.1.1-snapshot`
