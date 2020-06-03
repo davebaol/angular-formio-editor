@@ -1,6 +1,6 @@
 {
   "name": "@davebaol/angular-formio-editor",
-  "version": "0.9.4-snapshot",
+  "version": "0.9.4",
   "description": "Angular component integrating Form.io builder and renderer with a json editor",
   "repository": {
     "type": "git",

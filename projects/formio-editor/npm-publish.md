@@ -1,13 +1,15 @@
 To publish a new npm package follow the steps below:
-- Update version inside `projects/formio-editor/package.json`, for instance from `0.0.0` to `0.1.0`
-  ```json
-  {
-    "name": "@davebaol/angular-formio-editor",
-    "version": "0.1.0",
-    ...
-  }
-  ```
-- Commit this change to github with a commit message specifying the new version, for instance `Release 0.1.0`
+- Prepare for publishing:
+  - Update version inside `projects/formio-editor/package.json`, for instance from `0.0.0` to `0.1.0`
+    ```json
+    {
+      "name": "@davebaol/angular-formio-editor",
+      "version": "0.1.0",
+      ...
+    }
+    ```
+  - Update the file `HISTORY.md` with the changes of the new version. 
+  - Commit changes to github with a message specifying the new version, for instance `Release 0.1.0`
 - Build the entire project to check that everything is ok
   ```bash
   npm run build-all-prod

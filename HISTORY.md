@@ -3,7 +3,7 @@
 https://github.com/davebaol/angular-formio-editor
 
 
-## 2020-MM-DD, version 0.9.4-snapshot
+## 2020-06-03, version 0.9.4
 
 - Support high level of configurability
 
