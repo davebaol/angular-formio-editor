@@ -36,9 +36,9 @@ Yes, you have to install 5 packages!!! :scream:
 
 Having in mind the dependency graph can be useful for choosing the version of the various packages for your application. :wink:
 <details>
-  <summary><b>Open this spoiler to see the peer dependency graph.</b></summary>
+  <summary><b>Peer dependency graph.</b> :point_left:</summary>
     
-<p align="center">
+<br/><p align="center">
   <img alt="Peer dependencies graph" src="https://user-images.githubusercontent.com/2366334/83365783-0b260e80-a3ab-11ea-8197-e463625dfd15.png">
 </p>
 <!--
@@ -161,7 +161,7 @@ This is a regular form defined by the form.io framework. The component modifies 
 - **options**<br/>
 The options have 3 properties, one for each tab of the component: `builder`, `json`, `renderer`.
 Open the spoilers to see the details.
-  - <details><summary><b>options.builder</b></summary>
+  - <details><summary><b>options.builder</b> :point_left:</summary>
 
     ```javascript
     {
@@ -179,7 +179,7 @@ Open the spoilers to see the details.
     }
     ```
     </details>
-  - <details><summary><b>options.json</b></summary>
+  - <details><summary><b>options.json</b> :point_left:</summary>
 
     ```javascript
     {
@@ -213,7 +213,7 @@ Open the spoilers to see the details.
     }
     ```
     </details>
-  - <details><summary><b>options.renderer</b></summary>
+  - <details><summary><b>options.renderer</b> :point_left:</summary>
 
     ```javascript
     {
