@@ -36,7 +36,7 @@ Yes, you have to install 5 packages!!! :scream:
 
 Having in mind the dependency graph can be useful for choosing the version of the various packages for your application. :wink:
 <details>
-  <summary><b>Peer dependency graph.</b> :point_left:</summary>
+  <summary><b>Peer dependency graph</b> 👈</summary>
     
 <br/><p align="center">
   <img alt="Peer dependencies graph" src="https://user-images.githubusercontent.com/2366334/83365783-0b260e80-a3ab-11ea-8197-e463625dfd15.png">
@@ -161,15 +161,15 @@ This is a regular form defined by the form.io framework. The component modifies 
 - **options**<br/>
 The options have 3 properties, one for each tab of the component: `builder`, `json`, `renderer`.
 Open the spoilers to see the details.
-  - <details><summary><b>options.builder</b> :point_left:</summary>
+  - <details><summary><b>options.builder</b> 👈</summary>
 
     ```javascript
     {
-      // Whether to hide the builder tab or not. Defaults to false 
+      // Whether to hide the builder tab or not. Defaults to false.
       hideTab: false,
       // Specify if the builder is the active tab at component startup. Defaults to true. 
       defaultTab: true,
-      // Whether to hide or not the embedded select to change the form display 
+      // Whether to hide or not the embedded select to change the form display. Defaults to false. 
       hideDisplaySelect: false,
 
       // Input and output arguments of the component <formio-builder>.
@@ -179,24 +179,24 @@ Open the spoilers to see the details.
     }
     ```
     </details>
-  - <details><summary><b>options.json</b> :point_left:</summary>
+  - <details><summary><b>options.json</b> 👈</summary>
 
     ```javascript
     {
-      // Whether to hide the json tab or not. Defaults to false 
+      // Whether to hide the json tab or not. Defaults to false.
       hideTab: false,
-      // Specify if json is the active tab at component startup. Defaults to false 
+      // Specify if json is the active tab at component startup. Defaults to false.
       defaultTab: false,
       // The locations relative to the json editor where to show the panel
-      // for applying json changes to the form. Defaults to ['top', 'bottom']
+      // for applying json changes to the form. Defaults to ['top', 'bottom'].
       changePanelLocations: ['top', 'bottom'],
 
       // Input arguments of the component <json-editor>.
       input: {
         // Note that these options are only intended as a component setup at creation-time.
         options: {
-          // Whether to expand or not all nodes in tree mode. This is
-          // an additional option not supported by the original jsoneditor.
+          // Whether to expand or not all nodes in tree mode. This is an additional option
+          // not supported by the original jsoneditor. Defaults to false.
           expandAll: false,
 
           // Other options supported by the original jsoneditor.
@@ -213,13 +213,13 @@ Open the spoilers to see the details.
     }
     ```
     </details>
-  - <details><summary><b>options.renderer</b> :point_left:</summary>
+  - <details><summary><b>options.renderer</b> 👈</summary>
 
     ```javascript
     {
-      // Whether to hide the renderer tab or not. Defaults to false 
+      // Whether to hide the renderer tab or not. Defaults to false.
       hideTab: false,
-      // Specify if renderer is the active tab at component startup. Defaults to false 
+      // Specify if renderer is the active tab at component startup. Defaults to false.
       defaultTab: false,
       // Input and output arguments of the component <formio>.
       // Refer to the official documentation.
