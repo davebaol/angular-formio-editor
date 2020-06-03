@@ -111,7 +111,10 @@ export class AppComponent {
     };
     this.options = {
       builder: {
-        hideDisplaySelect: true
+        hideDisplaySelect: true,
+        output: {
+          change: (event) => console.log('Demo: builder change event:', event),
+        }
       },
       json: {
         changePanelLocations: ['top', 'bottom'],
@@ -125,7 +128,8 @@ export class AppComponent {
       renderer: {
         input: {
           options: {
-            src: 'http://localhost:8765/api/v1/documents'
+            src: 'http://localhost:8765/api/v1/documents',
+            renderOptions: { breadcrumbSettings: { clickable: true } }
           }
         }
       }
