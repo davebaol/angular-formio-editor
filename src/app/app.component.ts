@@ -20,12 +20,16 @@ export class AppComponent {
 
     this.options = {
       builder: {
-        hideDisplaySelect: false
+        hideDisplaySelect: false,
+        output: {
+          change: (event) => console.log('Demo: builder change event:', event),
+        }
       },
       json: {},
       renderer: {
         input: {
-          src: 'http://localhost:8383/api/v1/documents'
+          src: 'http://localhost:8383/api/v1/documents',
+          renderOptions: { breadcrumbSettings: { clickable: true } }
         }
       }
     };
