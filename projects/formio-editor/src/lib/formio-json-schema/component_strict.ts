@@ -173,9 +173,27 @@ export default {
       "items": {
         "$ref": "logic"
       }
-    },
-    "components": {
-      "$ref": "components"
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "columns" } } },
+      "then": { "$ref": "columns" }
+    },
+    {
+      "if": { "properties": { "type": { "const": "table" } } },
+      "then": { "$ref": "table" }
+    },
+    {
+      "if": { "properties": { "type": { "const": "tabs" } } },
+      "then": { "$ref": "tabs" },
+      "else": {
+        "properties": {
+          "components": {
+            "$ref": "components"
+          }
+        }
+      }
+    }
+  ]
 }

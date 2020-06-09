@@ -8,17 +8,23 @@ import action from './component-logic-action';
 import conditional from './component-conditional';
 import showStrict from './component-conditional-show_strict';
 import showLoose from './component-conditional-show_loose';
+import columns from './components/columns';
+import table from './components/table';
+import tabs from './components/tabs';
 
 export const strict = {
     schema,
     schemaRefs: {
+        columns,
         components,
         component: componentStrict,
         logic,
         trigger,
         action,
         conditional,
-        show: showStrict
+        show: showStrict,
+        table,
+        tabs
     }
 };
 
