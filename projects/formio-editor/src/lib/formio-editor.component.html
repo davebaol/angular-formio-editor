@@ -85,7 +85,7 @@
           <button type="button" class="btn btn-secondary" (click)="jsonEditorDiscardChanges()">Discard</button>
         </div>
         <alert class="col-6 mx-4 my-2 p-1 align-middle" type="danger" [isOpen]="jsonEditorErrors.length !== jsonEditorWarningCounter" >
-          Cannot apply changes. Json is not well-formed.
+          Json is not well-formed. You won't be able to apply changes!
         </alert>
       </div>
     </div>
@@ -114,7 +114,7 @@
         (submit)="options?.renderer?.output?.submit ? options.renderer.output.submit($event) : undefined"
         (prevPage)="options?.renderer?.output?.prevPage ? options.renderer.output.prevPage($event) : undefined"
         (nextPage)="options?.renderer?.output?.nextPage ? options.renderer.output.nextPage($event) : undefined"
-        (beforeSubmit)="options?.renderer?.output?.beforeSubmit ? options.renderer.output.beforeSubmit($event) : undefined"
+        (beforeSubmit)="showSubmissionPanel($event); options?.renderer?.output?.beforeSubmit ? options.renderer.output.beforeSubmit($event) : undefined"
         (change)="options?.renderer?.output?.change ? options.renderer.output.change($event) : undefined"
         (invalid)="options?.renderer?.output?.invalid ? options.renderer.output.invalid($event) : undefined"
         (errorChange)="options?.renderer?.output?.errorChange ? options.renderer.output.errorChange($event) : undefined"
@@ -122,6 +122,29 @@
         (submissionLoad)="options?.renderer?.output?.submissionLoad ? options.renderer.output.submissionLoad($event) : undefined"
         (ready)="options?.renderer?.output?.ready ? options.renderer.output.ready($event) : undefined"
       ></formio>
+    </div>
+    <div *ngIf="submissionPanel" class="m-2 border-top border-primary">
+      <div class="row mx-0">
+        <div class="p-2" [ngClass]="{'col-6':showResourceSchema,'col-12':!showResourceSchema}">
+          <p class="font-weight-bold text-center mb-1">Resource</p>
+          <json-editor #renderer_resource_jsoneditor
+            [options]="rendererResourceJsonEditorOptions"
+            (dataChange)="options?.renderer?.submissionPanel?.resourceJsonEditor?.output?.dataChange ? options.renderer.submissionPanel.resourceJsonEditor.output.dataChange($event) : undefined"
+            (dataError)="options?.renderer?.submissionPanel?.resourceJsonEditor?.output?.dataError ? options.renderer.submissionPanel.resourceJsonEditor.output.dataError($event) : undefined"
+          ></json-editor>
+        </div>
+        <div class="p-2 col-6" [hidden]=!showResourceSchema>
+          <p class="font-weight-bold text-center mb-1">Resource Json Schema Validator</p>
+          <json-editor #renderer_schema_jsoneditor
+            [options]="rendererSchemaJsonEditorOptions"
+            (dataChange)="options?.renderer?.submissionPanel?.schemaJsonEditor?.output?.dataChange ? options.renderer.submissionPanel.schemaJsonEditor.output.dataChange($event) : undefined"
+            (dataError)="options?.renderer?.submissionPanel?.schemaJsonEditor?.output?.dataError ? options.renderer.submissionPanel.schemaJsonEditor.output.dataError($event) : undefined"
+          ></json-editor>
+        </div>
+      </div>
+      <button class="mx-3 btn btn-primary" *ngIf="options?.renderer?.submissionPanel?.schemaJsonEditor?.enabled" (click)="showResourceSchema = !showResourceSchema">{{showResourceSchema? 'Hide Schema' : 'Show Schema'}}</button>
+      <button class="mx-2 btn btn-primary" *ngIf="options?.renderer?.submissionPanel?.schemaJsonEditor?.enabled && showResourceSchema" (click)="applyResourceJsonSchema()">Apply Schema</button>
+      <button class="mx-2 btn btn-primary" *ngIf="options?.renderer?.submissionPanel?.schemaJsonEditor?.enabled && showResourceSchema" (click)="showSubmissionPanel(undefined)">Regenerate Schema</button>
     </div>
   </div>
 </div>

@@ -225,7 +225,29 @@ Open the spoilers to see the details.
       hideTab: false,
       // Specify if renderer is the active tab at component startup. Defaults to false.
       defaultTab: false,
-      // Input and output arguments of the component <formio>.
+      // Configuration of the submission panel.
+      submissionPanel: {
+        // Whether to show the submission panel or not. Default to false.
+        disabled: false,
+        // The json editor of the submitted resource.
+        resourceJsonEditor: {
+          // Input and output arguments of this component <json-editor>.
+          // See options.json.input and options.json.output above.
+          input: {},
+          output: {}
+        },
+        // The json editor of the json schema for the submitted resource
+        schemaJsonEditor: {
+          // Whether to show or not the schema json editor. Defaults to false.
+          enabled: true,
+          // Input and output arguments of this component <json-editor>.
+          // See options.json.input and options.json.output above.
+          input: {},
+          output: {}
+          }
+        }
+      },
+      // Input and output arguments of the component <formio> that renders the form.
       // Refer to the official documentation.
       input: {},
       output: {}

@@ -4,7 +4,8 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { FormioEditorOptions, FormioEditorTab } from './formio-editor-options';
 import { JsonEditorComponent } from './json-editor/json-editor.component';
 import { JsonEditorValidationError, JsonEditorOptions } from './json-editor/json-editor-shapes';
-import { merge } from './clone-utils';
+import { merge, clone } from './clone-utils';
+import { generateFormJsonSchema } from './resource-json-schema/json-schema-generator';
 import { loose as formioJsonSchema } from './formio-json-schema';
 
 const defaultJsonEditorOptions: JsonEditorOptions = {
@@ -22,6 +23,15 @@ const defaultJsonEditorOptions: JsonEditorOptions = {
   search: true,
   sortObjectKeys: false
 };
+
+const defaultRendererResourceJsonEditorOptions: JsonEditorOptions = merge(defaultJsonEditorOptions, {
+  mode: 'tree', // set default mode
+  modes: ['code', 'tree'], // set allowed modes
+  schema: undefined,
+  schemaRefs: undefined
+});
+
+const defaultRendererSchemaJsonEditorOptions: JsonEditorOptions = clone(defaultRendererResourceJsonEditorOptions);
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -41,11 +51,25 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   get options() { return this._options; }
   @Input() set options(options: FormioEditorOptions) { this.setOptions(options); }
   jsonEditorOptions: JsonEditorOptions;
-
   jsonEditorChanged = false;
   @ViewChild('jsoneditor', {static: true}) jsonEditor: JsonEditorComponent;
 
-  activeTab: FormioEditorTab;
+  @ViewChild('renderer_resource_jsoneditor', {static: false}) rendererResourceJsonEditor: JsonEditorComponent;
+  @ViewChild('renderer_schema_jsoneditor', {static: false}) rendererSchemaJsonEditor: JsonEditorComponent;
+  rendererResourceJsonEditorOptions: JsonEditorOptions;
+  rendererSchemaJsonEditorOptions: JsonEditorOptions;
+  submissionPanel: boolean;
+  showResourceSchema: boolean;
+
+  // tslint:disable-next-line:variable-name
+  private _activeTab: FormioEditorTab;
+  get activeTab() { return this._activeTab; }
+  set activeTab(tab: FormioEditorTab) {
+    this._activeTab = tab;
+    if (tab === 'renderer') {
+      this.submissionPanel = false; // Disable submission panel when the renderer tab becomes active
+    }
+  }
 
   modalRef: BsModalRef;
 
@@ -94,7 +118,18 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
 
   private setOptions(options: FormioEditorOptions = {}) {
     this._options = options;
-    this.jsonEditorOptions = merge(defaultJsonEditorOptions, options?.json?.input?.options);
+    this.jsonEditorOptions = merge(
+      defaultJsonEditorOptions,
+      options?.json?.input?.options
+    );
+    this.rendererResourceJsonEditorOptions = merge(
+      defaultRendererResourceJsonEditorOptions,
+      options?.renderer?.submissionPanel?.resourceJsonEditor?.input?.options
+    );
+    this.rendererSchemaJsonEditorOptions = merge(
+      defaultRendererSchemaJsonEditorOptions,
+      options?.renderer?.submissionPanel?.schemaJsonEditor?.input?.options
+    );
   }
 
   //
@@ -189,4 +224,21 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
     }
   }
 
+  showSubmissionPanel(submission: any) {
+    this.submissionPanel = !this.options.renderer?.submissionPanel?.disabled;
+    if (this.submissionPanel) {
+      const schema = generateFormJsonSchema(this.form);
+      setTimeout(() => {
+        if (submission) {
+          this.rendererResourceJsonEditor.set(submission.data);
+        }
+        this.rendererSchemaJsonEditor.set(schema as JSON);
+        this.rendererResourceJsonEditor.setSchema(schema);
+      });
+    }
+  }
+  applyResourceJsonSchema() {
+    const schema = this.rendererSchemaJsonEditor.get();
+    this.rendererResourceJsonEditor.setSchema(schema);
+  }
 }

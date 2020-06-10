@@ -30,6 +30,20 @@ export class AppComponent {
         input: {
           src: 'http://localhost:8383/api/v1/documents',
           renderOptions: { breadcrumbSettings: { clickable: true } }
+        },
+        submissionPanel: {
+          disabled: false,
+          resourceJsonEditor: {
+            input: {
+              options: {}
+            }
+          },
+          schemaJsonEditor: {
+            enabled: false,
+            input: {
+              options: {}
+            }
+          }
         }
       }
     };

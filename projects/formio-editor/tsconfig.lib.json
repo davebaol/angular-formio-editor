@@ -9,7 +9,8 @@
     "lib": [
       "dom",
       "es2018"
-    ]
+    ],
+    "allowJs": true
   },
   "angularCompilerOptions": {
     "skipTemplateCodegen": true,

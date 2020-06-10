@@ -23,8 +23,7 @@ export interface FormioEditorBuilderOptions extends FormioEditorTabOptions {
   };
 }
 
-export interface FormioEditorJsonOptions extends FormioEditorTabOptions {
-  changePanelLocations?: ('top' | 'bottom')[];
+interface JsonEditorInputOutputArguments {
   input?: {
     options?: JsonEditorOptions;
   };
@@ -34,7 +33,16 @@ export interface FormioEditorJsonOptions extends FormioEditorTabOptions {
   };
 }
 
+export interface FormioEditorJsonOptions extends FormioEditorTabOptions, JsonEditorInputOutputArguments {
+  changePanelLocations?: ('top' | 'bottom')[];
+}
+
 export interface FormioEditorRendererOptions extends FormioEditorTabOptions {
+  submissionPanel?: {
+    disabled?: boolean;
+    resourceJsonEditor: JsonEditorInputOutputArguments;
+    schemaJsonEditor: JsonEditorInputOutputArguments & { enabled?: boolean };
+  };
   input?: {
     submission?: any;
     src?: string;
