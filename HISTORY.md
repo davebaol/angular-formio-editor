@@ -3,10 +3,16 @@
 https://github.com/davebaol/angular-formio-editor
 
 
+## YYYY-MM-DD, version 0.9.6-snapshot
+
+- ...
+
+
 ## 2020-06-11, version 0.9.5
 
 - Show the resource submitted by the renderer and the generated json schema
 - Improve the json schema for form validation
+
 
 ## 2020-06-03, version 0.9.4
 
