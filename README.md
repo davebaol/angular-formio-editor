@@ -229,6 +229,8 @@ Open the spoilers to see the details.
       submissionPanel: {
         // Whether to show the submission panel or not. Default to false.
         disabled: false,
+        // Whether to initially show full or partial submission. Default to false.
+        fullSubmission: false,
         // The json editor of the submitted resource.
         resourceJsonEditor: {
           // Input and output arguments of this component <json-editor>.
