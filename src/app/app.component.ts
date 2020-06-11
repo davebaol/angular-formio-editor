@@ -33,6 +33,7 @@ export class AppComponent {
         },
         submissionPanel: {
           disabled: false,
+          fullSubmission: true,
           resourceJsonEditor: {
             input: {
               options: {}

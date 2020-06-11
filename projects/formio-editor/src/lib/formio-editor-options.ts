@@ -40,6 +40,7 @@ export interface FormioEditorJsonOptions extends FormioEditorTabOptions, JsonEdi
 export interface FormioEditorRendererOptions extends FormioEditorTabOptions {
   submissionPanel?: {
     disabled?: boolean;
+    fullSubmission: boolean;
     resourceJsonEditor: JsonEditorInputOutputArguments;
     schemaJsonEditor: JsonEditorInputOutputArguments & { enabled?: boolean };
   };

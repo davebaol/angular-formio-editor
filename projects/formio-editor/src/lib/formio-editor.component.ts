@@ -60,6 +60,8 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   rendererSchemaJsonEditorOptions: JsonEditorOptions;
   submissionPanel: boolean;
   showResourceSchema: boolean;
+  submission: any;
+  fullSubmission: boolean;
 
   // tslint:disable-next-line:variable-name
   private _activeTab: FormioEditorTab;
@@ -130,6 +132,7 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
       defaultRendererSchemaJsonEditorOptions,
       options?.renderer?.submissionPanel?.schemaJsonEditor?.input?.options
     );
+    this.fullSubmission = options?.renderer?.submissionPanel?.fullSubmission;
   }
 
   //
@@ -227,11 +230,16 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   showSubmissionPanel(submission: any) {
     this.submissionPanel = !this.options.renderer?.submissionPanel?.disabled;
     if (this.submissionPanel) {
-      const schema = generateFormJsonSchema(this.form);
+      if (submission) {
+        this.submission = submission;
+      }
       setTimeout(() => {
-        if (submission) {
-          this.rendererResourceJsonEditor.set(submission.data);
+        let schema = generateFormJsonSchema(this.form);
+        if (this.fullSubmission) {
+          schema = { type: 'object', properties: { data: schema } };
         }
+        this.rendererResourceJsonEditor.setSchema(undefined);
+        this.rendererResourceJsonEditor.set(this.fullSubmission ? this.submission : this.submission.data);
         this.rendererSchemaJsonEditor.set(schema as JSON);
         this.rendererResourceJsonEditor.setSchema(schema);
       });

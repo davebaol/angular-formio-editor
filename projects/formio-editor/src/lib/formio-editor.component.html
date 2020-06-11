@@ -126,7 +126,12 @@
     <div *ngIf="submissionPanel" class="m-2 border-top border-primary">
       <div class="row mx-0">
         <div class="p-2" [ngClass]="{'col-6':showResourceSchema,'col-12':!showResourceSchema}">
-          <p class="font-weight-bold text-center mb-1">Resource</p>
+          <p class="font-weight-bold text-center mb-1">
+            Summission (
+              <label for="fullSubmitCheckbox" class="my-0">full</label>
+              <input id="fullSubmitCheckbox" class="mx-1" type="checkbox" [(ngModel)]="fullSubmission" (change)="showSubmissionPanel(submission)">
+            )
+          </p>
           <json-editor #renderer_resource_jsoneditor
             [options]="rendererResourceJsonEditorOptions"
             (dataChange)="options?.renderer?.submissionPanel?.resourceJsonEditor?.output?.dataChange ? options.renderer.submissionPanel.resourceJsonEditor.output.dataChange($event) : undefined"
@@ -134,7 +139,7 @@
           ></json-editor>
         </div>
         <div class="p-2 col-6" [hidden]=!showResourceSchema>
-          <p class="font-weight-bold text-center mb-1">Resource Json Schema Validator</p>
+          <p class="font-weight-bold text-center mb-1">Json Schema Validator</p>
           <json-editor #renderer_schema_jsoneditor
             [options]="rendererSchemaJsonEditorOptions"
             (dataChange)="options?.renderer?.submissionPanel?.schemaJsonEditor?.output?.dataChange ? options.renderer.submissionPanel.schemaJsonEditor.output.dataChange($event) : undefined"
@@ -144,7 +149,7 @@
       </div>
       <button class="mx-3 btn btn-primary" *ngIf="options?.renderer?.submissionPanel?.schemaJsonEditor?.enabled" (click)="showResourceSchema = !showResourceSchema">{{showResourceSchema? 'Hide Schema' : 'Show Schema'}}</button>
       <button class="mx-2 btn btn-primary" *ngIf="options?.renderer?.submissionPanel?.schemaJsonEditor?.enabled && showResourceSchema" (click)="applyResourceJsonSchema()">Apply Schema</button>
-      <button class="mx-2 btn btn-primary" *ngIf="options?.renderer?.submissionPanel?.schemaJsonEditor?.enabled && showResourceSchema" (click)="showSubmissionPanel(undefined)">Regenerate Schema</button>
+      <button class="mx-2 btn btn-primary" *ngIf="options?.renderer?.submissionPanel?.schemaJsonEditor?.enabled && showResourceSchema" (click)="showSubmissionPanel(submission)">Regenerate Schema</button>
     </div>
   </div>
 </div>
