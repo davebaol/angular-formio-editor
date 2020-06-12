@@ -139,7 +139,7 @@ class MergeableObjectSchema extends ObjectSchema {
     }
     merge(...sources) {
         const targetProps = this.properties;
-        for (const i = 0, len = sources.length; i < len; i++) {
+        for (let i = 0, len = sources.length; i < len; i++) {
             const source = sources[i];
             if (source instanceof MergeableObjectSchema) {
                 // merge properties
@@ -291,7 +291,7 @@ class CompoundComponent extends Component {
     }
     /*prorected*/ childrenSchema(parentSchema) {
         const children = this.children();
-        for (const i = 0, len = children.length; i < len; i++) {
+        for (let i = 0, len = children.length; i < len; i++) {
             const c = children[i];
             // console.log(this.formioComponent.type, 'child', c)
             if (c.persistent === 'client-only') {
@@ -300,11 +300,11 @@ class CompoundComponent extends Component {
             }
             const type = MAP[c.type] || this.defaultChildClass();
             if (type) {
-                const schema = new (type)(c).schema();
+                let schema = new (type)(c).schema();
                 const required = c.validate && c.validate.required;
                 // Dotted key means nested schema
                 const keyParts = c.key.split('.');
-                for (const j = keyParts.length - 1; j > 0; j--) {
+                for (let j = keyParts.length - 1; j > 0; j--) {
                     schema = new MergeableObjectSchema(undefined).addProperty(keyParts[j], schema, required);
                 }
                 parentSchema.merge(new MergeableObjectSchema(undefined).addProperty(keyParts[0], schema, required))
