@@ -39,9 +39,9 @@ class Schema {
         this.conditions.key = this.generateConditionsKey();
     }
     shrink() {
-        for (let k in this.properties) {
+        for (const k in this.properties) {
             if (hasOwnProperty.call(this.properties, k)) {
-                let propSchema = this.properties[k];
+                const propSchema = this.properties[k];
                 if (propSchema instanceof MergeableObjectSchema && propSchema.component && propSchema.component.shrinkable()) {
                     // console.log('Shrink', propSchema.component.formioComponent.type);
                     propSchema.shrink();
@@ -74,7 +74,7 @@ class ObjectSchema extends Schema {
         const required = [];
         const condPropMap = {};
         const conditionsMap = {};
-        for (let pk in this.properties) {
+        for (const pk in this.properties) {
             if (hasOwnProperty.call(this.properties, pk)) {
                 const childSchema = this.properties[pk];
                 if (childSchema.conditions.length === 0) {
@@ -99,7 +99,7 @@ class ObjectSchema extends Schema {
         }
         // Generate allOf from conditional properties
         const allOf = [];
-        for (let ck in condPropMap) {
+        for (const ck in condPropMap) {
             if (hasOwnProperty.call(condPropMap, ck)) {
                 const conds = conditionsMap[ck];
                 const _if = {
@@ -109,7 +109,7 @@ class ObjectSchema extends Schema {
                     }, {})
                 };
                 const then = { required: [], properties: {} };
-                for (let pk in condPropMap[ck]) {
+                for (const pk in condPropMap[ck]) {
                     if (hasOwnProperty.call(condPropMap[ck], pk)) {
                         const childSchema = condPropMap[ck][pk];
                         if (childSchema.required) {
@@ -139,7 +139,7 @@ class MergeableObjectSchema extends ObjectSchema {
     }
     merge(...sources) {
         const targetProps = this.properties;
-        for (let i = 0, len = sources.length; i < len; i++) {
+        for (const i = 0, len = sources.length; i < len; i++) {
             const source = sources[i];
             if (source instanceof MergeableObjectSchema) {
                 // merge properties
@@ -269,7 +269,7 @@ class AtomicComponent extends Component {
                 if (val === "true") return true;
                 if (val === "false") return false;
                 if (val === "") return val;
-                var v = Number(val);
+                const v = Number(val);
                 return isNaN(v) ? val : v;
         }
     }
@@ -277,7 +277,7 @@ class AtomicComponent extends Component {
 
 class CompoundComponent extends Component {
     schema() {
-        let schema = new MergeableObjectSchema(this);
+        const schema = new MergeableObjectSchema(this);
         this.childrenSchema(schema);
         return schema.shrink();
     }
@@ -291,8 +291,8 @@ class CompoundComponent extends Component {
     }
     /*prorected*/ childrenSchema(parentSchema) {
         const children = this.children();
-        for (let i = 0, len = children.length; i < len; i++) {
-            let c = children[i];
+        for (const i = 0, len = children.length; i < len; i++) {
+            const c = children[i];
             // console.log(this.formioComponent.type, 'child', c)
             if (c.persistent === 'client-only') {
                 // console.log(c.type, ': skipped because persistent ===', c.persistent);
@@ -300,11 +300,11 @@ class CompoundComponent extends Component {
             }
             const type = MAP[c.type] || this.defaultChildClass();
             if (type) {
-                let schema = new (type)(c).schema();
+                const schema = new (type)(c).schema();
                 const required = c.validate && c.validate.required;
                 // Dotted key means nested schema
                 const keyParts = c.key.split('.');
-                for (let j = keyParts.length - 1; j > 0; j--) {
+                for (const j = keyParts.length - 1; j > 0; j--) {
                     schema = new MergeableObjectSchema(undefined).addProperty(keyParts[j], schema, required);
                 }
                 parentSchema.merge(new MergeableObjectSchema(undefined).addProperty(keyParts[0], schema, required))
@@ -395,9 +395,9 @@ class SelectComponent extends EnumComponent {
 
 class SelectBoxesComponent extends AtomicComponent {
     baseSchema() {
-        let schema = new ObjectSchema(this);
+        const schema = new ObjectSchema(this);
         schema.dataType.additionalProperties = false;
-        let values = this.formioComponent.values
+        const values = this.formioComponent.values
             .forEach(v => schema.addProperty(v.value, new BooleanSchema(undefined), true));
         if (this.formioComponent.validate && !this.formioComponent.validate.required) {
             // This is needed for compatibility.
