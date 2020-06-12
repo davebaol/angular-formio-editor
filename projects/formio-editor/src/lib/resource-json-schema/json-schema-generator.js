@@ -294,6 +294,10 @@ class CompoundComponent extends Component {
         for (let i = 0, len = children.length; i < len; i++) {
             let c = children[i];
             // console.log(this.formioComponent.type, 'child', c)
+            if (c.persistent === 'client-only') {
+                // console.log(c.type, ': skipped because persistent ===', c.persistent);
+                continue;
+            }
             const type = MAP[c.type] || this.defaultChildClass();
             if (type) {
                 let schema = new (type)(c).schema();
