@@ -137,7 +137,7 @@ export class AppComponent {
   }
 }
 ```
-:three: For better styling, add the lines below to your main style.css file
+:three: To properly style this component, import the `.css` files below into your main `style.css` file
 ```css
 @import "./styles/bootstrap/css/bootstrap.min.css";
 @import '~font-awesome/css/font-awesome.min.css';
