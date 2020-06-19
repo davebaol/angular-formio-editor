@@ -5,8 +5,9 @@ https://github.com/davebaol/angular-formio-editor
 
 ## YYYY-MM-DD, version 0.9.6-snapshot
 
-- ...
-
+- Fix issue preventing from using the formio-editor as a formio custom component
+- Don't generate json schema for client-only components
+- Use ngx-bootstrap tabset
 
 ## 2020-06-11, version 0.9.5
 
