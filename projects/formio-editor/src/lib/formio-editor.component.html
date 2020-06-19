@@ -16,29 +16,11 @@
     <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="modalRef.hide(); jsonEditorApplyChanges()">YES</button>
   </div>
 </ng-template>
-<ul class="nav nav-tabs" id="myTab" role="tablist">
-  <li class="nav-item" *ngIf="options?.builder?.hideTab !== true">
-    <span class="nav-link" [ngClass]="{'active':activeTab=='builder'}" (click)="activeTab='builder'"
-       id="builder-tab" data-toggle="tab" data-target="#builder" role="tab" aria-controls="builder" aria-selected="true">
-      Builder
-    </span>
-  </li>
-  <li class="nav-item" *ngIf="options?.json?.hideTab !== true">
-    <span class="nav-link" [ngClass]="{'active':activeTab=='json'}" (click)="activeTab='json'"
-      id="json-editor-tab" data-toggle="tab" data-target="#json-editor" role="tab" aria-controls="json-editor"
-      aria-selected="false">
-      Json
-    </span>
-  </li>
-  <li class="nav-item" *ngIf="options?.renderer?.hideTab !== true">
-    <span class="nav-link" [ngClass]="{'active':activeTab=='renderer'}" (click)="activeTab='renderer'"
-        id="renderer-tab" data-toggle="tab" data-target="#renderer" role="tab" aria-controls="renderer" aria-selected="false">
-      Renderer
-    </span>
-  </li>
-</ul>
-<div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade" [ngClass]="{'show active':activeTab=='builder'}" id="builder" role="tabpanel" aria-labelledby="builder-tab">
+
+
+<tabset #formioEditorTabs>
+  <tab *ngIf="options?.builder?.hideTab !== true" (selectTab)="onSelectTab($event)"
+        heading="Builder" id="builder">
     <div class="m-2">
       <div *ngIf="options?.builder?.hideDisplaySelect !== true">
         <label for="form-display-select" class="mx-2">Display as: </label>
@@ -56,8 +38,9 @@
         (change)="onBuilderChange($event); options?.builder?.output?.change ? options.builder.output.change($event) : undefined"
       ></form-builder>
     </div>
-  </div>
-  <div class="tab-pane fade" [ngClass]="{'show active':activeTab=='json'}" id="json-editor" role="tabpanel" aria-labelledby="json-editor-tab">
+  </tab>
+  <tab *ngIf="options?.json?.hideTab !== true" (selectTab)="onSelectTab($event)"
+          heading="Json" id="json">
     <div class="m-2 well">
       <div class="row mx-0" *ngIf="!options?.json?.changePanelLocations || options.json.changePanelLocations?.includes('top')">
         <div class="m-2 p-0">
@@ -89,10 +72,12 @@
         </alert>
       </div>
     </div>
-  </div>
-  <div class="tab-pane fade" [ngClass]="{'show active':activeTab=='renderer'}" id="renderer" role="tabpanel" aria-labelledby="renderer-tab">
+  </tab>
+  <tab *ngIf="options?.renderer?.hideTab !== true" (selectTab)="onSelectTab($event)"
+          heading="Renderer" id="renderer">
     <div class="m-2">
-      <formio *ngIf="activeTab=='renderer'" [form]="form"
+      <formio *ngIf="activeTab=='renderer'"
+        [form]="form"
         [submission]="options?.renderer?.input?.submission"
         [src]="options?.renderer?.input?.src"
         [url]="options?.renderer?.input?.url"
@@ -151,5 +136,5 @@
       <button class="mx-2 btn btn-primary" *ngIf="options?.renderer?.submissionPanel?.schemaJsonEditor?.enabled && showResourceSchema" (click)="applyResourceJsonSchema()">Apply Schema</button>
       <button class="mx-2 btn btn-primary" *ngIf="options?.renderer?.submissionPanel?.schemaJsonEditor?.enabled && showResourceSchema" (click)="showSubmissionPanel(submission)">Regenerate Schema</button>
     </div>
-  </div>
-</div>
+  </tab>
+</tabset>

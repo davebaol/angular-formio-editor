@@ -5,6 +5,7 @@ import { FormioEditorComponent } from './formio-editor.component';
 import { FormioModule } from 'angular-formio';
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { TabsModule } from 'ngx-bootstrap/tabs';
 import { JsonEditorComponent } from './json-editor/json-editor.component';
 
 
@@ -15,7 +16,8 @@ import { JsonEditorComponent } from './json-editor/json-editor.component';
     FormioModule,
     FormsModule,
     AlertModule.forRoot(),
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    TabsModule.forRoot()
   ],
   exports: [FormioEditorComponent]
 })

@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, OnInit, ViewChild, Input, TemplateRef, OnDestroy} from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
+import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { FormioEditorOptions, FormioEditorTab } from './formio-editor-options';
 import { JsonEditorComponent } from './json-editor/json-editor.component';
@@ -52,7 +53,7 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   @Input() set options(options: FormioEditorOptions) { this.setOptions(options); }
   jsonEditorOptions: JsonEditorOptions;
   jsonEditorChanged = false;
-  @ViewChild('jsoneditor', {static: true}) jsonEditor: JsonEditorComponent;
+  @ViewChild('jsoneditor', {static: false}) jsonEditor: JsonEditorComponent;
 
   @ViewChild('renderer_resource_jsoneditor', {static: false}) rendererResourceJsonEditor: JsonEditorComponent;
   @ViewChild('renderer_schema_jsoneditor', {static: false}) rendererSchemaJsonEditor: JsonEditorComponent;
@@ -63,15 +64,8 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   submission: any;
   fullSubmission: boolean;
 
-  // tslint:disable-next-line:variable-name
-  private _activeTab: FormioEditorTab;
-  get activeTab() { return this._activeTab; }
-  set activeTab(tab: FormioEditorTab) {
-    this._activeTab = tab;
-    if (tab === 'renderer') {
-      this.submissionPanel = false; // Disable submission panel when the renderer tab becomes active
-    }
-  }
+  @ViewChild('formioEditorTabs', {static: true}) tabset: TabsetComponent;
+  activeTab: FormioEditorTab;
 
   modalRef: BsModalRef;
 
@@ -100,15 +94,23 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
       this.setOptions(); // Set default options
     }
 
-    this.activeTab = (['builder', 'json', 'renderer'] as FormioEditorTab[])
-          .find(t => this.options && this.options[t]?.defaultTab ? t : undefined) || 'builder';
-
     if (this.reset) {
       this.resetSubscription = this.reset.subscribe(() => this.resetFormBuilder());
     }
   }
 
   ngAfterViewInit() {
+    // Activate initial tab specified by options
+    setTimeout(() => {
+      // We have to run this inside a setTimeout to prevent the error below:
+      //
+      // ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked.
+      // Previous value for 'active': 'true'. Current value: 'false'.
+      const tabId = (['builder', 'json', 'renderer'] as FormioEditorTab[])
+            .find(t => this.options && this.options[t]?.defaultTab ? t : undefined) || 'builder';
+      this.selectTab(tabId);
+    });
+
     this.refreshJsonEditor();
   }
 
@@ -133,6 +135,28 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
       options?.renderer?.submissionPanel?.schemaJsonEditor?.input?.options
     );
     this.fullSubmission = options?.renderer?.submissionPanel?.fullSubmission;
+  }
+
+  findTab(tabId: FormioEditorTab) {
+    // console.log('>>>>>>>>>>>>>>>findTab.this.tabset.tabs', this.tabset.tabs);
+    return this.tabset.tabs.find(t => t.id === tabId);
+  }
+
+  selectTab(tabId: FormioEditorTab) {
+    const tab = this.findTab(tabId);
+    if (tab) {
+      // console.log('>>>>>>>>>>>>>>>selectTab.tab', tab);
+      tab.active = true; // This automatically triggers the onSelectTab() below
+    }
+  }
+
+  onSelectTab(event: any) {
+    // console.log(">>>>>>>>>>onSelectTab:", event)
+    this.activeTab = event.id;
+    if (event.id === 'renderer') {
+      // Disable submission panel when the renderer tab becomes active
+      this.submissionPanel = false;
+    }
   }
 
   //
@@ -203,13 +227,15 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
   }
 
   refreshJsonEditor(forceReset: boolean = false) {
-    console.log('refreshJsonEditor');
-    if (forceReset) {
-      this.jsonEditor.reset(true);
+    if (this.jsonEditor) {
+      console.log('refreshJsonEditor');
+      if (forceReset) {
+        this.jsonEditor.reset(true);
+      }
+      // Here we use update instead of set to preserve the editor status
+      this.jsonEditor.update(this.form);
+      this.jsonEditorChanged = false;
     }
-    // Here we use update instead of set to preserve the editor status
-    this.jsonEditor.update(this.form);
-    this.jsonEditorChanged = false;
   }
 
   //
@@ -222,8 +248,8 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
     // by changing the active tab and then restoring it.
     // Although this is a rather dirty hack it is hardly noticeable to the eye :)
     if (this.activeTab === 'renderer') {
-      this.activeTab = 'builder';
-      setTimeout(() => { this.activeTab = 'renderer'; });
+      this.selectTab('builder');
+      setTimeout(() => this.selectTab('renderer'));
     }
   }
 

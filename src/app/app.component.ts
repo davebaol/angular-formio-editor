@@ -40,7 +40,7 @@ export class AppComponent {
             }
           },
           schemaJsonEditor: {
-            enabled: false,
+            enabled: true,
             input: {
               options: {}
             }

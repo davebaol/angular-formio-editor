@@ -11,7 +11,8 @@
       "jsoneditor": "jsoneditor",
       "ngx-bootstrap": "ngx-bootstrap",
       "ngx-bootstrap/alert": "ngx-bootstrap/alert",
-      "ngx-bootstrap/modal": "ngx-bootstrap/modal"
+      "ngx-bootstrap/modal": "ngx-bootstrap/modal",
+      "ngx-bootstrap/tabs": "ngx-bootstrap/tabs"
     }
   }
 }
