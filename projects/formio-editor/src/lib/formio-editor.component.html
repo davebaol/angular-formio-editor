@@ -22,7 +22,7 @@
   <tab *ngIf="options?.builder?.hideTab !== true" (selectTab)="onSelectTab($event)"
         heading="Builder" id="builder">
     <div class="m-2">
-      <div *ngIf="options?.builder?.hideDisplaySelect !== true">
+      <div *ngIf="form && options?.builder?.hideDisplaySelect !== true">
         <label for="form-display-select" class="mx-2">Display as: </label>
         <select id="form-display-select" class="form-control my-2" style="display: inline-block; width: 150px;"
                 [(ngModel)]="form.display" (ngModelChange)="onBuilderDiplayChange($event)">
