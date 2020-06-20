@@ -1,0 +1,13 @@
+<div class="row mx-0">
+  <div class="m-2 p-0">
+    <button type="button" class="btn btn-success mr-4" (click)="apply.emit($event)" [disabled]="applyDisabled">
+      Apply
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="discard.emit($event)">
+      Discard
+    </button>
+  </div>
+  <alert class="col-6 mx-4 m-2 p-0"  type="danger" [isOpen]="alertOpen">
+    Json is not well-formed. You cannot apply changes.
+  </alert>
+</div>

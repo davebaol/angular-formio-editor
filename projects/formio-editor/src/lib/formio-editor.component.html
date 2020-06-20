@@ -42,35 +42,23 @@
   <tab *ngIf="options?.json?.hideTab !== true" (selectTab)="onSelectTab($event)"
           heading="Json" id="json">
     <div class="m-2 well">
-      <div class="row mx-0" *ngIf="!options?.json?.changePanelLocations || options.json.changePanelLocations?.includes('top')">
-        <div class="m-2 p-0">
-          <button type="button" class="btn btn-success mr-4" (click)="onJsonEditorApply(saveModal)"
-                  [disabled]="!jsonEditorChanged || jsonEditorErrors.length !== jsonEditorWarningCounter">
-            Apply
-          </button>
-          <button type="button" class="btn btn-secondary" (click)="jsonEditorDiscardChanges()">Discard</button>
-        </div>
-        <alert class="col-6 mx-4 m-2 p-0"  type="danger" [isOpen]="jsonEditorErrors.length !== jsonEditorWarningCounter" >
-          Cannot apply changes. Json is not well-formed.
-        </alert>
-      </div>
+      <json-change-panel *ngIf="!options?.json?.changePanelLocations || options.json.changePanelLocations?.includes('top')"
+          (apply)="onJsonEditorApply(saveModal)"
+          (discard)="jsonEditorDiscardChanges()"
+          [applyDisabled]="!jsonEditorChanged || jsonEditorErrors.length !== jsonEditorWarningCounter"
+          [alertOpen]="jsonEditorErrors.length !== jsonEditorWarningCounter"
+      ></json-change-panel>
       <json-editor #jsoneditor 
         [options]="jsonEditorOptions"
         (dataChange)="onJsonEditorChange($event); options?.json?.output?.dataChange ? options.json.output.dataChange($event) : undefined"
         (dataError)="onJsonEditorError($event); options?.json?.output?.dataError ? options.json.output.dataError($event) : undefined"
       ></json-editor>
-      <div class="row mx-0" *ngIf="!options?.json?.changePanelLocations || options.json.changePanelLocations?.includes('bottom')">
-        <div class="m-2 p-0">
-          <button type="button" class="btn btn-success mr-4" (click)="onJsonEditorApply(saveModal)"
-                  [disabled]="!jsonEditorChanged || jsonEditorErrors.length !== jsonEditorWarningCounter">
-            Apply
-          </button>
-          <button type="button" class="btn btn-secondary" (click)="jsonEditorDiscardChanges()">Discard</button>
-        </div>
-        <alert class="col-6 mx-4 my-2 p-1 align-middle" type="danger" [isOpen]="jsonEditorErrors.length !== jsonEditorWarningCounter" >
-          Json is not well-formed. You won't be able to apply changes!
-        </alert>
-      </div>
+      <json-change-panel *ngIf="!options?.json?.changePanelLocations || options.json.changePanelLocations?.includes('bottom')"
+          (apply)="onJsonEditorApply(saveModal)"
+          (discard)="jsonEditorDiscardChanges()"
+          [applyDisabled]="!jsonEditorChanged || jsonEditorErrors.length !== jsonEditorWarningCounter"
+          [alertOpen]="jsonEditorErrors.length !== jsonEditorWarningCounter"
+      ></json-change-panel>
     </div>
   </tab>
   <tab *ngIf="options?.renderer?.hideTab !== true" (selectTab)="onSelectTab($event)"

@@ -7,10 +7,11 @@ import { AlertModule } from 'ngx-bootstrap/alert';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { JsonEditorComponent } from './json-editor/json-editor.component';
+import { JsonChangePanelComponent } from './json-change-panel/json-change-panel.component';
 
 
 @NgModule({
-  declarations: [FormioEditorComponent, JsonEditorComponent],
+  declarations: [FormioEditorComponent, JsonEditorComponent, JsonChangePanelComponent],
   imports: [
     BrowserModule,
     FormioModule,
