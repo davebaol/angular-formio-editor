@@ -484,6 +484,12 @@ class WellComponent extends CompoundComponent {}
 // DATA COMPONENTS
 // -------------------------------
 
+class DataGridComponent extends CompoundComponent {
+    schema() {
+        return new ArraySchema(this, super.schema());
+    }
+}
+
 class EditGridComponent extends CompoundComponent {
     schema() {
         return new ArraySchema(this, super.schema());
@@ -496,11 +502,12 @@ class EditGridComponent extends CompoundComponent {
 class FormComponent extends CompoundComponent {}
 
 const MAP = {
-    editgrid: EditGridComponent,
     checkbox: CheckboxComponent,
     columns: ColumnsComponent,
     content: ContentComponent,
+    datagrid: DataGridComponent,
     datetime: DateTimeComponent,
+    editgrid: EditGridComponent,
     email: EmailComponent,
     fieldset: FieldSetComponent,
     number: NumberComponent,
