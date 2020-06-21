@@ -388,9 +388,11 @@ class SelectComponent extends EnumComponent {
         }
         return schema;
     }
-    isDefaultCastToString() {
-        return true; // cast defaults to 'string'
-    }
+    // This has changed with formio 4.10.x used by angular-formio 4.8.x
+    // Now cast defaults to 'auto'
+    // isDefaultCastToString() {
+    //     return true; // cast defaults to 'string'
+    // }
 }
 
 class SelectBoxesComponent extends AtomicComponent {
