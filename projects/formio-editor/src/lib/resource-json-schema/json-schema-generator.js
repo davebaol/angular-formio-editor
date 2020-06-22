@@ -70,6 +70,13 @@ class Schema {
         }
         return jsonSchema;
     }
+    fromString(val) {
+        try {
+            return JSON.parse(val);
+        } catch (e) {
+            return val;
+        }
+    }
 }
 class ObjectSchema extends Schema {
     constructor(component, rootSchema) {
@@ -92,12 +99,14 @@ class ObjectSchema extends Schema {
             if (hasOwnProperty.call(this.properties, pk)) {
                 const childSchema = this.properties[pk];
                 if (childSchema.conditions.length === 0) {
+                    // Unconditional property
                     if (childSchema.required) {
                         required.push(pk);
                     }
                     jsonSchema.properties[pk] = childSchema.toJsonSchema();
                     continue;
                 }
+                // Conditional property
                 childSchema.prepareConditions();
                 const ck = childSchema.conditions.key
                 conditionsMap[ck] = childSchema.conditions;
@@ -118,7 +127,11 @@ class ObjectSchema extends Schema {
                 const conds = conditionsMap[ck];
                 const _if = {
                     properties: conds.reduce((acc, c) => {
-                        acc[c.when] = c.show ? { const: c.eq } : { not: { const: c.eq } };
+                        const whenProp = this.properties[c.when];
+                        if (whenProp) {
+                            const eq = whenProp.fromString(c.eq);
+                            acc[c.when] = c.show ? { const: eq } : { not: { const: eq } };
+                        }
                         return acc;
                     }, {})
                 };
@@ -219,12 +232,24 @@ class StringSchema extends PrimitiveSchema {
             if (validate.pattern) this.dataType.pattern = validate.pattern;
         }
     }
+    fromString(val) {
+        return val;
+    }
 }
 
 class EnumSchema extends Schema {
     constructor(component, values, rootSchema) {
         super(component, rootSchema);
         this.dataType.enum = values;
+    }
+    fromString(val) {
+        if (!this.dataType.enum.includes(val)) {
+            const v = super.fromString(val);
+            if (v !== val && this.dataType.enum.includes(v)) {
+                return v;
+            }
+        }
+        return val; 
     }
 }
 
