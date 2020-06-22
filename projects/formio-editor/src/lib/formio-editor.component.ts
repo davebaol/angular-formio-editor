@@ -260,14 +260,17 @@ export class FormioEditorComponent implements OnInit, AfterViewInit, OnDestroy  
         this.submission = submission;
       }
       setTimeout(() => {
-        let schema = generateFormJsonSchema(this.form);
+        let jsonSchema: any = generateFormJsonSchema(this.form);
         if (this.fullSubmission) {
-          schema = { type: 'object', properties: { data: schema } };
+          // Wrap json schema moving definitions to the root
+          const schemaDefs = jsonSchema.definitions;
+          delete jsonSchema.definitions;
+          jsonSchema = { definitions: schemaDefs, required: ['data'], type: 'object', properties: { data: jsonSchema } };
         }
         this.rendererResourceJsonEditor.setSchema(undefined);
         this.rendererResourceJsonEditor.set(this.fullSubmission ? this.submission : this.submission.data);
-        this.rendererSchemaJsonEditor.set(schema as JSON);
-        this.rendererResourceJsonEditor.setSchema(schema);
+        this.rendererSchemaJsonEditor.set(jsonSchema as JSON);
+        this.rendererResourceJsonEditor.setSchema(jsonSchema);
       });
     }
   }

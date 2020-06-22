@@ -7,7 +7,7 @@ https://github.com/davebaol/angular-formio-editor
 
 - Fix issue preventing from using the formio-editor as a formio custom component
 - Fix json schema for select component with angular-formio 4.8.x
-- Generate json schema for data grid component
+- Add json schema support for data grid and tree components
 - Don't generate json schema for client-only components
 - Use ngx-bootstrap tabset
 

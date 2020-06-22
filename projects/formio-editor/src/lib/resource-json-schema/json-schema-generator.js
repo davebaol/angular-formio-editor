@@ -5,11 +5,14 @@ const { hasOwnProperty } = Object.prototype;
 // -------------------------------
 
 class Schema {
-    constructor(component) {
+    constructor(component, rootSchema) {
         this.component = component;
         this.conditions = [];
         this.required = false;
         this.dataType = {};
+        if (!rootSchema) {
+            this.definitions = {};
+        }
         if (component && component.formioComponent) {
             if (component.formioComponent.conditional) {
                 // Add non-empty condition from the component
@@ -54,12 +57,23 @@ class Schema {
     }
     // Subclasses overriding this method MUST call super.toJsonSchema()
     toJsonSchema() {
-        return Object.assign({}, this.dataType);
+        const jsonSchema = Object.assign({}, this.dataType);
+        // Compile definitions
+        if (this.definitions) {
+            const defKeys = Object.keys(this.definitions);
+            if (defKeys.length > 0) {
+                jsonSchema.definitions = defKeys.reduce((defs, dk) => {
+                    defs[dk] = this.definitions[dk].toJsonSchema();
+                    return defs;
+                }, {});
+            }
+        }
+        return jsonSchema;
     }
 }
 class ObjectSchema extends Schema {
-    constructor(component) {
-        super(component);
+    constructor(component, rootSchema) {
+        super(component, rootSchema);
         this.dataType.type = 'object';
         this.properties = {};
     }
@@ -134,8 +148,8 @@ class ObjectSchema extends Schema {
     }
 }
 class MergeableObjectSchema extends ObjectSchema {
-    constructor(component) {
-        super(component);
+    constructor(component, rootSchema) {
+        super(component, rootSchema);
     }
     merge(...sources) {
         const targetProps = this.properties;
@@ -162,8 +176,8 @@ class MergeableObjectSchema extends ObjectSchema {
     }
 }
 class ArraySchema extends Schema {
-    constructor(component, items) {
-        super(component);
+    constructor(component, items, rootSchema) {
+        super(component, rootSchema);
         this.dataType.type = 'array';
         this.dataType.items = items;
     }
@@ -174,19 +188,19 @@ class ArraySchema extends Schema {
     }
 }
 class PrimitiveSchema extends Schema {
-    constructor(component, type) {
-        super(component);
+    constructor(component, type, rootSchema) {
+        super(component, rootSchema);
         this.dataType.type = type;
     }
 }
 class BooleanSchema extends PrimitiveSchema {
-    constructor(component) {
-        super(component, 'boolean');
+    constructor(component, rootSchema) {
+        super(component, 'boolean', rootSchema);
     }
 }
 class NumberSchema extends PrimitiveSchema {
-    constructor(component) {
-        super(component, 'number');
+    constructor(component, rootSchema) {
+        super(component, 'number', rootSchema);
         if (component && component.formioComponent && component.formioComponent.validate) {
             const validate = component.formioComponent.validate;
             if (validate.min || typeof validate.min === 'number') this.dataType.minimum = Number(validate.min);
@@ -196,8 +210,8 @@ class NumberSchema extends PrimitiveSchema {
     }
 }
 class StringSchema extends PrimitiveSchema {
-    constructor(component) {
-        super(component, 'string');
+    constructor(component, rootSchema) {
+        super(component, 'string', rootSchema);
         if (component && component.formioComponent && component.formioComponent.validate) {
             const validate = component.formioComponent.validate;
             if (validate.minLength) this.dataType.minLength = Number(validate.minLength);
@@ -208,8 +222,8 @@ class StringSchema extends PrimitiveSchema {
 }
 
 class EnumSchema extends Schema {
-    constructor(component, values) {
-        super(component);
+    constructor(component, values, rootSchema) {
+        super(component, rootSchema);
         this.dataType.enum = values;
     }
 }
@@ -222,7 +236,7 @@ class Component {
     constructor(formioComponent) {
         this.formioComponent = formioComponent;
     }
-    schema() {
+    schema(rootSchema) {
         throw new Error('Subclasses of \'Component\' have to implement the method \'schema\'!');
     }
     // Layout components are view-only components. From resource perspective, they are to be
@@ -236,14 +250,14 @@ class Component {
 }
 
 class AtomicComponent extends Component {
-    schema() {
+    schema(rootSchema) {
         const schema = this.baseSchema();
         if (this.formioComponent.multiple) {
             if (this.formioComponent.validate && !this.formioComponent.validate.required) {
             // With multiple values enabled the component can generate null items if required is false
             schema.dataType = { anyOf: [schema.dataType, { type: 'null' }] };
             }
-            return new ArraySchema(this, schema);
+            return new ArraySchema(this, schema, rootSchema);
         }
         return schema;
     }
@@ -276,9 +290,9 @@ class AtomicComponent extends Component {
 }
 
 class CompoundComponent extends Component {
-    schema() {
-        const schema = new MergeableObjectSchema(this);
-        this.childrenSchema(schema);
+    schema(rootSchema) {
+        const schema = new MergeableObjectSchema(this, rootSchema);
+        this.childrenSchema(schema, rootSchema);
         return schema.shrink();
     }
     /*prorected*/ children() {
@@ -289,7 +303,7 @@ class CompoundComponent extends Component {
     /*prorected*/ defaultChildClass() {
         return undefined;
     }
-    /*prorected*/ childrenSchema(parentSchema) {
+    /*prorected*/ childrenSchema(parentSchema, rootSchema) {
         const children = this.children();
         for (let i = 0, len = children.length; i < len; i++) {
             const c = children[i];
@@ -300,7 +314,7 @@ class CompoundComponent extends Component {
             }
             const type = MAP[c.type] || this.defaultChildClass();
             if (type) {
-                let schema = new (type)(c).schema();
+                let schema = new (type)(c).schema(rootSchema);
                 const required = c.validate && c.validate.required;
                 // Dotted key means nested schema
                 const keyParts = c.key.split('.');
@@ -485,21 +499,72 @@ class WellComponent extends CompoundComponent {}
 // -------------------------------
 
 class DataGridComponent extends CompoundComponent {
-    schema() {
-        return new ArraySchema(this, super.schema());
+    schema(rootSchema) {
+        return new ArraySchema(this, super.schema(rootSchema));
     }
 }
 
 class EditGridComponent extends CompoundComponent {
-    schema() {
-        return new ArraySchema(this, super.schema());
+    schema(rootSchema) {
+        return new ArraySchema(this, super.schema(rootSchema));
     }
+}
+
+/*
+definitions: {
+  tree_1234567890: {
+    type: 'object',
+    properties: {
+      data: {
+        type: 'object',
+        properties: {
+          item: {type: 'string'},
+          price: {type: 'number'},
+        }
+      },
+      children: {
+          type: 'array',
+          items: { $ref: "#/definitions/tree_1234567890"} 
+      } 
+    }
+  }
+},
+$ref: "#/definitions/tree_1234567890""
+*/
+class TreeComponent extends CompoundComponent {
+    schema(rootSchema) {
+        return new TreeSchema(this, super.schema(rootSchema), rootSchema);
+    }
+}
+class RefSchema extends Schema {
+    constructor(component, schemaRef, rootSchema) {
+        super(component, rootSchema);
+        this.dataType.$ref = schemaRef;
+    }
+}
+class TreeSchema extends RefSchema {
+    constructor(component, dataSchema, rootSchema) {
+        super(component, 'tree_' + Math.floor(Math.random() * 1000000), rootSchema);
+        const schemaId = this.dataType.$ref;
+        this.dataType.$ref = "#/definitions/" + schemaId;
+
+        const treeSchema = new ObjectSchema(component)
+            .addProperty('data', dataSchema, true)
+            .addProperty('children', new ArraySchema(component, new RefSchema(undefined, this.dataType.$ref)), true);
+        
+        rootSchema.definitions[schemaId] = treeSchema;
+        }
 }
 
 // -------------------------------
 // FORM COMPONENT
 // -------------------------------
-class FormComponent extends CompoundComponent {}
+class FormComponent extends CompoundComponent {
+    /*prorected*/ childrenSchema(parentSchema, rootSchema) {
+        // For form's children parentSchema and rootSchema are the same
+        return super.childrenSchema(parentSchema, parentSchema);
+    }
+}
 
 const MAP = {
     checkbox: CheckboxComponent,
@@ -521,6 +586,7 @@ const MAP = {
     tags: TagsComponent,
     textarea: TextAreaComponent,
     textfield: TextFieldComponent,
+    tree: TreeComponent,
     url: UrlComponent,
     well: WellComponent
 };
