@@ -498,6 +498,8 @@ class WellComponent extends CompoundComponent {}
 // DATA COMPONENTS
 // -------------------------------
 
+class ContainerComponent extends CompoundComponent {}
+
 class DataGridComponent extends CompoundComponent {
     schema(rootSchema) {
         return new ArraySchema(this, super.schema(rootSchema));
@@ -569,6 +571,7 @@ class FormComponent extends CompoundComponent {
 const MAP = {
     checkbox: CheckboxComponent,
     columns: ColumnsComponent,
+    container: ContainerComponent,
     content: ContentComponent,
     datagrid: DataGridComponent,
     datetime: DateTimeComponent,
