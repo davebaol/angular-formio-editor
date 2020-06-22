@@ -4,15 +4,15 @@ const { hasOwnProperty } = Object.prototype;
 // SCHEMAS
 // -------------------------------
 
-class Schema {
-    constructor(component, rootSchema) {
+class JsonSchemaBuilder {
+    constructor(component, rootJSB) {
         this.component = component;
         this.conditions = [];
         this.required = false;
         this.dataType = {};
-        if (!rootSchema) {
-            this.definitions = {};
-        }
+        // if (!rootJSB) {
+        //     this.definitions = {};
+        // }
         if (component && component.formioComponent) {
             if (component.formioComponent.conditional) {
                 // Add non-empty condition from the component
@@ -28,6 +28,11 @@ class Schema {
                 this.required = component.formioComponent.validate.required;
             }
         }
+    }
+    addDefinition(name, jsb) {
+        this.definitions = this.definitions || {}; // Make sure definitions is an object
+        this.definitions[name] = jsb;
+        return this;
     }
     /*private*/ generateSingleConditionKey(condition) {
         return JSON.stringify(condition);
@@ -45,7 +50,7 @@ class Schema {
         for (const k in this.properties) {
             if (hasOwnProperty.call(this.properties, k)) {
                 const propSchema = this.properties[k];
-                if (propSchema instanceof MergeableObjectSchema && propSchema.component && propSchema.component.shrinkable()) {
+                if (propSchema instanceof MergeableObjectJSB && propSchema.component && propSchema.component.shrinkable()) {
                     // console.log('Shrink', propSchema.component.formioComponent.type);
                     propSchema.shrink();
                     delete this.properties[k]; // Remove shribkable schema from parent
@@ -55,21 +60,24 @@ class Schema {
         }
         return this;
     }
-    // Subclasses overriding this method MUST call super.toJsonSchema()
-    toJsonSchema() {
+    // Subclasses overriding this method MUST call super.build()
+    build() {
+        // Start creating json schema from builder's dataType 
         const jsonSchema = Object.assign({}, this.dataType);
-        // Compile definitions
+
+        // Compile builder's definitions (if any)
         if (this.definitions) {
             const defKeys = Object.keys(this.definitions);
             if (defKeys.length > 0) {
                 jsonSchema.definitions = defKeys.reduce((defs, dk) => {
-                    defs[dk] = this.definitions[dk].toJsonSchema();
+                    defs[dk] = this.definitions[dk].build();
                     return defs;
                 }, {});
             }
         }
         return jsonSchema;
     }
+    // Convert the specified string value to the type of this json schema
     fromString(val) {
         try {
             return JSON.parse(val);
@@ -78,42 +86,42 @@ class Schema {
         }
     }
 }
-class ObjectSchema extends Schema {
-    constructor(component, rootSchema) {
-        super(component, rootSchema);
+class ObjectJSB extends JsonSchemaBuilder {
+    constructor(component, rootJSB) {
+        super(component, rootJSB);
         this.dataType.type = 'object';
         this.properties = {};
     }
-    addProperty(name, schema, required) {
-        this.properties[name] = schema;
-        schema.required = required;
+    addProperty(name, jsb, required) {
+        this.properties[name] = jsb;
+        jsb.required = required;
         return this;
     }
-    toJsonSchema() {
-        const jsonSchema = super.toJsonSchema();
+    build() {
+        const jsonSchema = super.build();
         jsonSchema.properties = {};
         const required = [];
         const condPropMap = {};
         const conditionsMap = {};
         for (const pk in this.properties) {
             if (hasOwnProperty.call(this.properties, pk)) {
-                const childSchema = this.properties[pk];
-                if (childSchema.conditions.length === 0) {
+                const childJSB = this.properties[pk];
+                if (childJSB.conditions.length === 0) {
                     // Unconditional property
-                    if (childSchema.required) {
+                    if (childJSB.required) {
                         required.push(pk);
                     }
-                    jsonSchema.properties[pk] = childSchema.toJsonSchema();
+                    jsonSchema.properties[pk] = childJSB.build();
                     continue;
                 }
                 // Conditional property
-                childSchema.prepareConditions();
-                const ck = childSchema.conditions.key
-                conditionsMap[ck] = childSchema.conditions;
+                childJSB.prepareConditions();
+                const ck = childJSB.conditions.key
+                conditionsMap[ck] = childJSB.conditions;
                 if (!(ck in condPropMap)) {
                     condPropMap[ck] = {};
                 }
-                condPropMap[ck][pk] = childSchema;
+                condPropMap[ck][pk] = childJSB;
             }
         }
         // Add required to jsonSchema if not empty
@@ -138,11 +146,11 @@ class ObjectSchema extends Schema {
                 const then = { required: [], properties: {} };
                 for (const pk in condPropMap[ck]) {
                     if (hasOwnProperty.call(condPropMap[ck], pk)) {
-                        const childSchema = condPropMap[ck][pk];
-                        if (childSchema.required) {
+                        const childJSB = condPropMap[ck][pk];
+                        if (childJSB.required) {
                             then.required.push(pk);
                         }
-                        then.properties[pk] = childSchema.toJsonSchema();
+                        then.properties[pk] = childJSB.build();
                     }
                 }
                 // Remove empty required
@@ -160,15 +168,15 @@ class ObjectSchema extends Schema {
         return jsonSchema;
     }
 }
-class MergeableObjectSchema extends ObjectSchema {
-    constructor(component, rootSchema) {
-        super(component, rootSchema);
+class MergeableObjectJSB extends ObjectJSB {
+    constructor(component, rootJSB) {
+        super(component, rootJSB);
     }
     merge(...sources) {
         const targetProps = this.properties;
         for (let i = 0, len = sources.length; i < len; i++) {
             const source = sources[i];
-            if (source instanceof MergeableObjectSchema) {
+            if (source instanceof MergeableObjectJSB) {
                 // merge properties
                 const sourceProps = source.properties;
                 for (const key in sourceProps) {
@@ -176,7 +184,7 @@ class MergeableObjectSchema extends ObjectSchema {
                         // Append source schema conditions to the conditions of its sub-schemas 
                         Array.prototype.push.apply(sourceProps[key].conditions, source.conditions);
                         // Merge properties recursively
-                        if (targetProps[key] && sourceProps[key] instanceof MergeableObjectSchema) {
+                        if (targetProps[key] && sourceProps[key] instanceof MergeableObjectJSB) {
                             targetProps[key].merge(sourceProps[key]);
                         } else {
                             targetProps[key] = sourceProps[key];
@@ -188,32 +196,32 @@ class MergeableObjectSchema extends ObjectSchema {
         return this;
     }
 }
-class ArraySchema extends Schema {
-    constructor(component, items, rootSchema) {
-        super(component, rootSchema);
+class ArrayJSB extends JsonSchemaBuilder {
+    constructor(component, items, rootJSB) {
+        super(component, rootJSB);
         this.dataType.type = 'array';
         this.dataType.items = items;
     }
-    toJsonSchema() {
-        const jsonSchema = super.toJsonSchema();
-        jsonSchema.items = this.dataType.items.toJsonSchema();
+    build() {
+        const jsonSchema = super.build();
+        jsonSchema.items = this.dataType.items.build();
         return jsonSchema;
     }
 }
-class PrimitiveSchema extends Schema {
-    constructor(component, type, rootSchema) {
-        super(component, rootSchema);
+class PrimitiveJSB extends JsonSchemaBuilder {
+    constructor(component, type, rootJSB) {
+        super(component, rootJSB);
         this.dataType.type = type;
     }
 }
-class BooleanSchema extends PrimitiveSchema {
-    constructor(component, rootSchema) {
-        super(component, 'boolean', rootSchema);
+class BooleanJSB extends PrimitiveJSB {
+    constructor(component, rootJSB) {
+        super(component, 'boolean', rootJSB);
     }
 }
-class NumberSchema extends PrimitiveSchema {
-    constructor(component, rootSchema) {
-        super(component, 'number', rootSchema);
+class NumberJSB extends PrimitiveJSB {
+    constructor(component, rootJSB) {
+        super(component, 'number', rootJSB);
         if (component && component.formioComponent && component.formioComponent.validate) {
             const validate = component.formioComponent.validate;
             if (validate.min || typeof validate.min === 'number') this.dataType.minimum = Number(validate.min);
@@ -222,9 +230,9 @@ class NumberSchema extends PrimitiveSchema {
         }
     }
 }
-class StringSchema extends PrimitiveSchema {
-    constructor(component, rootSchema) {
-        super(component, 'string', rootSchema);
+class StringJSB extends PrimitiveJSB {
+    constructor(component, rootJSB) {
+        super(component, 'string', rootJSB);
         if (component && component.formioComponent && component.formioComponent.validate) {
             const validate = component.formioComponent.validate;
             if (validate.minLength) this.dataType.minLength = Number(validate.minLength);
@@ -237,9 +245,9 @@ class StringSchema extends PrimitiveSchema {
     }
 }
 
-class EnumSchema extends Schema {
-    constructor(component, values, rootSchema) {
-        super(component, rootSchema);
+class EnumJSB extends JsonSchemaBuilder {
+    constructor(component, values, rootJSB) {
+        super(component, rootJSB);
         this.dataType.enum = values;
     }
     fromString(val) {
@@ -261,8 +269,8 @@ class Component {
     constructor(formioComponent) {
         this.formioComponent = formioComponent;
     }
-    schema(rootSchema) {
-        throw new Error('Subclasses of \'Component\' have to implement the method \'schema\'!');
+    jsonSchemaBuilder(rootJSB) {
+        throw new Error('Subclasses of \'Component\' have to implement the method \'jsonSchemaBuilder\'!');
     }
     // Layout components are view-only components. From resource perspective, they are to be
     // shrinked, because they don't have any value neither implicit nor expressed by user.
@@ -275,19 +283,19 @@ class Component {
 }
 
 class AtomicComponent extends Component {
-    schema(rootSchema) {
-        const schema = this.baseSchema();
+    jsonSchemaBuilder(rootJSB) {
+        const jsb = this.baseJsonSchemaBuilder();
         if (this.formioComponent.multiple) {
             if (this.formioComponent.validate && !this.formioComponent.validate.required) {
-            // With multiple values enabled the component can generate null items if required is false
-            schema.dataType = { anyOf: [schema.dataType, { type: 'null' }] };
+                // With multiple values enabled the component can generate null items if required is false
+                jsb.dataType = { anyOf: [jsb.dataType, { type: 'null' }] };
             }
-            return new ArraySchema(this, schema, rootSchema);
+            return new ArrayJSB(this, jsb, rootJSB);
         }
-        return schema;
+        return jsb;
     }
-    baseSchema() {
-        throw new Error('Subclasses of \'AtomicComponent\' have to implement the method \'baseSchema\'!');
+    baseJsonSchemaBuilder() {
+        throw new Error('Subclasses of \'AtomicComponent\' have to implement the method \'baseJsonSchemaBuilder\'!');
     }
     isDefaultCastToString() {
         return false; // cast defaults to 'auto'
@@ -315,10 +323,10 @@ class AtomicComponent extends Component {
 }
 
 class CompoundComponent extends Component {
-    schema(rootSchema) {
-        const schema = new MergeableObjectSchema(this, rootSchema);
-        this.childrenSchema(schema, rootSchema);
-        return schema.shrink();
+    jsonSchemaBuilder(rootJSB) {
+        const jsb = new MergeableObjectJSB(this, rootJSB);
+        this.childrenJsonSchemaBuilder(jsb, rootJSB);
+        return jsb.shrink();
     }
     /*prorected*/ children() {
         return this.formioComponent.components;
@@ -328,7 +336,7 @@ class CompoundComponent extends Component {
     /*prorected*/ defaultChildClass() {
         return undefined;
     }
-    /*prorected*/ childrenSchema(parentSchema, rootSchema) {
+    /*prorected*/ childrenJsonSchemaBuilder(parentJSB, rootJSB) {
         const children = this.children();
         for (let i = 0, len = children.length; i < len; i++) {
             const c = children[i];
@@ -339,20 +347,20 @@ class CompoundComponent extends Component {
             }
             const type = MAP[c.type] || this.defaultChildClass();
             if (type) {
-                let schema = new (type)(c).schema(rootSchema);
+                let jsb = new (type)(c).jsonSchemaBuilder(rootJSB);
                 const required = c.validate && c.validate.required;
                 // Dotted key means nested schema
                 const keyParts = c.key.split('.');
                 for (let j = keyParts.length - 1; j > 0; j--) {
-                    schema = new MergeableObjectSchema(undefined).addProperty(keyParts[j], schema, required);
+                    jsb = new MergeableObjectJSB(undefined).addProperty(keyParts[j], jsb, required);
                 }
-                parentSchema.merge(new MergeableObjectSchema(undefined).addProperty(keyParts[0], schema, required))
+                parentJSB.merge(new MergeableObjectJSB(undefined).addProperty(keyParts[0], jsb, required))
             }
             else {
                 // console.log(this.formioComponent.type, ": skipping child with unknown type", c.type);
             }
         }
-        return parentSchema;
+        return parentJSB;
     }
 }
 
@@ -361,8 +369,8 @@ class CompoundComponent extends Component {
 // -------------------------------
 
 class StringComponent extends AtomicComponent {
-    baseSchema() {
-        return new StringSchema(this);
+    baseJsonSchemaBuilder() {
+        return new StringJSB(this);
     }
 }
 class EnumComponent extends AtomicComponent {
@@ -374,12 +382,12 @@ class EnumComponent extends AtomicComponent {
     values() {
         throw new Error('Subclasses of \'EnumComponent\' have to implement the method \'values\'!');
     }
-    baseSchema() {
+    baseJsonSchemaBuilder() {
         const values = this.values().map(v => this.cast(v.value, this.formioComponent.dataType));
         if (this.formioComponent && this.formioComponent.validate && !this.formioComponent.validate.required) {
             Array.prototype.push.apply(values, this.additionalValuesIfNotRequired);
         }
-        return new EnumSchema(this, values);
+        return new EnumJSB(this, values);
     }
 }
 
@@ -388,14 +396,14 @@ class EnumComponent extends AtomicComponent {
 // -------------------------------
 
 class CheckboxComponent extends AtomicComponent {
-    baseSchema() {
-        return new BooleanSchema(this);
+    baseJsonSchemaBuilder() {
+        return new BooleanJSB(this);
     }
 }
 
 class NumberComponent extends AtomicComponent {
-    baseSchema() {
-        return new NumberSchema(this);
+    baseJsonSchemaBuilder() {
+        return new NumberJSB(this);
     }
 }
 
@@ -419,13 +427,13 @@ class SelectComponent extends EnumComponent {
     values() {
         return this.formioComponent.data.values;
     }
-    schema() {
-        const schema = super.schema();
+    jsonSchemaBuilder() {
+        const jsb = super.jsonSchemaBuilder();
         // If multiple values are enabled ensure uniqueness
-        if (schema instanceof ArraySchema) {
-            schema.dataType.uniqueItems = true;
+        if (jsb instanceof ArrayJSB) {
+            jsb.dataType.uniqueItems = true;
         }
-        return schema;
+        return jsb;
     }
     // This has changed with formio 4.10.x used by angular-formio 4.8.x
     // Now cast defaults to 'auto'
@@ -435,18 +443,18 @@ class SelectComponent extends EnumComponent {
 }
 
 class SelectBoxesComponent extends AtomicComponent {
-    baseSchema() {
-        const schema = new ObjectSchema(this);
-        schema.dataType.additionalProperties = false;
+    baseJsonSchemaBuilder() {
+        const jsb = new ObjectJSB(this);
+        jsb.dataType.additionalProperties = false;
         const values = this.formioComponent.values
-            .forEach(v => schema.addProperty(v.value, new BooleanSchema(undefined), true));
+            .forEach(v => jsb.addProperty(v.value, new BooleanJSB(undefined), true));
         if (this.formioComponent.validate && !this.formioComponent.validate.required) {
             // This is needed for compatibility.
             // Formio adds a boolean property with name "" when the component is not required.
             // The property itself must not be required
-            schema.addProperty('', new BooleanSchema(undefined), false);
+            jsb.addProperty('', new BooleanJSB(undefined), false);
         }
-        return schema;
+        return jsb;
     }
 }
 
@@ -463,13 +471,13 @@ class EmailComponent extends StringComponent {}
 class UrlComponent extends StringComponent {}
 
 class TagsComponent extends AtomicComponent {
-    schema() {
+    jsonSchemaBuilder() {
         return this.formioComponent.storeas === 'array' ?
-            new ArraySchema(this, this.baseSchema())
-            : this.baseSchema();
+            new ArrayJSB(this, this.baseJsonSchemaBuilder())
+            : this.baseJsonSchemaBuilder();
     }
-    baseSchema() {
-        return new StringSchema(this);
+    baseJsonSchemaBuilder() {
+        return new StringJSB(this);
     }
 }
 
@@ -526,14 +534,14 @@ class WellComponent extends CompoundComponent {}
 class ContainerComponent extends CompoundComponent {}
 
 class DataGridComponent extends CompoundComponent {
-    schema(rootSchema) {
-        return new ArraySchema(this, super.schema(rootSchema));
+    jsonSchemaBuilder(rootJSB) {
+        return new ArrayJSB(this, super.jsonSchemaBuilder(rootJSB));
     }
 }
 
 class EditGridComponent extends CompoundComponent {
-    schema(rootSchema) {
-        return new ArraySchema(this, super.schema(rootSchema));
+    jsonSchemaBuilder(rootJSB) {
+        return new ArrayJSB(this, super.jsonSchemaBuilder(rootJSB));
     }
 }
 
@@ -559,37 +567,37 @@ definitions: {
 $ref: "#/definitions/tree_1234567890""
 */
 class TreeComponent extends CompoundComponent {
-    schema(rootSchema) {
-        return new TreeSchema(this, super.schema(rootSchema), rootSchema);
+    jsonSchemaBuilder(rootJSB) {
+        return new TreeJSB(this, super.jsonSchemaBuilder(rootJSB), rootJSB);
     }
 }
-class RefSchema extends Schema {
-    constructor(component, schemaRef, rootSchema) {
-        super(component, rootSchema);
-        this.dataType.$ref = schemaRef;
+class RefJSB extends JsonSchemaBuilder {
+    constructor(component, ref, rootJSB) {
+        super(component, rootJSB);
+        this.dataType.$ref = ref;
     }
 }
-class TreeSchema extends RefSchema {
-    constructor(component, dataSchema, rootSchema) {
-        super(component, 'tree_' + Math.floor(Math.random() * 1000000), rootSchema);
+class TreeJSB extends RefJSB {
+    constructor(component, dataJSB, rootJSB) {
+        super(component, 'tree_' + Math.floor(Math.random() * 1000000), rootJSB);
         const schemaId = this.dataType.$ref;
         this.dataType.$ref = "#/definitions/" + schemaId;
 
-        const treeSchema = new ObjectSchema(component)
-            .addProperty('data', dataSchema, true)
-            .addProperty('children', new ArraySchema(component, new RefSchema(undefined, this.dataType.$ref)), true);
+        const treeJSB = new ObjectJSB(component)
+            .addProperty('data', dataJSB, true)
+            .addProperty('children', new ArrayJSB(component, new RefJSB(undefined, this.dataType.$ref)), true);
         
-        rootSchema.definitions[schemaId] = treeSchema;
-        }
+        rootJSB.addDefinition(schemaId, treeJSB);
+    }
 }
 
 // -------------------------------
 // FORM COMPONENT
 // -------------------------------
 class FormComponent extends CompoundComponent {
-    /*prorected*/ childrenSchema(parentSchema, rootSchema) {
-        // For form's children parentSchema and rootSchema are the same
-        return super.childrenSchema(parentSchema, parentSchema);
+    /*prorected*/ childrenJsonSchemaBuilder(parentJSB, rootJSB) {
+        // For form's children parent  and root are the same
+        return super.childrenJsonSchemaBuilder(parentJSB, parentJSB);
     }
 }
 
@@ -620,5 +628,5 @@ const MAP = {
 };
 
 export function generateFormJsonSchema(form) {
-    return new FormComponent(form).schema().toJsonSchema();
+    return new FormComponent(form).jsonSchemaBuilder().build();
 }
