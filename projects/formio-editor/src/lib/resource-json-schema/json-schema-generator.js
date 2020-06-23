@@ -97,10 +97,8 @@ class ObjectJSB extends JsonSchemaBuilder {
         jsb.required = required;
         return this;
     }
-    build() {
-        const jsonSchema = super.build();
-        jsonSchema.properties = {};
-        const required = [];
+    /*private*/ splitProperties() {
+        const unconditionalProperties = {};
         const condPropMap = {};
         const conditionsMap = {};
         for (const pk in this.properties) {
@@ -108,10 +106,7 @@ class ObjectJSB extends JsonSchemaBuilder {
                 const childJSB = this.properties[pk];
                 if (childJSB.conditions.length === 0) {
                     // Unconditional property
-                    if (childJSB.required) {
-                        required.push(pk);
-                    }
-                    jsonSchema.properties[pk] = childJSB.build();
+                    unconditionalProperties[pk] = childJSB;
                     continue;
                 }
                 // Conditional property
@@ -124,25 +119,32 @@ class ObjectJSB extends JsonSchemaBuilder {
                 condPropMap[ck][pk] = childJSB;
             }
         }
-        // Add required to jsonSchema if not empty
-        if (required.length > 0) {
-            jsonSchema.required = required;
-        }
+        return { unconditionalProperties, condPropMap, conditionsMap };
+    }
+    /*private*/ buildConditionalProperties(condPropMap, conditionsMap, unconditionalProperties) {
         // Generate allOf from conditional properties
         const allOf = [];
         for (const ck in condPropMap) {
             if (hasOwnProperty.call(condPropMap, ck)) {
                 const conds = conditionsMap[ck];
+                let condPropCounter = 0;
                 const _if = {
                     properties: conds.reduce((acc, c) => {
                         const whenProp = this.properties[c.when];
                         if (whenProp) {
+                            condPropCounter++;
                             const eq = whenProp.fromString(c.eq);
                             acc[c.when] = c.show ? { const: eq } : { not: { const: eq } };
                         }
                         return acc;
                     }, {})
                 };
+                if (condPropCounter === 0) {
+                    // Move these conditional properties back to unconditional properties
+                    Object.assign(unconditionalProperties, condPropMap[ck]);
+                    delete condPropMap[ck];
+                    continue;
+                }
                 const then = { required: [], properties: {} };
                 for (const pk in condPropMap[ck]) {
                     if (hasOwnProperty.call(condPropMap[ck], pk)) {
@@ -161,10 +163,44 @@ class ObjectJSB extends JsonSchemaBuilder {
                 allOf.push({ if: _if, then: then });
             }
         }
-        // Add allOf to jsonSchema if not empty
+        return allOf;
+    }
+    /*private*/ buildUnconditionalProperties(unconditionalProperties) {
+        const out = { required: [], properties: {} };
+        for (const pk in unconditionalProperties) {
+            if (hasOwnProperty.call(unconditionalProperties, pk)) {
+                const childJSB = unconditionalProperties[pk];
+                if (childJSB.required) {
+                    out.required.push(pk);
+                }
+                out.properties[pk] = childJSB.build();
+            }
+        }
+        return out;
+    }
+    build() {
+        const jsonSchema = super.build();
+
+        // Split conditional and unconditional properties
+        const { condPropMap, conditionsMap, unconditionalProperties } = this.splitProperties();
+
+        // Generate allOf from conditional properties.
+        // Note that we have to process conditional properties first, because some
+        // of them may still be moved back to unconditional properties for some reason.
+        const allOf = this.buildConditionalProperties(condPropMap, conditionsMap, unconditionalProperties);
+
+        // Build unconditional properties and add them to the json schema
+        const builtUncondProps = this.buildUnconditionalProperties(unconditionalProperties);
+        if (builtUncondProps.required.length > 0) {
+            jsonSchema.required = builtUncondProps.required; // Add non-empty required to the json schema 
+        }
+        jsonSchema.properties = builtUncondProps.properties;
+
+        // Add not empty allOf (with conditional properties) to the json schema 
         if (allOf.length > 0) {
             jsonSchema.allOf = allOf;
         }
+
         return jsonSchema;
     }
 }
